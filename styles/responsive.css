@@ -1,0 +1,21 @@
+/* Мобильная адаптация */
+@media (max-width: 600px) {
+    .modal--profile {
+        padding: 22px;
+    }
+    .profile-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .avatar-picker {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .profile-badges {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .nav { display: none; }
+    .hero h1 { font-size: var(--fs-3xl); }
+    .player-badge { display: none !important; }
+}

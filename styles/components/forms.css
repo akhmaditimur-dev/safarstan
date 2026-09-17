@@ -1,0 +1,198 @@
+/* ============ ФОРМЫ (Т-Банк-стиль) ============ */
+
+/* === Лейбл === */
+.modal-label {
+    display: block;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin-bottom: 8px;
+    margin-top: 18px;
+    letter-spacing: -0.01em;
+}
+
+/* === Инпут === */
+.modal-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--fs-base);
+    font-family: inherit;
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: all var(--transition-fast);
+    font-weight: var(--fw-medium);
+}
+
+.modal-input::placeholder {
+    color: var(--color-text-muted);
+    font-weight: var(--fw-normal);
+}
+
+.modal-input:hover {
+    border-color: var(--color-text-muted);
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+/* === Textarea === */
+textarea.modal-input {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.5;
+    font-family: inherit;
+}
+
+/* === Select === */
+select.modal-input {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 44px;
+}
+
+/* ============================================ */
+/* АВАТАР-ПИКЕР                               */
+/* ============================================ */
+
+.avatar-picker {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.avatar-option {
+    background: var(--color-bg-soft);
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    font-size: 28px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-option:hover {
+    background: var(--color-primary-light);
+    transform: translateY(-2px);
+}
+
+.avatar-option.selected {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-primary);
+}
+
+/* ============================================ */
+/* АВТОРИЗАЦИЯ                                */
+/* ============================================ */
+
+.auth-tabs {
+    display: flex;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-full);
+    padding: 5px;
+    margin-bottom: 24px;
+    gap: 4px;
+}
+
+.auth-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px 16px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-soft);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-base);
+    letter-spacing: -0.01em;
+}
+
+.auth-tab:hover {
+    color: var(--color-primary);
+}
+
+.auth-tab.active {
+    background: var(--color-surface);
+    color: var(--color-primary-dark);
+    box-shadow: var(--shadow-sm);
+}
+
+.auth-error {
+    margin-top: 14px;
+    padding: 14px 18px;
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+    border-radius: var(--radius-lg);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* ============================================ */
+/* ЗВЁЗДЫ РЕЙТИНГА                            */
+/* ============================================ */
+
+.rating-picker {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.rating-star {
+    background: transparent;
+    border: none;
+    font-size: 40px;
+    color: var(--color-border);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    padding: 0;
+    line-height: 1;
+}
+
+.rating-star:hover {
+    transform: scale(1.2);
+    color: var(--color-warm);
+}
+
+.rating-star.active {
+    color: var(--color-warm);
+}
+
+/* === Адаптация === */
+@media (max-width: 600px) {
+    .modal-input {
+        padding: 12px 16px;
+        font-size: var(--fs-sm);
+    }
+    
+    .avatar-picker {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+    }
+    
+    .avatar-option {
+        font-size: 22px;
+        padding: 8px;
+    }
+    
+    .rating-star {
+        font-size: 32px;
+    }
+}

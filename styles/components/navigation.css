@@ -1,0 +1,185 @@
+/* ============ НАВИГАЦИЯ (Т-Банк-стиль) ============ */
+
+/* ============================================ */
+/* НИЖНЕЕ МЕНЮ (мобильное)                     */
+/* ============================================ */
+
+.bottom-nav {
+    display: none;   /* скрыто на десктопе */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border-soft);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    z-index: 500;
+    padding: 8px 0;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+
+.bottom-nav__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 4px;
+    text-decoration: none;
+    color: var(--color-text-muted);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    transition: all var(--transition-fast);
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    position: relative;
+}
+
+.bottom-nav__item:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+}
+
+.bottom-nav__item.active {
+    color: var(--color-primary);
+}
+
+.bottom-nav__item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+}
+
+.bottom-nav__icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-fast), color var(--transition-fast);
+    color: var(--color-primary);   /* ← ЗЕЛЁНЫЙ */
+}
+
+.bottom-nav__icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    display: block;
+}
+
+.bottom-nav__item.active .bottom-nav__icon {
+    transform: scale(1.15);
+    color: var(--color-primary-dark);
+}
+
+.bottom-nav__item:hover .bottom-nav__icon {
+    color: var(--color-primary-dark);
+}
+
+.bottom-nav__item.active .bottom-nav__icon {
+    transform: scale(1.15);
+}
+
+.bottom-nav__item:hover .bottom-nav__icon svg {
+    filter: brightness(1.15);
+}
+
+.bottom-nav__label {
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.01em;
+}
+
+/* ============================================ */
+/* АДАПТАЦИЯ                                  */
+/* ============================================ */
+
+/* Показать нижнее меню только на мобильном */
+@media (max-width: 768px) {
+    .bottom-nav {
+        display: flex;
+    }
+    
+    /* Отступ снизу для body, чтобы меню не перекрывало контент */
+    body {
+        padding-bottom: 80px;
+    }
+    
+    /* Скрыть верхнее nav */
+    .nav {
+        display: none;
+    }
+    
+    /* Шапка компактнее */
+    .header__inner {
+        height: 56px;
+        gap: 12px;
+    }
+    
+    .logo {
+        font-size: var(--fs-lg);
+    }
+    
+    /* Скрыть бейдж игрока в шапке (он есть в меню) */
+    .player-badge {
+        display: none !important;
+    }
+    
+    /* Язык — компактнее */
+    .lang-btn {
+        padding: 8px 14px;
+        font-size: var(--fs-xs);
+    }
+}
+
+/* === Активный пункт === */
+.bottom-nav__item.active {
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+}
+
+.bottom-nav__item.active .bottom-nav__icon {
+    transform: scale(1.15);
+}
+
+.bottom-nav__icon {
+    transition: transform var(--transition-fast);
+}
+
+/* === Активный пункт === */
+.bottom-nav__item.active {
+    color: var(--color-primary);
+}
+
+.bottom-nav__item.active .bottom-nav__icon {
+    transform: scale(1.15);
+}
+
+.bottom-nav__item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+}
+
+/* === Плавная анимация иконки === */
+.bottom-nav__icon {
+    transition: transform var(--transition-fast);
+}

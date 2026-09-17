@@ -1,0 +1,115 @@
+/* ============ РЕЙТИНГ ============ */
+.rating-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rating-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--color-surface);
+    border: none;
+    border-radius: var(--radius-xl);
+    padding: 18px 22px;
+    box-shadow: var(--shadow-xs);
+    transition: all var(--transition-base);
+}
+
+.rating-row:hover {
+    transform: translateX(6px);
+    box-shadow: var(--shadow-md);
+}
+
+.rating-row.top-1 {
+    background: linear-gradient(90deg, #fef3c7 0%, #ffffff 60%);
+}
+
+.rating-row.top-2 {
+    background: linear-gradient(90deg, #f1f5f9 0%, #ffffff 60%);
+}
+
+.rating-row.top-3 {
+    background: linear-gradient(90deg, #fed7aa 0%, #ffffff 60%);
+}
+
+.rating-row.top-1 {
+    background: linear-gradient(90deg, #fef3c7, #fff);
+    border-color: #fcd34d;
+}
+
+.rating-row.top-2 {
+    background: linear-gradient(90deg, #f1f5f9, #fff);
+    border-color: #cbd5e1;
+}
+
+.rating-row.top-3 {
+    background: linear-gradient(90deg, #fed7aa, #fff);
+    border-color: #fb923c;
+}
+
+.rating-position {
+    font-size: 20px;
+    font-weight: 700;
+    color: #555;
+    min-width: 40px;
+    text-align: center;
+}
+
+.rating-row.top-1 .rating-position,
+.rating-row.top-2 .rating-position,
+.rating-row.top-3 .rating-position {
+    font-size: 24px;
+}
+
+.rating-city {
+    flex: 1;
+    font-weight: 600;
+    font-size: 16px;
+    color: #1a1a1a;
+}
+
+.rating-city small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.rating-score {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-primary);
+    min-width: 90px;
+    text-align: right;
+    line-height: 1.2;
+}
+
+.rating-score small {
+    display: block;
+    font-weight: 400;
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.rating-empty {
+    text-align: center;
+    color: #888;
+    padding: 30px;
+    font-size: 14px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 500px) {
+    .rating-score {
+        min-width: 70px;
+        font-size: 15px;
+    }
+    .rating-city {
+        font-size: 14px;
+    }
+}

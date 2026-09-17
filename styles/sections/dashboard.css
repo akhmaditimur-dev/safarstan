@@ -1,0 +1,711 @@
+/* ============ ДАШБОРД ============ */
+
+.dashboard {
+    padding: 40px 0;
+    background: var(--color-bg);
+}
+
+/* === СЕТКА: 3 КОЛОНКИ === */
+.dashboard__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.dashboard-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+    align-items: stretch;
+}
+
+/* === КАРТОЧКА === */
+.dashboard-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.dashboard-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-card h3 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin: 0;
+}
+
+.dashboard-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dashboard-card__header h3 {
+    margin: 0;
+}
+
+.dashboard-card__btn {
+    width: 100%;
+    margin-top: auto;
+}
+
+/* === ПРОФИЛЬ === */
+.dashboard-user {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dashboard-avatar {
+    font-size: 40px;
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dashboard-user h2 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-text);
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.dashboard-level {
+    color: var(--color-primary);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-sm);
+}
+
+.dashboard-xp__text {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    font-size: var(--fs-sm);
+    color: var(--color-text-soft);
+    gap: 8px;
+}
+
+.dashboard-xp__text strong {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-primary);
+}
+
+.dashboard-xp__text small {
+    color: var(--color-text-muted);
+    font-size: var(--fs-xs);
+    white-space: nowrap;
+}
+
+.dashboard-xp__bar {
+    height: 10px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.dashboard-xp__fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    transition: width var(--transition-slow);
+    border-radius: var(--radius-full);
+}
+
+/* === МОИ ГОРОДА === */
+.dashboard-cities-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dashboard-cities-section h3 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin: 0;
+}
+
+.dashboard-cities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* === КВЕСТЫ === */
+.dashboard-quests {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.dashboard-quest {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border-soft);
+}
+
+.dashboard-quest:last-child {
+    border-bottom: none;
+}
+
+.dashboard-quest__icon {
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.dashboard-quest__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dashboard-quest__name {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dashboard-quest__progress {
+    font-size: var(--fs-xs);
+    color: var(--color-primary);
+    font-weight: var(--fw-bold);
+}
+
+/* === МОЙ ВКЛАД === */
+.dashboard-contribution {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.dashboard-contribution__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    gap: 8px;
+}
+
+.dashboard-contribution__label {
+    color: var(--color-text-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dashboard-contribution__value {
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+/* === ДРУЗЬЯ === */
+.dashboard-friends {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 0;
+    text-align: center;
+}
+
+.dashboard-friends__count {
+    font-family: var(--font-heading);
+    font-size: var(--fs-4xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-primary);
+    line-height: 1;
+}
+
+.dashboard-friends__count::after {
+    content: ' друзей';
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-soft);
+    display: block;
+    margin-top: 4px;
+}
+
+/* === ПЛАНЫ === */
+.dashboard-plans {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.plan-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.plan-item:hover {
+    background: var(--color-primary-light);
+}
+
+.plan-item--next {
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+    border: 2px solid var(--color-primary);
+}
+
+.plan-item__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.plan-item__city {
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+    margin-bottom: 4px;
+}
+
+.plan-item__place {
+    font-size: var(--fs-xs);
+    color: var(--color-primary);
+    font-weight: var(--fw-semibold);
+    margin-bottom: 4px;
+}
+
+.plan-item__note {
+    font-size: var(--fs-xs);
+    color: var(--color-text-soft);
+    font-style: italic;
+    margin-bottom: 4px;
+}
+
+.plan-item__date {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    font-weight: var(--fw-medium);
+}
+
+.plan-item__countdown {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-warm);
+    margin-top: 4px;
+}
+
+.plan-item__actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.plan-item__btn {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+}
+
+.plan-item__btn:hover {
+    background: var(--color-surface);
+}
+
+/* === ЛЕНТА === */
+.feed-filters {
+    display: flex;
+    gap: 4px;
+    background: var(--color-bg-soft);
+    padding: 4px;
+    border-radius: var(--radius-full);
+}
+
+.feed-filter {
+    background: transparent;
+    border: none;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-soft);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.feed-filter:hover {
+    color: var(--color-text);
+}
+
+.feed-filter.active {
+    background: var(--color-surface);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-xs);
+}
+
+.dashboard-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.feed-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    align-items: flex-start;
+}
+
+.feed-item:hover {
+    background: var(--color-primary-light);
+}
+
+.feed-item__avatar {
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.feed-item__body {
+    flex: 1;
+    min-width: 0;
+}
+
+.feed-item__text {
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.feed-item__text strong {
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+}
+
+.feed-item__time {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
+
+.feed-item--recommend {
+    background: linear-gradient(135deg, #fef3c7 0%, #ffffff 60%);
+}
+
+.feed-item--recommend .feed-item__avatar {
+    background: var(--color-warm-light);
+}
+
+.feed-empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 30px 20px;
+    font-size: var(--fs-sm);
+}
+
+/* === ПУСТОЕ СОСТОЯНИЕ === */
+.dashboard-empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 16px;
+    font-size: var(--fs-sm);
+    line-height: 1.4;
+}
+
+/* ============ АДАПТАЦИЯ ============ */
+
+/* Мобильный: 1 колонка */
+@media (max-width: 700px) {
+    .dashboard {
+        padding: 20px 0;
+    }
+
+    .dashboard__grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .dashboard-col {
+        gap: 14px;
+    }
+
+    .dashboard-card {
+        padding: 18px;
+    }
+
+    .dashboard-avatar {
+        width: 56px;
+        height: 56px;
+        font-size: 32px;
+    }
+
+    .dashboard-user h2 {
+        font-size: var(--fs-lg);
+    }
+}
+
+/* === Строка с именем + кнопка ✏️ === */
+.dashboard-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.dashboard-name-row h2 {
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-text);
+    line-height: 1.2;
+}
+
+/* === Кнопка редактирования ✏️ === */
+.profile-edit-btn {
+    background: var(--color-bg-soft);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-edit-btn:hover {
+    background: var(--color-primary-light);
+    transform: scale(1.1);
+}
+
+/* ============ НАВИГАЦИЯ В КАРТОЧКЕ ============ */
+
+.dashboard-card--nav {
+    padding: 16px;
+    gap: 0;
+}
+
+.dashboard-nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.dashboard-nav-title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 8px 12px 4px;
+    margin: 0;
+}
+
+.dashboard-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: left;
+    width: 100%;
+}
+
+.dashboard-nav-item:hover {
+    background: var(--color-primary-light);
+    transform: translateX(4px);
+}
+
+.dashboard-nav-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--color-primary);   /* ← ЗЕЛЁНЫЙ ЦВЕТ */
+}
+
+.dashboard-nav-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;          /* ← наследует зелёный */
+    stroke-width: 2;
+    fill: none;
+}
+
+.dashboard-nav-item:hover .dashboard-nav-icon {
+    color: #15803d;                /* ← темнее при hover */
+}
+
+.dashboard-nav-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    display: block;
+}
+
+.dashboard-nav-label {
+    flex: 1;
+    min-width: 0;
+}
+
+.dashboard-nav-count {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
+.dashboard-nav-arrow {
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    transition: transform var(--transition-fast);
+}
+
+.dashboard-nav-item:hover .dashboard-nav-arrow {
+    transform: translateX(4px);
+    color: var(--color-primary);
+}
+
+.dashboard-nav-divider {
+    height: 1px;
+    background: var(--color-border-soft);
+    margin: 12px 0;
+}
+
+/* === Аватар с фото === */
+.dashboard-avatar img,
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+.dashboard-avatar,
+.profile-avatar {
+    overflow: hidden;
+}
+
+/* === Аватар в ленте === */
+.feed-item__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+/* === Чипы городов === */
+.city-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    background: var(--color-bg-soft);
+    color: var(--color-text-soft);
+    transition: all var(--transition-fast);
+}
+
+/* Иконки в чипах */
+.city-chip svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.5;
+    flex-shrink: 0;
+    stroke: currentColor;
+}
+
+/* === 🏠 Родной — насыщенный зелёный === */
+.city-chip.home {
+    background: #bbf7d0;   /* светлый зелёный */
+    color: #14532d;        /* тёмно-зелёный */
+}
+
+/* === 📍 Текущий — средний зелёный === */
+.city-chip.current {
+    background: #dcfce7;   /* чуть светлее */
+    color: #166534;
+}
+
+/* === ✅ Посещённый — мягкий зелёный === */
+.city-chip.visited {
+    background: #f0fdf4;   /* почти белый с зеленью */
+    color: #15803d;
+}

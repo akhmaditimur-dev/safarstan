@@ -1,0 +1,148 @@
+/* ============ СЕКЦИИ — ЕДИНЫЙ СТИЛЬ ============ */
+
+/* === Общие стили секций === */
+.section {
+    padding: 48px 0;
+}
+
+.section--alt {
+    background: var(--color-bg-soft);
+}
+
+/* === Заголовки секций === */
+.section > .container > h2,
+.section > .container > .section-header > h2 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+/* === Заголовок секции с кнопкой === */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.section-header h2 {
+    margin-bottom: 0;
+}
+
+/* === О ГОРОДЕ === */
+#info {
+    padding: 40px 0;
+}
+
+.city-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.city-header h2 {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: var(--fw-extrabold);
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    margin: 0;
+    line-height: 1.15;
+}
+
+.city-description {
+    color: var(--color-text-soft);
+    font-size: var(--fs-lg);
+    line-height: 1.6;
+    max-width: 720px;
+    margin-bottom: 32px;
+}
+
+/* === РЕЙТИНГ === */
+#ratings .tabs {
+    margin-bottom: 28px;
+}
+
+/* === КВЕСТЫ === */
+#quests .tabs {
+    margin-bottom: 28px;
+}
+
+/* === КАРТА === */
+#map .map-legend {
+    margin-bottom: 24px;
+}
+
+#map .map-container {
+    height: 520px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+/* === ТРАНСПОРТ, ОТЕЛИ, СЕРВИСЫ === */
+    /* базовые стили секций уже применены */
+
+#transport .tabs {
+    margin-bottom: 28px;
+}
+
+/* === АДАПТАЦИЯ === */
+@media (max-width: 900px) {
+    .section {
+        padding: 60px 0;
+    }
+    
+    .section > .container > h2,
+    .section > .container > .section-header > h2 {
+        margin-bottom: 24px;
+    }
+    
+    .city-description {
+        font-size: var(--fs-base);
+        margin-bottom: 24px;
+    }
+    
+    #map .map-container {
+        height: 400px;
+    }
+}
+
+@media (max-width: 600px) {
+    .section {
+        padding: 36px 0;
+    }
+    
+    .section > .container > h2,
+    .section > .container > .section-header > h2 {
+        margin-bottom: 28px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .city-header {
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .city-description {
+        margin-bottom: 20px;
+    }
+    
+    #map .map-container {
+        height: 320px;
+    }
+}

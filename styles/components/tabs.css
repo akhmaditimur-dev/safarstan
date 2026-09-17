@@ -1,0 +1,60 @@
+/* ============ ТАБЫ (Т-Банк-стиль) ============ */
+
+/* === Контейнер табов — пилюля === */
+.tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 5px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-full);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+/* === Таб === */
+.tab {
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-soft);
+    transition: all var(--transition-base);
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+}
+
+.tab.active {
+    background: var(--color-surface);
+    color: var(--color-primary-dark);
+    box-shadow: var(--shadow-sm);
+}
+
+/* === Адаптация === */
+@media (max-width: 600px) {
+    .tabs {
+        width: 100%;
+        justify-content: center;
+        padding: 4px;
+    }
+    
+    .tab {
+        padding: 8px 14px;
+        font-size: var(--fs-xs);
+        flex: 1;
+        justify-content: center;
+        min-width: 0;
+    }
+}

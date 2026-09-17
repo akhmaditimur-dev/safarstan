@@ -1,0 +1,389 @@
+/* ============ КНОПКИ (Т-Банк-стиль) ============ */
+
+/* === Базовая кнопка === */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    padding: 14px 28px;
+    border: none;
+    border-radius: var(--radius-full);   /* pill */
+    font-family: var(--font-text);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    line-height: 1;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+    text-decoration: none;
+    user-select: none;
+    letter-spacing: -0.01em;
+}
+
+/* === PRIMARY — зелёный градиент === */
+.btn-primary {
+    background: var(--gradient-primary);
+    color: #fff;
+    box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(22, 163, 74, 0.35);
+}
+
+.btn-primary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* === SECONDARY — прозрачный + рамка === */
+.btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 2px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+    background: var(--color-bg-soft);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* === GHOST — без фона === */
+.btn-ghost {
+    background: transparent;
+    color: var(--color-text-soft);
+    padding: 10px 20px;
+}
+
+.btn-ghost:hover {
+    background: var(--color-bg-soft);
+    color: var(--color-primary);
+}
+
+/* === SUCCESS — изумруд === */
+.btn-success {
+    background: var(--gradient-success);
+    color: #fff;
+    box-shadow: var(--shadow-success);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(22, 163, 74, 0.4);
+}
+
+/* === Размеры === */
+.btn-sm {
+    padding: 10px 20px;
+    font-size: var(--fs-sm);
+}
+
+.btn-lg {
+    padding: 18px 36px;
+    font-size: var(--fs-lg);
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* ============================================ */
+/* СПЕЦИАЛЬНЫЕ КНОПКИ                          */
+/* ============================================ */
+
+/* === Кнопка языка === */
+.lang-btn {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    border: none;
+    padding: 10px 18px;
+    border-radius: var(--radius-full);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    letter-spacing: 0.02em;
+}
+
+.lang-btn:hover {
+    background: var(--color-primary);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* === Кнопка "Я здесь" (чек-ин) === */
+.checkin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gradient-primary);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+    letter-spacing: -0.01em;
+}
+
+.checkin-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(22, 163, 74, 0.35);
+}
+
+.checkin-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.checkin-btn::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+/* === Кнопка "Добавить место" === */
+.add-place-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-surface);
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+    padding: 12px 24px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    letter-spacing: -0.01em;
+}
+
+.add-place-btn:hover {
+    background: var(--color-primary);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary);
+}
+
+.add-place-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.add-place-btn::before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'/%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    transition: all var(--transition-fast);
+}
+
+.add-place-btn:hover::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'/%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+}
+
+/* === Модальные кнопки === */
+.modal-btn {
+    width: 100%;
+    background: var(--gradient-primary);
+    color: #fff;
+    border: none;
+    padding: 16px 24px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    cursor: pointer;
+    margin-top: 24px;
+    font-family: inherit;
+    box-shadow: var(--shadow-primary);
+    transition: all var(--transition-base);
+    letter-spacing: -0.01em;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(22, 163, 74, 0.35);
+}
+
+.modal-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.modal-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* === Кнопки "Редактировать" / "Удалить" (UGC) === */
+.card-actions .edit-btn,
+.card-actions .delete-btn {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-soft);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.card-actions .edit-btn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    border-color: var(--color-primary);
+}
+
+.card-actions .delete-btn:hover {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+/* === Кнопка "Фото" === */
+.photo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-soft);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.photo-btn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* === Кнопка "Отзыв" === */
+.reviews-block__btn {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-soft);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.reviews-block__btn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* === Кнопки профиля === */
+.profile-logout {
+    width: 100%;
+    background: var(--color-bg-soft);
+    color: var(--color-text-soft);
+    border: 2px solid var(--color-border);
+    padding: 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 10px;
+    transition: all var(--transition-base);
+}
+
+.profile-logout:hover {
+    background: var(--color-border);
+    color: var(--color-text);
+    transform: translateY(-2px);
+}
+
+.profile-reset {
+    width: 100%;
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+    border: 2px solid var(--color-danger);
+    padding: 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 10px;
+    transition: all var(--transition-base);
+}
+
+.profile-reset:hover {
+    background: var(--color-danger);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* === Кнопка "Друзья" в дашборде === */
+.dashboard-card__btn {
+    width: 100%;
+    margin-top: auto;
+}
+
+/* === Кнопка "Начать путешествие" на лендинге === */
+#landingStartBtn {
+    padding: 18px 40px;
+    font-size: var(--fs-lg);
+}
+
+/* === Кнопка темы === */
+.theme-btn {
+    background: var(--color-bg-soft);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.theme-btn:hover {
+    background: var(--color-primary-light);
+    transform: rotate(20deg) scale(1.1);
+}
+
+.theme-btn:active {
+    transform: scale(0.95);
+}

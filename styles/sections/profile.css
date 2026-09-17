@@ -1,0 +1,493 @@
+/* ============ МОДАЛКА ПРОФИЛЯ ============ */
+.modal--profile {
+    max-width: 560px;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    padding: 32px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    transition: background .15s;
+}
+
+.modal-close:hover {
+    background: #f3f4f6;
+    color: #222;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.profile-avatar {
+    font-size: 48px;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #dbeafe, #ede9fe);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.profile-header h2 {
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.profile-level {
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.profile-xp-block {
+    background: #f7f8fa;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.profile-xp-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+.profile-xp-text small {
+    color: #888;
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.profile-xp-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.profile-xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    transition: width .3s;
+}
+
+.profile-section {
+    margin-bottom: 22px;
+}
+
+.profile-section h3 {
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+/* Мои города */
+.profile-cities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* Статистика */
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.profile-stat {
+    background: #f7f8fa;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+}
+
+.profile-stat strong {
+    display: block;
+    font-size: 22px;
+    color: #2563eb;
+}
+
+.profile-stat small {
+    color: #888;
+    font-size: 12px;
+}
+
+/* Кнопка сброса */
+.profile-reset {
+    width: 100%;
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 10px;
+}
+
+.profile-reset:hover {
+    background: #fee2e2;
+}
+
+/* Кликабельный бейдж в шапке */
+.player-badge {
+    cursor: pointer;
+    transition: background .15s;
+}
+
+.player-badge:hover {
+    background: #e0e7ff;
+}
+
+/* === Редактирование имени === */
+.profile-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.profile-name-row h2 {
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-edit-btn {
+    background: var(--color-bg-soft);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-edit-btn:hover {
+    background: var(--color-primary-light);
+    transform: scale(1.1);
+}
+
+/* === Инпут редактирования === */
+.profile-name-edit {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.profile-name-input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    font-family: var(--font-heading);
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.profile-name-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+.profile-name-save {
+    background: var(--gradient-primary);
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.profile-name-save:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary);
+}
+
+.profile-name-cancel {
+    background: var(--color-bg-soft);
+    color: var(--color-text-soft);
+    border: none;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.profile-name-cancel:hover {
+    background: var(--color-border);
+    color: var(--color-text);
+}
+
+/* ============ МОДАЛКА СМЕНЫ АВАТАРА ============ */
+
+.avatar-picker--profile {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+/* Разделитель */
+.avatar-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--color-text-muted);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+}
+
+.avatar-divider::before,
+.avatar-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+}
+
+/* Превью фото */
+.avatar-preview {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+}
+
+.avatar-preview__item {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-bg-soft);
+    border: 3px solid var(--color-primary);
+}
+
+.avatar-preview__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* === Аватар с фото (круглый) === */
+.dashboard-avatar img,
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Кликабельный аватар */
+.dashboard-avatar,
+.profile-avatar {
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.dashboard-avatar:hover,
+.profile-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+/* ============ ГАЛЕРЕЯ ============ */
+
+.modal--wide {
+    max-width: 720px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.gallery-item {
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-bg-soft);
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ============ МОИ ОТЗЫВЫ ============ */
+
+.my-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.my-review-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+}
+
+.my-review-place {
+    font-family: var(--font-heading);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+}
+
+.my-review-rating {
+    color: var(--color-warm);
+    font-size: var(--fs-sm);
+    letter-spacing: 1px;
+}
+
+.my-review-text {
+    font-size: var(--fs-sm);
+    color: var(--color-text-soft);
+    line-height: 1.5;
+}
+
+.my-review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.my-review-date {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
+
+.my-review-delete {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-soft);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-xs);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.my-review-delete:hover {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+/* ============ НАСТРОЙКИ ============ */
+
+.settings-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.settings-btn {
+    flex: 1;
+    background: var(--color-bg-soft);
+    border: 2px solid transparent;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-soft);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.settings-btn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.settings-btn.active {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    border-color: var(--color-primary);
+}
+
+.settings-divider {
+    height: 1px;
+    background: var(--color-border-soft);
+    margin: 20px 0;
+}
+
+.btn-block {
+    width: 100%;
+    display: block;
+}
+
+/* === Кликабельный профиль === */
+[data-player-profile] {
+    transition: opacity var(--transition-fast);
+}
+
+[data-player-profile]:hover {
+    opacity: 0.75;
+}
+
+.review-item__name[data-player-profile]:hover,
+.card-author[data-player-profile]:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+}

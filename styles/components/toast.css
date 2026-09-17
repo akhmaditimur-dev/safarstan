@@ -1,0 +1,44 @@
+/* Тост-уведомление о начислении XP */
+.xp-toast {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: var(--gradient-primary);
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: var(--radius-lg);
+    font-weight: var(--fw-semibold);
+    box-shadow: var(--shadow-lg);
+    z-index: 2000;
+    animation: slideIn .3s ease-out;
+    max-width: 320px;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+}
+
+.xp-toast.fade-out {
+    animation: slideOut .3s ease-in forwards;
+}
+
+@keyframes slideOut {
+    to { transform: translateX(400px); opacity: 0; }
+}
+
+/* Прогресс-бар XP */
+.xp-bar {
+    height: 4px;
+    background: #e8e8e8;
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.xp-bar__fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    transition: width .3s;
+}

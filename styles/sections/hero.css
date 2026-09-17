@@ -1,0 +1,377 @@
+/* ============ HERO — ВЫБОР ГОРОДА ============ */
+
+.hero {
+    background: var(--gradient-hero);
+    color: #fff;
+    padding: 48px 0;
+    text-align: center;
+}
+
+.hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: var(--fw-extrabold);
+    margin-bottom: 8px;
+    color: #fff;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.hero__subtitle {
+    opacity: .85;
+    margin-bottom: 32px;
+    font-size: var(--fs-base);
+    color: #fff;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ============================================ */
+/* ДВЕ КОЛОНКИ                                  */
+/* ============================================ */
+
+.hero__columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+    text-align: left;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hero__col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+/* ============================================ */
+/* ПОИСК ГОРОДА                                */
+/* ============================================ */
+
+.city-search {
+    position: relative;
+    width: 100%;
+}
+
+.city-search__input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.city-search__icon {
+    position: absolute;
+    left: 16px;
+    font-size: 16px;
+    pointer-events: none;
+    opacity: .7;
+}
+
+.city-search__input {
+    width: 100%;
+    padding: 14px 44px 14px 44px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-full);
+    color: #fff;
+    font-size: var(--fs-base);
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.city-search__input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.city-search__input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.city-search__clear {
+    position: absolute;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-fast);
+}
+
+.city-search__clear:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+/* Выпадающие результаты */
+.city-search__results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+    z-index: 50;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.city-search__result {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    color: var(--color-text);
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: var(--fs-sm);
+}
+
+.city-search__result:hover {
+    background: var(--color-primary-light);
+}
+
+.city-search__result-flag {
+    font-size: 18px;
+}
+
+.city-search__result-name {
+    font-weight: var(--fw-semibold);
+    flex: 1;
+}
+
+.city-search__result-country {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
+
+.city-search__empty {
+    padding: 16px;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+}
+
+/* ============================================ */
+/* СЕКЦИИ В HERO                                */
+/* ============================================ */
+
+.city-section {
+    text-align: left;
+}
+
+.city-section__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* === Чипы городов === */
+.city-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.city-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-full);
+    color: #fff;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: inherit;
+    backdrop-filter: blur(10px);
+}
+
+.city-chip:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.city-chip.active {
+    background: #fff;
+    color: var(--color-primary-dark);
+    border-color: #fff;
+}
+
+.city-chip__icon {
+    font-size: 14px;
+}
+
+/* ============================================ */
+/* АККОРДЕОН СТРАН                              */
+/* ============================================ */
+
+.country-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.country-item {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: background var(--transition-fast);
+}
+
+.country-item.open {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.country-item__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: #fff;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    transition: background var(--transition-fast);
+}
+
+.country-item__header:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.country-item__flag {
+    font-size: 20px;
+}
+
+.country-item__name {
+    flex: 1;
+}
+
+.country-item__count {
+    font-size: var(--fs-xs);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.country-item__arrow {
+    font-size: 12px;
+    transition: transform var(--transition-fast);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.country-item.open .country-item__arrow {
+    transform: rotate(90deg);
+}
+
+.country-item__cities {
+    display: none;
+    padding: 8px 18px 14px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.country-item.open .country-item__cities {
+    display: flex;
+}
+
+.country-city-btn {
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-full);
+    color: #fff;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.country-city-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.country-city-btn.active {
+    background: #fff;
+    color: var(--color-primary-dark);
+    border-color: #fff;
+}
+
+/* ============================================ */
+/* АДАПТАЦИЯ                                    */
+/* ============================================ */
+
+@media (max-width: 800px) {
+    .hero__columns {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        max-width: 480px;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero {
+        padding: 32px 0;
+    }
+
+    .hero h1 {
+        font-size: var(--fs-2xl);
+    }
+
+    .hero__subtitle {
+        font-size: var(--fs-sm);
+        margin-bottom: 20px;
+    }
+
+    .city-search__input {
+        padding: 12px 40px 12px 40px;
+        font-size: var(--fs-sm);
+    }
+
+    .city-chip {
+        padding: 8px 14px;
+        font-size: var(--fs-xs);
+    }
+
+    .country-item__header {
+        padding: 10px 14px;
+        font-size: var(--fs-xs);
+    }
+
+    .country-city-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+}

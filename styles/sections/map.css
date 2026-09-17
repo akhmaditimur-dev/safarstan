@@ -1,0 +1,239 @@
+/* ============ КАРТА ============ */
+.map-container {
+    width: 100%;
+    height: 500px;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: none;
+}
+
+.map-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #555;
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-item .dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+}
+
+.legend-item .dot.visited    { background: #16a34a; }
+.legend-item .dot.unvisited  { background: #9ca3af; }
+.legend-item .dot.home       { background: #f59e0b; }
+.legend-item .dot.current    { background: #2563eb; }
+
+/* Кастомный маркер (кружок вместо иконки Leaflet) */
+.custom-marker {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.35);
+    cursor: pointer;
+    transition: transform .15s;
+}
+
+.custom-marker:hover {
+    transform: scale(1.25);
+}
+
+.custom-marker.visited   { background: #16a34a; }
+.custom-marker.unvisited { background: #9ca3af; }
+.custom-marker.home      { background: #f59e0b; }
+.custom-marker.current   { background: #2563eb; }
+
+/* Popup */
+.safarstan-popup {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-width: 180px;
+}
+
+.safarstan-popup h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: #1a1a1a;
+}
+
+.safarstan-popup small {
+    color: #666;
+    font-size: 12px;
+}
+
+.safarstan-popup .popup-status {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.safarstan-popup .popup-status.visited { color: #16a34a; }
+.safarstan-popup .popup-status.home    { color: #f59e0b; }
+.safarstan-popup .popup-status.current { color: #2563eb; }
+
+/* Мобильная адаптация */
+@media (max-width: 600px) {
+    .map-container {
+        height: 380px;
+    }
+    .map-legend {
+        gap: 12px;
+        font-size: 12px;
+    }
+}
+
+/* === Кластеры городов === */
+.marker-cluster-small {
+    background-color: rgba(22, 163, 74, 0.5);
+}
+
+.marker-cluster-small div {
+    background-color: rgba(22, 163, 74, 0.9);
+    color: #fff;
+    font-weight: 700;
+}
+
+.marker-cluster-medium {
+    background-color: rgba(217, 119, 6, 0.5);
+}
+
+.marker-cluster-medium div {
+    background-color: rgba(217, 119, 6, 0.9);
+    color: #fff;
+    font-weight: 700;
+}
+
+.marker-cluster-large {
+    background-color: rgba(220, 38, 38, 0.5);
+}
+
+.marker-cluster-large div {
+    background-color: rgba(220, 38, 38, 0.9);
+    color: #fff;
+    font-weight: 700;
+}
+
+/* Убираем дефолтную тень и делаем крупнее */
+.marker-cluster {
+    background-clip: padding-box;
+    border-radius: 50%;
+}
+
+.marker-cluster div {
+    width: 36px;
+    height: 36px;
+    margin-left: 5px;
+    margin-top: 5px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   КНОПКА НАСТРОЕК КАРТЫ
+   ============================================ */
+.map-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.map-settings-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+    font-family: inherit;
+}
+
+.map-settings-btn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* ============================================
+   ОБЁРТКА КАРТЫ + ТУЛТИП
+   ============================================ */
+.map-wrapper {
+    position: relative;
+}
+
+.city-tooltip {
+    position: absolute;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 10px 14px;
+    box-shadow: var(--shadow-lg);
+    font-size: var(--fs-sm);
+    font-family: var(--font-body);
+    pointer-events: none;
+    z-index: 1000;
+    min-width: 160px;
+    transform: translate(-50%, -100%);
+    margin-top: -12px;
+    white-space: nowrap;
+}
+
+.city-tooltip__title {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-base);
+    color: var(--color-text);
+    margin-bottom: 6px;
+}
+
+.city-tooltip__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-text-soft);
+}
+
+.city-tooltip__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: var(--fw-medium);
+}
+
+.city-tooltip__item strong {
+    color: var(--color-text);
+    font-weight: var(--fw-bold);
+}
+
+.city-tooltip__empty {
+    color: var(--color-text-soft);
+    font-style: italic;
+    font-size: var(--fs-xs);
+}

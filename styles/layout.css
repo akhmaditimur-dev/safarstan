@@ -1,0 +1,219 @@
+/* ============ ШАПКА ============ */
+.player-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f0f4ff;
+    border: 1px solid #d0dcff;
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+.player-badge .player-level {
+    background: #2563eb;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.player-badge .player-xp {
+    color: #7c3aed;
+    font-size: 12px;
+}
+
+/* ============ ШАПКА ============ */
+.header {
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* ============ ПОДВАЛ ============ */
+.footer {
+    background: var(--color-text);
+    color: var(--color-text-muted);
+    padding: 32px 0;
+    text-align: center;
+    font-size: var(--fs-sm);
+}
+
+/* ============ ПОИСК В ШАПКЕ ============ */
+.header-search {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.header-search__input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.header-search__icon {
+    position: absolute;
+    left: 14px;
+    font-size: 14px;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.header-search__input {
+    width: 100%;
+    padding: 10px 40px 10px 40px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-full);
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.header-search__input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.header-search__input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background: var(--color-surface);
+    box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+.header-search__clear {
+    position: absolute;
+    right: 10px;
+    background: var(--color-bg);
+    border: none;
+    color: var(--color-text-soft);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-fast);
+}
+
+.header-search__clear:hover {
+    background: var(--color-border);
+    color: var(--color-text);
+}
+
+/* Выпадающие результаты */
+.header-search__results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+    z-index: 200;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.header-search__group {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-border-soft);
+}
+
+.header-search__group:last-child {
+    border-bottom: none;
+}
+
+.header-search__group-title {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 16px;
+}
+
+.header-search__result {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    color: var(--color-text);
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: var(--fs-sm);
+}
+
+.header-search__result:hover {
+    background: var(--color-primary-light);
+}
+
+.header-search__result-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+}
+
+.header-search__result-text {
+    flex: 1;
+    min-width: 0;
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-search__result-sub {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    font-weight: var(--fw-normal);
+    margin-left: 6px;
+}
+
+.header-search__empty {
+    padding: 20px 16px;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+}
+
+/* Скрываем поиск в шапке на маленьких экранах */
+@media (max-width: 600px) {
+    .header-search {
+        max-width: none;
+    }
+
+    .header-search__input {
+        padding: 8px 36px 8px 36px;
+        font-size: var(--fs-xs);
+    }
+}

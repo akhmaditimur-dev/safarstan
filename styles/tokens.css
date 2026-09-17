@@ -1,0 +1,235 @@
+/* ============ ДИЗАЙН-ТОКЕНЫ SAFARSTAN ============ */
+/* Единая система переменных: цвета, шрифты, отступы, тени */
+
+:root {
+    /* === ЦВЕТА: БАЗА === */
+    --color-bg:            #fafafa;       /* основной фон */
+    --color-bg-soft:       #f5f5f7;       /* мягкий фон секций */
+    --color-surface:       #ffffff;       /* карточки, модалки */
+    --color-border:        #e5e7eb;       /* границы */
+    --color-border-soft:   #f3f4f6;       /* мягкие границы */
+
+    /* === ЦВЕТА: ТЕКСТ === */
+    --color-text:          #0a0a0a;       /* основной */
+    --color-text-soft:     #4b5563;       /* второстепенный */
+    --color-text-muted:    #9ca3af;       /* приглушённый */
+
+    /* === ЦВЕТА: АКЦЕНТЫ (зелёные, сдержанные) === */
+    --color-primary:        #16a34a;   /* основной зелёный */
+    --color-primary-dark:   #15803d;
+    --color-primary-light:  #dcfce7;
+    --color-primary-soft:   #f0fdf4;
+
+    --color-accent:         #059669;   /* изумруд */
+    --color-accent-dark:    #047857;
+    --color-accent-light:   #d1fae5;
+
+    --color-success:        #16a34a;
+    --color-success-dark:   #15803d;
+    --color-success-light:  #dcfce7;
+
+    --color-warm:           #d97706;   /* золото для рейтинга */
+    --color-warm-dark:      #b45309;
+    --color-warm-light:     #fef3c7;
+
+    --color-danger:         #dc2626;
+    --color-danger-light:   #fee2e2;
+
+    /* === ГРАДИЕНТЫ (зелёные) === */
+    --gradient-primary: linear-gradient(135deg, #16a34a 0%, #059669 100%);
+    --gradient-hero:    linear-gradient(135deg, #064e3b 0%, #16a34a 100%);
+    --gradient-success: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+    --gradient-warm:    linear-gradient(135deg, #d97706 0%, #ea580c 100%);
+
+    /* === ШРИФТЫ === */
+    --font-text:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-heading: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* === РАЗМЕРЫ ШРИФТА === */
+    --fs-xs:    0.75rem;    /* 12px */
+    --fs-sm:    0.875rem;   /* 14px */
+    --fs-base:  1rem;       /* 16px */
+    --fs-lg:    1.125rem;   /* 18px */
+    --fs-xl:    1.25rem;    /* 20px */
+    --fs-2xl:   1.5rem;     /* 24px */
+    --fs-3xl:   2rem;       /* 32px */
+    --fs-4xl:   2.5rem;     /* 40px */
+    --fs-5xl:   clamp(2.5rem, 6vw, 4.5rem);  /* адаптивный hero */
+
+    /* === ВЕС ШРИФТА === */
+    --fw-normal:  400;
+    --fw-medium:  500;
+    --fw-semibold: 600;
+    --fw-bold:    700;
+    --fw-extrabold: 800;
+
+    /* === ОТСТУПЫ (шкала 4px) === */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-10: 40px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+    --sp-20: 80px;
+
+    /* === СКРУГЛЕНИЯ === */
+    --radius-sm:   8px;
+    --radius-md:   12px;
+    --radius-lg:   16px;
+    --radius-xl:   24px;
+    --radius-2xl:  32px;
+    --radius-full: 9999px;
+
+    /* === ТЕНИ (мягкие) === */
+    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
+    --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.10);
+
+    /* Цветные тени для кнопок (зелёные) */
+    --shadow-primary: 0 8px 24px rgba(22, 163, 74, 0.25);
+    --shadow-accent:  0 8px 24px rgba(5, 150, 105, 0.25);
+    --shadow-success: 0 8px 24px rgba(34, 197, 94, 0.25);
+
+    /* === ПЕРЕХОДЫ === */
+    --transition-fast:   150ms ease;
+    --transition-base:   250ms ease;
+    --transition-slow:   400ms ease;
+    --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* === КОНТЕЙНЕР === */
+    --container-max: 1100px;
+    --container-pad: 20px;
+
+    /* === РАЗМЕРЫ ИКОНОК === */
+    --icon-xs:  14px;
+    --icon-sm:  18px;
+    --icon-md:  24px;
+    --icon-lg:  32px;
+    --icon-xl:  40px;
+
+    /* === ИКОНКИ === */
+    --icon-stroke-width: 2;
+    --icon-size-sm: 18px;
+    --icon-size-md: 22px;
+    --icon-size-lg: 28px;
+}
+
+/* ============ ТЁМНАЯ ТЕМА ============ */
+[data-theme="dark"] {
+    /* === БАЗА === */
+    --color-bg:            #0f1419;
+    --color-bg-soft:       #1a2028;
+    --color-surface:       #1e2630;
+    --color-border:        #2d3742;
+    --color-border-soft:   #232c36;
+
+    /* === ТЕКСТ === */
+    --color-text:          #f0f4f8;
+    --color-text-soft:     #b0bcc8;
+    --color-text-muted:    #6b7684;
+
+    /* === АКЦЕНТЫ (ярче для тёмной темы) === */
+    --color-primary:        #22c55e;
+    --color-primary-dark:   #16a34a;
+    --color-primary-light:  #14532d;
+    --color-primary-soft:   #0f2a1a;
+
+    --color-accent:         #10b981;
+    --color-accent-dark:    #059669;
+    --color-accent-light:   #064e3b;
+
+    --color-success:        #22c55e;
+    --color-success-dark:   #16a34a;
+    --color-success-light:  #14532d;
+
+    --color-warm:           #f59e0b;
+    --color-warm-dark:      #d97706;
+    --color-warm-light:     #4a2e0a;
+
+    --color-danger:         #ef4444;
+    --color-danger-light:   #4a1a1a;
+
+    /* === ГРАДИЕНТЫ === */
+    --gradient-primary: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+    --gradient-hero:    linear-gradient(135deg, #0f2a1a 0%, #14532d 100%);
+
+    /* === ТЕНИ (для тёмной темы — глубже) === */
+    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.7);
+
+    --shadow-primary: 0 8px 24px rgba(34, 197, 94, 0.35);
+    --shadow-success: 0 8px 24px rgba(34, 197, 94, 0.35);
+}
+
+/* === Плавный переход при смене темы === */
+body,
+.header,
+.dashboard-card,
+.card,
+.modal,
+.footer,
+.quest-card,
+.rating-row {
+    transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
+}
+
+/* ============ ИКОНКИ ============ */
+    .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    stroke-width: 2;
+}
+
+    .icon-xs { width: var(--icon-xs); height: var(--icon-xs); }
+    .icon-sm { width: var(--icon-sm); height: var(--icon-sm); }
+    .icon-md { width: var(--icon-md); height: var(--icon-md); }
+    .icon-lg { width: var(--icon-lg); height: var(--icon-lg); }
+    .icon-xl { width: var(--icon-xl); height: var(--icon-xl); }
+
+    /* SVG-иконки Lucide наследуют цвет текста */
+    svg.lucide {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+/* ============ ГРАДИЕНТНЫЕ ИКОНКИ ============ */
+.icon-gradient {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    /* Градиент через mask */
+    background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+}
+
+/* Обычные SVG Lucide — наследуют цвет */
+svg.lucide {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+    stroke-width: 2;
+}
+
+/* Модификаторы размера */
+.icon-sm svg { width: 18px; height: 18px; }
+.icon-md svg { width: 22px; height: 22px; }
+.icon-lg svg { width: 28px; height: 28px; }

@@ -1,0 +1,179 @@
+.city-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.city-description {
+    color: var(--color-text-soft);
+    max-width: 700px;
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.city-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+}
+
+.stat {
+    background: var(--color-surface);
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 20px 18px;
+    text-align: center;
+    box-shadow: var(--shadow-xs);
+    transition: all var(--transition-fast);
+}
+
+.stat:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+}
+
+.stat span {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-primary);
+    display: block;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.stat small {
+    color: var(--color-text-muted);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+}
+
+.city-warning {
+    background: var(--color-warm-light);
+    color: var(--color-warm-dark);
+    border: 1px solid var(--color-warm);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+/* === СТАТИСТИКА ГОРОДА === */
+.city-analytics {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border-soft);
+}
+
+.city-analytics__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin-bottom: 16px;
+}
+
+.city-analytics__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.city-analytics__card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-xs);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.city-analytics__card h4 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-soft);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Сводка */
+.city-analytics__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.city-analytics__stat {
+    text-align: center;
+}
+
+.city-analytics__stat strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-primary);
+    line-height: 1.2;
+}
+
+.city-analytics__stat small {
+    display: block;
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    margin-top: 4px;
+}
+
+/* Список (топ мест / игроков) */
+.city-analytics__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.city-analytics__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+}
+
+.city-analytics__item-rank {
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+    min-width: 24px;
+    text-align: center;
+}
+
+.city-analytics__item-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.city-analytics__item-value {
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+    font-size: var(--fs-xs);
+    flex-shrink: 0;
+}
+
+.city-analytics__empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    padding: 16px;
+}
