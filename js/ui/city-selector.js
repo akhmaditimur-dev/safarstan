@@ -1,6 +1,6 @@
 // ============ UI: ВЫБОР ГОРОДА ============
 
-// Флаги стран — буквенные коды (без эмодзи)
+// Флаги стран — буквенные коды
 const COUNTRY_FLAGS = {
     'Узбекистан': 'UZ',
     'Казахстан': 'KZ',
@@ -49,7 +49,6 @@ function initCitySearch() {
         results.style.display = 'block';
     });
 
-    // Клик на результат
     results.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-city-key]');
         if (!btn) return;
@@ -59,7 +58,6 @@ function initCitySearch() {
         if (clear) clear.style.display = 'none';
     });
 
-    // Очистка
     if (clear) {
         clear.addEventListener('click', () => {
             input.value = '';
@@ -69,14 +67,12 @@ function initCitySearch() {
         });
     }
 
-    // Клик вне — закрыть
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.city-search')) {
             results.style.display = 'none';
         }
     });
 
-    // Escape — закрыть
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             results.style.display = 'none';
@@ -93,7 +89,6 @@ function renderMyCities() {
     const container = document.getElementById('myCitiesChips');
     if (!section || !container) return;
 
-    // Если нет игрока — скрыть
     if (!PLAYER) {
         section.style.display = 'none';
         return;
@@ -102,19 +97,16 @@ function renderMyCities() {
     const cities = [];
     const seen = new Set();
 
-    // 1. Родной
     if (PLAYER.homeCity && CITIES[PLAYER.homeCity]) {
         cities.push({ key: PLAYER.homeCity, icon: '<i data-lucide="home"></i>', label: 'Родной' });
         seen.add(PLAYER.homeCity);
     }
 
-    // 2. Текущий
     if (PLAYER.currentCity && CITIES[PLAYER.currentCity] && !seen.has(PLAYER.currentCity)) {
         cities.push({ key: PLAYER.currentCity, icon: '<i data-lucide="map-pin"></i>', label: 'Текущий' });
         seen.add(PLAYER.currentCity);
     }
 
-    // 3. Последний посещённый (по checkinCooldowns)
     const cooldowns = PLAYER.checkinCooldowns || {};
     const lastVisitedCity = Object.keys(cooldowns)
         .map(checkinKey => {
@@ -129,7 +121,6 @@ function renderMyCities() {
         seen.add(lastVisitedCity.cityKey);
     }
 
-    // 4. Из планов
     if (typeof PLANS !== 'undefined' && PLANS.length > 0) {
         const planCity = PLANS[0].city_key;
         if (planCity && CITIES[planCity] && !seen.has(planCity)) {
@@ -168,7 +159,6 @@ function renderCountryAccordion() {
         byCountry[city.country].push({ key, city });
     });
 
-    // Сортируем страны: сначала Узбекистан (больше всего городов)
     const sortedCountries = Object.entries(byCountry).sort((a, b) => b[1].length - a[1].length);
 
     container.innerHTML = sortedCountries.map(([country, cities]) => {
@@ -176,7 +166,7 @@ function renderCountryAccordion() {
 
         return `
             <div class="country-item" data-country="${country}">
-                <button class="country-item__header">
+                <button class="country-item__header" type="button">
                     <span class="country-item__flag">${flag}</span>
                     <span class="country-item__name">${country}</span>
                     <span class="country-item__count">${cities.length}</span>
@@ -184,7 +174,7 @@ function renderCountryAccordion() {
                 </button>
                 <div class="country-item__cities">
                     ${cities.map(({ key, city }) => `
-                        <button class="country-city-btn ${key === currentCity ? 'active' : ''}" data-city-key="${key}">
+                        <button class="country-city-btn ${key === currentCity ? 'active' : ''}" data-city-key="${key}" type="button">
                             ${city.name}
                         </button>
                     `).join('')}
@@ -192,27 +182,6 @@ function renderCountryAccordion() {
             </div>
         `;
     }).join('');
-
-    // Обработчик аккордеона
-    container.addEventListener('click', (e) => {
-        const header = e.target.closest('.country-item__header');
-        if (header) {
-            const item = header.closest('.country-item');
-            const isOpen = item.classList.contains('open');
-
-            container.querySelectorAll('.country-item').forEach(el => {
-                el.classList.remove('open');
-            });
-
-            if (!isOpen) item.classList.add('open');
-            return;
-        }
-
-        const cityBtn = e.target.closest('[data-city-key]');
-        if (cityBtn) {
-            selectCity(cityBtn.dataset.cityKey);
-        }
-    });
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
@@ -223,4 +192,84 @@ function renderCountryAccordion() {
 function renderCitySelector() {
     renderMyCities();
     renderCountryAccordion();
+}
+
+// ============================================
+// ГЛОБАЛЬНЫЙ ОБРАБОТЧИК АККОРДЕОНА (один раз)
+// ============================================
+document.addEventListener('click', (e) => {
+    // 1. Клик по шапке страны — открыть/закрыть
+    const header = e.target.closest('.country-item__header');
+    if (header) {
+        e.preventDefault();
+        const item = header.closest('.country-item');
+        if (!item) return;
+
+        const container = item.parentElement;
+        const isOpen = item.classList.contains('open');
+
+        // Закрыть все в контейнере
+        if (container) {
+            container.querySelectorAll('.country-item').forEach(el => {
+                el.classList.remove('open');
+            });
+        }
+
+        // Открыть текущий, если был закрыт
+        if (!isOpen) item.classList.add('open');
+        return;
+    }
+
+    // 2. Клик по городу внутри страны
+    const cityBtn = e.target.closest('.country-city-btn[data-city-key]');
+    if (cityBtn) {
+        e.preventDefault();
+        if (typeof selectCity === 'function') {
+            selectCity(cityBtn.dataset.cityKey);
+        }
+        return;
+    }
+
+    // 3. Клик по чипу «Твои города»
+    const cityChip = e.target.closest('.city-chip[data-city-key]');
+    if (cityChip) {
+        e.preventDefault();
+        if (typeof selectCity === 'function') {
+            selectCity(cityChip.dataset.cityKey);
+        }
+        return;
+    }
+});
+
+// ============================================
+// ВЫБОР ГОРОДА
+// ============================================
+function selectCity(cityKey) {
+    if (!cityKey || !CITIES[cityKey]) return;
+
+    currentCity = cityKey;
+
+    // Сохраняем в localStorage
+    if (typeof saveState === 'function') saveState();
+
+    // Перерисовываем
+    if (typeof renderAll === 'function') {
+        renderAll();
+    } else {
+        if (typeof renderCityInfo === 'function') renderCityInfo();
+        if (typeof renderTransport === 'function') renderTransport();
+        if (typeof renderHotels === 'function') renderHotels();
+        if (typeof renderServices === 'function') renderServices();
+    }
+
+    if (typeof renderCitySelector === 'function') renderCitySelector();
+
+    // Скролл к секции «О городе»
+    const infoSection = document.getElementById('info');
+    if (infoSection) {
+        infoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Обновляем иконки
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }

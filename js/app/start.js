@@ -1,7 +1,14 @@
 // ============ APP: ФИНАЛЬНЫЙ ЗАПУСК ============
 
 // Регистрация Service Worker
-if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+// ⚠️ На localhost (127.0.0.1 / localhost) SW НЕ регистрируется —
+//    чтобы кэш не мешал при разработке.
+if (
+    'serviceWorker' in navigator
+    && location.protocol !== 'file:'
+    && location.hostname !== '127.0.0.1'
+    && location.hostname !== 'localhost'
+) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
             .then((reg) => console.log('✅ SW зарегистрирован:', reg.scope))

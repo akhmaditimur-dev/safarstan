@@ -1,6 +1,6 @@
 // ============ SAFARSTAN — SERVICE WORKER ============
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_STATIC = `safarstan-static-${CACHE_VERSION}`;
 const CACHE_RUNTIME = `safarstan-runtime-${CACHE_VERSION}`;
 const CACHE_TILES = `safarstan-tiles-${CACHE_VERSION}`;

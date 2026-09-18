@@ -50,10 +50,187 @@ function renderCityInfo() {
         warnEl.remove();
     }
 
+    const info = (typeof COUNTRY_INFO !== 'undefined' && COUNTRY_INFO[city.country]) || {};
+
+    // 1. Население
     setText('statPopulation', city.population);
+
+    // 2. Языки
+    const langs = info.languages || (city.language ? city.language.split(' / ') : []);
+    const langsListEl = $id('statLanguagesList');
+    if (langsListEl) langsListEl.textContent = langs.join(', ');
+
+    // 3. Валюта + курсы
     setText('statCurrency', city.currency);
-    setText('statLanguage', city.language);
+    if (typeof renderCurrencyRates === 'function') renderCurrencyRates(city);
+
+    // 4. Погода
+    if (typeof renderWeather === 'function') renderWeather(city);
+
+    // 5. Время
     setText('statTime', city.time);
+
+    // 6. Оплата
+    setText('statPayment', 'Принимают');
+    const payEl = $id('statPaymentList');
+    if (payEl) payEl.textContent = (info.payment || []).join(' · ');
+
+    // 7. Связь
+    setText('statMobile', 'SIM');
+    const mobEl = $id('statMobileList');
+    if (mobEl) mobEl.textContent = (info.mobile || []).join(', ');
+
+    // 8. Экстренные
+    setText('statEmergency', '112');
+    const emEl = $id('statEmergencyList');
+    if (emEl && info.emergency) {
+        const e = info.emergency;
+        emEl.textContent = `${e.ambulance} · ${e.fire} · ${e.police}`;
+    }
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// ============================================
+// КУРСЫ ВАЛЮТ (API open.er-api.com)
+// ============================================
+let _currencyCache = {};
+
+async function renderCurrencyRates(city) {
+    const container = $id('currencyRates');
+    if (!container || !city || !city.currencyCode) return;
+
+    const code = city.currencyCode;
+    const now = Date.now();
+
+    // Кэш на 1 час
+    if (_currencyCache[code] && (now - _currencyCache[code].time < 3600000)) {
+        displayRates(container, _currencyCache[code].data, city.currency);
+        return;
+    }
+
+    container.innerHTML = '<div class="currency-rate-item">Загрузка...</div>';
+
+    try {
+        const response = await fetch(`https://open.er-api.com/v6/latest/${code}`);
+        const data = await response.json();
+
+        if (data.result !== 'success' || !data.rates) {
+            throw new Error('API вернул ошибку');
+        }
+
+        // data.rates['USD'] = сколько USD за 1 UZS.
+        // Нам надо 1 USD = X UZS → X = 1 / data.rates['USD'].
+        const rates = {
+            USD: 1 / data.rates['USD'],
+            EUR: 1 / data.rates['EUR'],
+            RUB: 1 / data.rates['RUB'],
+        };
+
+        _currencyCache[code] = { time: now, data: rates };
+        displayRates(container, rates, city.currency);
+
+    } catch (err) {
+        console.warn('Ошибка загрузки курсов:', err);
+        container.innerHTML = '';
+    }
+}
+
+function displayRates(container, rates, currencyName) {
+    // Короткие названия валют для курсов
+    const shortNames = {
+        'Сомони': 'смн',
+        'Сум': 'сум',
+        'Тенге': '₸',
+        'Сом': 'сом',
+        'Манат': 'манат',
+    };
+
+    const shortName = shortNames[currencyName] || currencyName.toLowerCase();
+
+    container.innerHTML = ['USD', 'EUR', 'RUB'].map(code => {
+        const val = rates[code];
+        if (!val) return '';
+        const formatted = val > 100 ? Math.round(val).toLocaleString('ru-RU') : val.toFixed(3);
+        return `
+            <div class="currency-rate-item">
+                <strong>1 ${code} =</strong>
+                <span>${formatted} ${shortName}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+// ============================================
+// ПОГОДА (API open-meteo.com)
+// ============================================
+async function renderWeather(city) {
+    const container = $id('statWeather');
+    const forecastEl = $id('weatherForecast');
+    if (!container || !city || !city.coords) return;
+
+    try {
+        const url = `https://api.open-meteo.com/v1/forecast`
+            + `?latitude=${city.coords.lat}`
+            + `&longitude=${city.coords.lng}`
+            + `&current=temperature_2m,weather_code`
+            + `&daily=temperature_2m_max,temperature_2m_min,weather_code`
+            + `&forecast_days=3`
+            + `&timezone=auto`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.current) throw new Error('Нет данных');
+
+        const temp = Math.round(data.current.temperature_2m);
+        const code = data.current.weather_code;
+        const { label } = weatherInfo(code);
+
+        container.textContent = `${temp}°C`;
+        container.title = label;
+
+        // Прогноз на 3 дня
+        if (forecastEl && data.daily && data.daily.time) {
+            const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            const rows = [];
+
+            for (let i = 0; i < 3 && i < data.daily.time.length; i++) {
+                const date = new Date(data.daily.time[i]);
+                const dayIndex = date.getDay();
+
+                const dayLabel = i === 0 ? 'Сегодня' : days[dayIndex];
+                const max = Math.round(data.daily.temperature_2m_max[i]);
+                const min = Math.round(data.daily.temperature_2m_min[i]);
+
+                rows.push(`
+                    <div class="weather-day">
+                        <span class="weather-day__name">${dayLabel}</span>
+                        <span class="weather-day__temp">${max}° / ${min}°</span>
+                    </div>
+                `);
+            }
+
+            forecastEl.innerHTML = rows.join('');
+        }
+
+    } catch (err) {
+        console.warn('Ошибка загрузки погоды:', err);
+        container.textContent = '—';
+        if (forecastEl) forecastEl.innerHTML = '';
+    }
+}
+
+function weatherInfo(code) {
+    if (code === 0) return { icon: '☀️', label: 'Ясно' };
+    if (code <= 3) return { icon: '⛅', label: 'Облачно' };
+    if (code <= 48) return { icon: '🌫', label: 'Туман' };
+    if (code <= 67) return { icon: '🌧', label: 'Дождь' };
+    if (code <= 77) return { icon: '❄️', label: 'Снег' };
+    if (code <= 82) return { icon: '🌦', label: 'Ливень' };
+    if (code <= 86) return { icon: '🌨', label: 'Снегопад' };
+    if (code >= 95) return { icon: '⛈', label: 'Гроза' };
+    return { icon: '🌡', label: 'Погода' };
 }
 
 // ============ ТАБЫ ТРАНСПОРТА ============
@@ -73,19 +250,13 @@ function renderTabs() {
 function applyLang() {
     const dict = (I18N && I18N[currentLang]) || (I18N && I18N.ru) || {};
 
-    // Hero
     setText('.hero h1', dict.heroTitle || '');
     setText('.hero__subtitle', dict.heroSubtitle || '');
-
-    // Заголовки секций
     setText('#transport h2', dict.transport || '');
-    setText('#hotels h2',    dict.hotels    || '');
-    setText('#services h2',  dict.services  || '');
-
-    // Кнопка языка
+    setText('#hotels h2', dict.hotels || '');
+    setText('#services h2', dict.services || '');
     setText('langBtn', currentLang === 'ru' ? 'EN' : 'RU');
 
-    // Табы транспорта
     renderTabs();
 }
 
@@ -106,13 +277,11 @@ async function renderCityAnalytics() {
         return;
     }
 
-    if (!analytics || !analytics.totalCheckins) {
-        return;
-    }
+    if (!analytics || !analytics.totalCheckins) return;
 
     container.style.display = 'block';
 
-    // --- Сводка ---
+    // Сводка
     const summary = $id('cityAnalyticsSummary');
     if (summary) {
         summary.innerHTML = `
@@ -127,7 +296,7 @@ async function renderCityAnalytics() {
         `;
     }
 
-    // --- Топ мест ---
+    // Топ мест
     const placesEl = $id('cityTopPlaces');
     if (placesEl) {
         const topPlaces = analytics.topPlaces || [];
@@ -144,7 +313,7 @@ async function renderCityAnalytics() {
         }
     }
 
-    // --- Топ игроков ---
+    // Топ игроков
     const playersEl = $id('cityTopPlayers');
     if (playersEl) {
         const topPlayers = analytics.topPlayers || [];

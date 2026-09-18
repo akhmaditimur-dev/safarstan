@@ -370,10 +370,36 @@
             </div>
             <p id="cityDescription" class="city-description"></p>
             <div class="city-stats">
-                <div class="stat"><span id="statPopulation">—</span><small>Население</small></div>
-                <div class="stat"><span id="statCurrency">—</span><small>Валюта</small></div>
-                <div class="stat"><span id="statLanguage">—</span><small>Язык</small></div>
-                <div class="stat"><span id="statTime">—</span><small>Время</small></div>
+                <div class="stat">
+                    <span id="statPopulation">—</span><small>Население</small>
+                    <div class="stat-extra">
+                    <span>Языки</span>
+                    <div id="statLanguagesList"></div>
+                </div>
+                </div>
+                <div class="stat">
+                    <span id="statCurrency">—</span><small>Валюта</small>
+                    <div id="currencyRates" class="currency-rates"></div>
+                </div>
+                <div class="stat">
+                    <span id="statWeather">—</span><small>Погода</small>
+                    <div id="weatherForecast" class="stat-extra"></div>
+                    <div class="stat-extra">
+                        <span id="statTime">—</span><small>Время</small>
+                    </div>
+                </div>
+                <div class="stat">
+                    <span id="statPayment">Принимают</span><small>Оплата</small>
+                    <div id="statPaymentList" class="stat-extra"></div>
+                </div>
+                <div class="stat">
+                    <span id="statMobile">SIM</span><small>Связь</small>
+                    <div id="statMobileList" class="stat-extra"></div>
+                </div>
+                <div class="stat">
+                    <span id="statEmergency">112</span><small>Экстренно</small>
+                    <div id="statEmergencyList" class="stat-extra"></div>
+                </div>
             </div>
 
             <div class="city-analytics" id="cityAnalytics" style="display:none;">
