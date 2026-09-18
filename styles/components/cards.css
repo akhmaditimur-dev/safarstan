@@ -1,15 +1,15 @@
-/* ============ КАРТОЧКИ (Т-Банк-стиль) ============ */
+/* ============ КАРТОЧКИ МЕСТ ============ */
 
-/* ---------- Общий каркас ---------- */
+/* ---------- Сетка ---------- */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 16px;
 }
 
+/* ---------- Карточка ---------- */
 .card {
     background: var(--color-surface);
-    border: none;
     border-radius: var(--radius-xl);
     padding: 22px;
     box-shadow: var(--shadow-sm);
@@ -69,7 +69,10 @@
     margin-top: auto;
 }
 
-/* ---------- Кнопка действия в карточке ---------- */
+/* ============================================
+   КНОПКИ В КАРТОЧКЕ
+   ============================================ */
+
 .card-actions {
     display: flex;
     align-items: center;
@@ -80,27 +83,38 @@
     flex-wrap: nowrap;
 }
 
-.card-actions .checkin-btn {
+/* Основная кнопка (Я здесь / Был) */
+.checkin-btn {
     flex: 1;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
+    gap: 6px;
     min-width: 0;
     padding: 10px 14px;
     font-size: var(--fs-sm);
+    font-family: inherit;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* ---------- Общий стиль для кнопок-иконок ---------- */
+.checkin-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+/* Круглые кнопки-иконки: фото, отзывы, edit, delete */
 .card-actions .photo-btn,
 .card-actions .reviews-toggle-btn,
-.card-actions--owner .edit-btn,
-.card-actions--owner .delete-btn {
+.card-actions .edit-btn,
+.card-actions .delete-btn {
     width: 40px;
     height: 40px;
     padding: 0;
     border-radius: 50%;
-    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -116,6 +130,13 @@
                 border-color var(--transition-fast);
 }
 
+.card-actions .photo-btn svg,
+.card-actions .reviews-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
 .card-actions .photo-btn:hover,
 .card-actions .reviews-toggle-btn:hover {
     background: var(--color-primary-light);
@@ -123,47 +144,68 @@
     border-color: var(--color-primary);
 }
 
-/* Кнопки владельца — компактнее */
-.card-actions--owner .edit-btn,
-.card-actions--owner .delete-btn {
+/* Edit / Delete — компактнее */
+.card-actions .edit-btn,
+.card-actions .delete-btn {
     width: 32px;
     height: 32px;
-    font-size: 14px;
 }
 
-.card-actions--owner {
-    border-top: none;
-    padding-top: 0;
-    margin-top: 0;
-    justify-content: flex-end;
-    gap: 6px;
+.card-actions .edit-btn svg,
+.card-actions .delete-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
 }
 
-.card-actions--owner .edit-btn:hover {
+.card-actions .edit-btn:hover {
     background: var(--color-primary-light);
     color: var(--color-primary);
     border-color: var(--color-primary);
 }
 
-.card-actions--owner .delete-btn:hover {
+.card-actions .delete-btn:hover {
     background: var(--color-danger-light);
     color: var(--color-danger);
     border-color: var(--color-danger);
 }
 
-/* ---------- Счётчик чек-инов ---------- */
-.checkin-count {
-    font-size: var(--fs-xs);
-    color: var(--color-accent);
-    font-weight: var(--fw-bold);
-    padding: 6px 12px;
-    background: var(--color-accent-light);
+/* Кнопки «Редактировать» / «Удалить» с текстом (не только иконка) */
+.card-actions .edit-btn:not(:only-child),
+.card-actions .delete-btn:not(:only-child) {
+    width: auto;
+    height: 36px;
+    padding: 0 14px;
     border-radius: var(--radius-full);
+    gap: 6px;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    white-space: nowrap;
 }
 
-.checkin-count.visited {
-    color: var(--color-primary-dark);
-    background: var(--color-primary-light);
+/* ---------- Кнопки внутри блока отзывов ---------- */
+.reviews-block__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.reviews-block__btn svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
+}
+
+.reviews-block__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reviews-block__rating svg {
+    width: 14px;
+    height: 14px;
+    color: #f59e0b;
 }
 
 /* ---------- Бейдж-счётчик на кнопке ---------- */
@@ -183,10 +225,26 @@
     border: 2px solid var(--color-surface);
 }
 
-/* ============================================ */
-/* UGC-КАРТОЧКИ                                */
-/* ============================================ */
+/* ============================================
+   СЧЁТЧИК ЧЕК-ИНОВ
+   ============================================ */
+.checkin-count {
+    font-size: var(--fs-xs);
+    color: var(--color-accent);
+    font-weight: var(--fw-bold);
+    padding: 6px 12px;
+    background: var(--color-accent-light);
+    border-radius: var(--radius-full);
+}
 
+.checkin-count.visited {
+    color: var(--color-primary-dark);
+    background: var(--color-primary-light);
+}
+
+/* ============================================
+   UGC-КАРТОЧКИ
+   ============================================ */
 .card.user-place {
     background: linear-gradient(160deg, #f0fdf4 0%, #ffffff 50%);
     border: 2px solid var(--color-primary-light);
@@ -232,10 +290,9 @@
     border-radius: 50%;
 }
 
-/* ============================================ */
-/* ТЁМНАЯ ТЕМА                                  */
-/* ============================================ */
-
+/* ============================================
+   ТЁМНАЯ ТЕМА
+   ============================================ */
 [data-theme="dark"] .card.user-place {
     background: linear-gradient(160deg, rgba(22, 163, 74, 0.12) 0%, var(--color-surface) 60%);
     border-color: rgba(34, 197, 94, 0.3);
@@ -246,10 +303,9 @@
     box-shadow: 0 16px 40px rgba(34, 197, 94, 0.2);
 }
 
-/* ============================================ */
-/* ДОСТУПНОСТЬ                                  */
-/* ============================================ */
-
+/* ============================================
+   ДОСТУПНОСТЬ
+   ============================================ */
 @media (prefers-reduced-motion: reduce) {
     .card {
         transition: none;
@@ -259,10 +315,9 @@
     }
 }
 
-/* ============================================ */
-/* АДАПТАЦИЯ                                    */
-/* ============================================ */
-
+/* ============================================
+   АДАПТАЦИЯ
+   ============================================ */
 @media (max-width: 600px) {
     .cards {
         grid-template-columns: 1fr;
@@ -287,6 +342,11 @@
     .card-actions .reviews-toggle-btn {
         width: 36px;
         height: 36px;
-        font-size: 16px;
+    }
+
+    .card-actions .photo-btn svg,
+    .card-actions .reviews-toggle-btn svg {
+        width: 16px;
+        height: 16px;
     }
 }

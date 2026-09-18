@@ -63,3 +63,104 @@ img {
     margin: 0 auto;
     padding: 0 var(--container-pad);
 }
+
+/* ============================================
+   LUCIDE-ИКОНКИ В ЭЛЕМЕНТАХ
+   ============================================ */
+
+.logo svg {
+    width: 22px;
+    height: 22px;
+    vertical-align: -4px;
+    margin-right: 6px;
+    color: #fff;
+}
+
+.header-search__icon svg,
+.city-search__icon svg {
+    width: 18px;
+    height: 18px;
+    color: var(--color-text-soft);
+}
+
+.header-search__clear svg,
+.city-search__clear svg {
+    width: 16px;
+    height: 16px;
+}
+
+.profile-edit-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.dashboard-level svg,
+.profile-level svg {
+    width: 16px;
+    height: 16px;
+    color: #f59e0b;
+    vertical-align: -3px;
+}
+
+.city-section__title svg {
+    width: 18px;
+    height: 18px;
+    vertical-align: -4px;
+    margin-right: 4px;
+}
+
+.city-gap-hashar-stats__icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.city-analytics__card h4 svg,
+.profile-section h3 svg {
+    width: 18px;
+    height: 18px;
+    vertical-align: -3px;
+    margin-right: 4px;
+}
+
+.map-settings-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.rating-star svg {
+    width: 22px;
+    height: 22px;
+}
+
+.modal-close svg {
+    width: 16px;
+    height: 16px;
+}
+
+.add-place-btn svg,
+.btn svg,
+.hashar-filter svg,
+.tab svg {
+    width: 16px;
+    height: 16px;
+    vertical-align: -3px;
+    margin-right: 4px;
+}
+
+.tab svg,
+.hashar-filter svg {
+    margin-right: 6px;
+}
+
+#ppAddFriendBtn svg,
+#ppRemoveFriendBtn svg,
+#ppPendingBtn svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    vertical-align: -3px;
+}
+
+.dashboard-card__header .btn svg {
+    margin-right: 0;
+}

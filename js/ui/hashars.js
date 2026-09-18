@@ -10,13 +10,14 @@ let CURRENT_HASHAR_FILTERS = {
 };
 let CURRENT_OPEN_HASHAR = null;
 
+// Категории хашаров с Lucide-иконками
 const HASHAR_CATEGORIES = {
-    repair:  { icon: '🔨', label: 'Ремонт' },
-    trees:   { icon: '🌳', label: 'Деревья' },
-    cleanup: { icon: '🧹', label: 'Уборка' },
-    help:    { icon: '🤝', label: 'Помощь' },
-    charity: { icon: '❤️', label: 'Благотворительность' },
-    other:   { icon: '📌', label: 'Другое' },
+    repair:  { icon: 'hammer',      label: 'Ремонт' },
+    trees:   { icon: 'trees',       label: 'Деревья' },
+    cleanup: { icon: 'brush',       label: 'Уборка' },
+    help:    { icon: 'hand-heart',  label: 'Помощь' },
+    charity: { icon: 'heart',       label: 'Благотворительность' },
+    other:   { icon: 'pin',         label: 'Другое' },
 };
 
 // ============================================
@@ -26,7 +27,7 @@ async function renderHasharsList() {
     const container = document.getElementById('hasharsList');
     if (!container) return;
 
-    container.innerHTML = '<div class="dash-empty">⏳ Загрузка...</div>';
+    container.innerHTML = '<div class="dashboard-empty">Загрузка...</div>';
 
     const filters = { ...CURRENT_HASHAR_FILTERS };
     if (!filters.cityKey && PLAYER?.currentCity) {
@@ -37,15 +38,19 @@ async function renderHasharsList() {
 
     if (CURRENT_HASHARS.length === 0) {
         container.innerHTML = `
-            <div class="dash-empty">
-                <p>Пока нет хашаров в этом городе</p>
-                <button class="btn btn-primary btn-sm" id="hasharCreateBtn">🤝 Создать хашар</button>
+            <div class="dashboard-empty">
+                Пока нет хашаров в этом городе
             </div>
+            <button class="btn btn-primary btn-sm" id="hasharCreateBtn">
+                <i data-lucide="hand-heart"></i> Создать хашар
+            </button>
         `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 
     container.innerHTML = CURRENT_HASHARS.map(h => renderHasharCard(h)).join('');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function renderHasharCard(h) {
@@ -55,16 +60,18 @@ function renderHasharCard(h) {
 
     return `
         <div class="hashar-card" data-hashar-id="${h.id}">
-            <div class="hashar-card__icon">${cat.icon}</div>
+            <div class="hashar-card__icon">
+                <i data-lucide="${cat.icon}"></i>
+            </div>
             <div class="hashar-card__body">
                 <div class="hashar-card__title">${escapeHtml(h.title)}</div>
                 <div class="hashar-card__meta">
-                    <span>📅 ${date}</span>
-                    <span>📍 ${escapeHtml(h.address || cityName(h.city_key))}</span>
+                    <span><i data-lucide="calendar"></i> ${date}</span>
+                    <span><i data-lucide="map-pin"></i> ${escapeHtml(h.address || cityName(h.city_key))}</span>
                 </div>
                 <div class="hashar-card__cat">${cat.label}</div>
             </div>
-            ${joined ? `<div class="hashar-card__badge">✓</div>` : ''}
+            ${joined ? `<div class="hashar-card__badge"><i data-lucide="check"></i></div>` : ''}
         </div>
     `;
 }
@@ -76,21 +83,44 @@ async function renderMyHashars() {
     const container = document.getElementById('dashHashars');
     if (!container) return;
 
-    container.innerHTML = '<div class="dash-empty">⏳ Загрузка...</div>';
+    container.innerHTML = '<div class="dashboard-empty">Загрузка...</div>';
 
     const list = await loadMyHashars();
 
     if (list.length === 0) {
         container.innerHTML = `
-            <div class="dash-empty">
-                <p>Ты пока не участвуешь в хашарах</p>
-                <button class="btn btn-primary btn-sm" id="hasharCreateBtn">🤝 Создать хашар</button>
+            <div class="dashboard-empty">
+                Ты пока не участвуешь в хашарах
             </div>
+            <button class="btn btn-primary btn-sm btn-block" id="dashHasharCreateBtn">
+                <i data-lucide="hand-heart"></i> Создать хашар
+            </button>
         `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 
-    container.innerHTML = list.slice(0, 5).map(h => renderHasharCard({ ...h, myJoined: true })).join('');
+    container.innerHTML = list.slice(0, 5).map(h => {
+        const cat = HASHAR_CATEGORIES[h.category] || HASHAR_CATEGORIES.other;
+        const dateStr = formatHasharDate(h.starts_at);
+
+        return `
+            <div class="dashboard-row" data-hashar-id="${h.id}">
+                <div class="dashboard-row__icon">
+                    <i data-lucide="${cat.icon}"></i>
+                </div>
+                <div class="dashboard-row__info">
+                    <div class="dashboard-row__name">${escapeHtml(h.title)}</div>
+                    <div class="dashboard-row__meta">
+                        ${dateStr}
+                        ${h.address ? ' · ' + escapeHtml(h.address) : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -100,7 +130,6 @@ function openHasharCreateModal() {
     const modal = document.getElementById('hasharCreateModal');
     if (!modal) return;
 
-    // Сброс формы
     document.getElementById('hasharTitleInput').value = '';
     document.getElementById('hasharDescInput').value = '';
     document.getElementById('hasharAddressInput').value = '';
@@ -108,17 +137,15 @@ function openHasharCreateModal() {
     document.getElementById('hasharStartInput').value = defaultStartDate();
     document.getElementById('hasharEndInput').value = '';
 
-    // Категории
     const catContainer = document.getElementById('hasharCatPicker');
     if (catContainer) {
         catContainer.innerHTML = Object.entries(HASHAR_CATEGORIES).map(([key, c]) => `
             <button type="button" class="hashar-cat-option${key === 'other' ? ' active' : ''}" data-cat="${key}">
-                ${c.icon} ${c.label}
+                <i data-lucide="${c.icon}"></i> ${c.label}
             </button>
         `).join('');
     }
 
-    // Города
     const citySelect = document.getElementById('hasharCityInput');
     if (citySelect) {
         citySelect.innerHTML = Object.entries(CITIES).map(([key, c]) =>
@@ -127,6 +154,7 @@ function openHasharCreateModal() {
     }
 
     modal.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function defaultStartDate() {
@@ -145,11 +173,11 @@ async function openHasharModal(hasharId) {
 
     modal.style.display = 'flex';
     const body = document.getElementById('hasharModalBody');
-    body.innerHTML = '<div class="dash-empty">⏳ Загрузка...</div>';
+    body.innerHTML = '<div class="dashboard-empty">Загрузка...</div>';
 
     const hashar = await loadHasharById(hasharId);
     if (!hashar) {
-        body.innerHTML = '<div class="dash-empty">Не удалось загрузить</div>';
+        body.innerHTML = '<div class="dashboard-empty">Не удалось загрузить</div>';
         return;
     }
 
@@ -166,9 +194,9 @@ function renderHasharView(hashar, { isMine, isHost }) {
 
     const membersHtml = (hashar.members || []).map(m => `
         <div class="hashar-member" data-player-profile="${m.player_id}">
-            <div class="hashar-member__avatar">${m.avatar}</div>
+            <div class="hashar-member__avatar">${renderAvatarHtml(m.avatar)}</div>
             <div class="hashar-member__name">${escapeHtml(m.name)}</div>
-            ${m.role === 'host' ? '<div class="hashar-member__role">👑</div>' : ''}
+            ${m.role === 'host' ? '<div class="hashar-member__role"><i data-lucide="crown"></i></div>' : ''}
         </div>
     `).join('');
 
@@ -179,7 +207,7 @@ function renderHasharView(hashar, { isMine, isHost }) {
 
     body.innerHTML = `
         <div class="hashar-view__header">
-            <div class="hashar-view__icon">${cat.icon}</div>
+            <div class="hashar-view__icon"><i data-lucide="${cat.icon}"></i></div>
             <h2>${escapeHtml(hashar.title)}</h2>
             <div class="hashar-view__cat">${cat.label}</div>
         </div>
@@ -187,31 +215,33 @@ function renderHasharView(hashar, { isMine, isHost }) {
         ${hashar.description ? `<p class="hashar-view__desc">${escapeHtml(hashar.description)}</p>` : ''}
 
         <div class="hashar-view__rows">
-            <div class="hashar-view__row">📅 ${formatHasharDate(hashar.starts_at)}</div>
-            ${hashar.ends_at ? `<div class="hashar-view__row">⏱ до ${formatHasharDate(hashar.ends_at)}</div>` : ''}
-            <div class="hashar-view__row">📍 ${escapeHtml(hashar.address || cityName(hashar.city_key))}</div>
-            <div class="hashar-view__row">👥 Участников: ${limitText}</div>
-            <div class="hashar-view__row">🏷 Статус: ${translateHasharStatus(hashar.status)}</div>
+            <div class="hashar-view__row"><i data-lucide="calendar"></i> ${formatHasharDate(hashar.starts_at)}</div>
+            ${hashar.ends_at ? `<div class="hashar-view__row"><i data-lucide="clock"></i> до ${formatHasharDate(hashar.ends_at)}</div>` : ''}
+            <div class="hashar-view__row"><i data-lucide="map-pin"></i> ${escapeHtml(hashar.address || cityName(hashar.city_key))}</div>
+            <div class="hashar-view__row"><i data-lucide="users"></i> Участников: ${limitText}</div>
+            <div class="hashar-view__row"><i data-lucide="tag"></i> Статус: ${translateHasharStatus(hashar.status)}</div>
         </div>
 
         <div class="hashar-view__section">
             <h3>Кто идёт (${(hashar.members || []).length})</h3>
-            <div class="hashar-members-grid">${membersHtml || '<div class="dash-empty">Пока никого</div>'}</div>
+            <div class="hashar-members-grid">${membersHtml || '<div class="dashboard-empty">Пока никого</div>'}</div>
         </div>
 
         ${renderHasharActions(hashar, { isMine, isHost })}
     `;
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function renderHasharActions(hashar, { isMine, isHost }) {
     if (hashar.status !== 'open') {
-        return `<div class="dash-empty">Хашар ${translateHasharStatus(hashar.status)}</div>`;
+        return `<div class="dashboard-empty">Хашар ${translateHasharStatus(hashar.status)}</div>`;
     }
 
     if (isHost) {
         return `
             <button class="btn btn-secondary btn-block" id="hasharCloseBtn" data-hashar-id="${hashar.id}">
-                ✅ Закрыть хашар
+                <i data-lucide="check"></i> Закрыть хашар
             </button>
         `;
     }
@@ -226,7 +256,7 @@ function renderHasharActions(hashar, { isMine, isHost }) {
 
     return `
         <button class="btn btn-primary btn-block" id="hasharJoinBtn" data-hashar-id="${hashar.id}">
-            🤝 Присоединиться
+            <i data-lucide="hand-heart"></i> Присоединиться
         </button>
     `;
 }
@@ -255,11 +285,20 @@ function translateHasharStatus(status) {
     return map[status] || status;
 }
 
+// Аватар: URL → <img>, иначе эмодзи
+function renderAvatarHtml(avatar) {
+    if (!avatar) return '🧑‍💼';
+    if (typeof avatar === 'string' && avatar.startsWith('http')) {
+        return `<img src="${avatar}" alt="" loading="lazy">`;
+    }
+    return avatar;
+}
+
 // ============================================
 // ОБРАБОТЧИКИ
 // ============================================
 document.addEventListener('click', async (e) => {
-    // Открыть карточку хашара
+    // Открыть карточку хашара (из секции)
     const card = e.target.closest('.hashar-card');
     if (card && !e.target.closest('[data-hashar-id]')) {
         openHasharModal(card.dataset.hasharId);
@@ -267,7 +306,7 @@ document.addEventListener('click', async (e) => {
     }
 
     // Создать хашар — открыть модалку
-     if (e.target.id === 'hasharCreateBtn' || e.target.id === 'dashHasharCreateBtn') {
+    if (e.target.id === 'hasharCreateBtn' || e.target.id === 'dashHasharCreateBtn') {
         openHasharCreateModal();
         return;
     }
@@ -344,7 +383,8 @@ document.addEventListener('click', async (e) => {
 
     // Покинуть
     if (e.target.id === 'hasharLeaveBtn') {
-        if (!confirm('Покинуть хашар?')) return;
+        const ok = await showConfirm('Покинуть хашар?', { okText: 'Покинуть' });
+        if (!ok) return;
         const id = e.target.dataset.hasharId;
         await leaveHashar(id);
         openHasharModal(id);
@@ -354,7 +394,8 @@ document.addEventListener('click', async (e) => {
 
     // Закрыть хашар (host)
     if (e.target.id === 'hasharCloseBtn') {
-        if (!confirm('Закрыть хашар?')) return;
+        const ok = await showConfirm('Закрыть хашар?', { okText: 'Закрыть' });
+        if (!ok) return;
         const id = e.target.dataset.hasharId;
         await updateHasharStatus(id, 'done');
 
@@ -380,10 +421,10 @@ document.addEventListener('click', async (e) => {
     }
 
     // Закрытие модалок
-    if (e.target.id === 'hasharModal' || e.target.id === 'hasharClose') {
+    if (e.target.id === 'hasharModal' || e.target.closest('#hasharClose')) {
         document.getElementById('hasharModal').style.display = 'none';
     }
-    if (e.target.id === 'hasharCreateModal' || e.target.id === 'hasharCreateClose') {
+    if (e.target.id === 'hasharCreateModal' || e.target.closest('#hasharCreateClose')) {
         document.getElementById('hasharCreateModal').style.display = 'none';
     }
 });

@@ -12,33 +12,40 @@ async function renderGapsDashboard() {
     const container = document.getElementById('dashGaps');
     if (!container) return;
 
-    container.innerHTML = '<div class="dash-empty">⏳ Загрузка...</div>';
+    container.innerHTML = '<div class="dashboard-empty">Загрузка...</div>';
 
     CURRENT_GAPS = await loadMyGaps();
 
     if (CURRENT_GAPS.length === 0) {
         container.innerHTML = `
-            <div class="dash-empty">
-                <p>У тебя пока нет гапов</p>
-                <button class="btn btn-primary btn-sm" onclick="openGapModal()">☕ Создать гап</button>
+            <div class="dashboard-empty">
+                У тебя пока нет гапов
             </div>
+            <button class="btn btn-primary btn-sm btn-block" onclick="openGapModal()">
+                <i data-lucide="coffee"></i> Создать гап
+            </button>
         `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 
     container.innerHTML = CURRENT_GAPS.map(gap => `
-        <div class="gap-card" data-gap-id="${gap.id}">
-            <div class="gap-card__emoji">${gap.avatar_emoji || '☕'}</div>
-            <div class="gap-card__info">
-                <div class="gap-card__name">${escapeHtml(gap.name)}</div>
-                <div class="gap-card__meta">
-                    ${gap.myRole === 'host' ? '👑 Организатор' : '👤 Участник'}
+        <div class="dashboard-row" data-gap-id="${gap.id}">
+            <div class="dashboard-row__icon">
+                <span class="gap-emoji">${gap.avatar_emoji || '☕'}</span>
+            </div>
+            <div class="dashboard-row__info">
+                <div class="dashboard-row__name">${escapeHtml(gap.name)}</div>
+                <div class="dashboard-row__meta">
+                    <i data-lucide="${gap.myRole === 'host' ? 'crown' : 'user'}"></i>
+                    ${gap.myRole === 'host' ? 'Организатор' : 'Участник'}
                     ${gap.city_key ? ' · ' + cityName(gap.city_key) : ''}
                 </div>
             </div>
-            <div class="gap-card__arrow">→</div>
         </div>
     `).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -57,23 +64,29 @@ async function renderGapInvites() {
 
     container.style.display = 'block';
     container.innerHTML = `
-        <h3>📨 Приглашения в гапы (${CURRENT_GAP_INVITES.length})</h3>
+        <h3 class="dashboard-card__title">
+            <i data-lucide="mail"></i> Приглашения в гапы (${CURRENT_GAP_INVITES.length})
+        </h3>
         ${CURRENT_GAP_INVITES.map(inv => `
             <div class="gap-invite">
                 <div class="gap-invite__emoji">${inv.gapEmoji}</div>
                 <div class="gap-invite__info">
                     <div><strong>${escapeHtml(inv.gapName)}</strong></div>
                     <div class="gap-invite__from">
-                        ${inv.fromAvatar} ${escapeHtml(inv.fromName)} приглашает
+                        ${renderAvatarHtml(inv.fromAvatar)} ${escapeHtml(inv.fromName)} приглашает
                     </div>
                 </div>
                 <div class="gap-invite__actions">
                     <button class="btn btn-primary btn-sm" data-gap-invite-accept="${inv.id}">Принять</button>
-                    <button class="btn btn-ghost btn-sm" data-gap-invite-decline="${inv.id}">✕</button>
+                    <button class="btn btn-ghost btn-sm" data-gap-invite-decline="${inv.id}" title="Отклонить">
+                        <i data-lucide="x"></i>
+                    </button>
                 </div>
             </div>
         `).join('')}
     `;
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -84,7 +97,6 @@ async function openGapModal(gapId) {
     if (!modal) return;
 
     if (gapId) {
-        // Открываем существующий
         const gap = await loadGapById(gapId);
         if (!gap) {
             showWarningToast('Не удалось загрузить гап');
@@ -93,7 +105,6 @@ async function openGapModal(gapId) {
         CURRENT_OPEN_GAP = gap;
         renderGapView(gap);
     } else {
-        // Создаём новый
         CURRENT_OPEN_GAP = null;
         renderGapCreateForm();
     }
@@ -143,7 +154,6 @@ function renderGapCreateForm() {
         <button id="gapCreateSubmit" class="modal-btn">Создать гап</button>
     `;
 
-    // Обработчик эмодзи
     const picker = document.getElementById('gapEmojiPicker');
     if (picker) {
         picker.onclick = (e) => {
@@ -161,9 +171,9 @@ function renderGapView(gap) {
 
     const membersHtml = (gap.members || []).map(m => `
         <div class="gap-member" data-player-profile="${m.player_id}">
-            <div class="gap-member__avatar">${m.avatar}</div>
+            <div class="gap-member__avatar">${renderAvatarHtml(m.avatar)}</div>
             <div class="gap-member__name">${escapeHtml(m.name)}</div>
-            ${m.role === 'host' ? '<div class="gap-member__role">👑</div>' : ''}
+            ${m.role === 'host' ? '<div class="gap-member__role"><i data-lucide="crown"></i></div>' : ''}
         </div>
     `).join('');
 
@@ -178,8 +188,10 @@ function renderGapView(gap) {
 
         ${gap.description ? `<p class="gap-view__desc">${escapeHtml(gap.description)}</p>` : ''}
 
-        ${gap.meet_point ? `<div class="gap-view__row">📍 ${escapeHtml(gap.meet_point)}</div>` : ''}
-        ${gap.schedule ? `<div class="gap-view__row">🕐 ${formatSchedule(gap.schedule)}</div>` : ''}
+        <div class="gap-view__rows">
+            ${gap.meet_point ? `<div class="gap-view__row"><i data-lucide="map-pin"></i> ${escapeHtml(gap.meet_point)}</div>` : ''}
+            ${gap.schedule ? `<div class="gap-view__row"><i data-lucide="clock"></i> ${formatSchedule(gap.schedule)}</div>` : ''}
+        </div>
 
         <div class="gap-view__section">
             <h3>Участники (${(gap.members || []).length})</h3>
@@ -188,7 +200,7 @@ function renderGapView(gap) {
 
         ${isHost ? `
             <button class="btn btn-primary btn-block" id="gapInviteBtn" data-gap-id="${gap.id}">
-                ✉️ Пригласить в гап
+                <i data-lucide="user-plus"></i> Пригласить в гап
             </button>
         ` : `
             <button class="btn btn-secondary btn-block" id="gapLeaveBtn" data-gap-id="${gap.id}">
@@ -196,6 +208,8 @@ function renderGapView(gap) {
             </button>
         `}
     `;
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function formatSchedule(schedule) {
@@ -233,9 +247,10 @@ async function searchPlayersForGap(query) {
         return;
     }
 
-    container.innerHTML = '<div class="dash-empty">⏳ Поиск...</div>';
+    container.innerHTML = '<div class="dashboard-empty">Поиск...</div>';
 
-    const { data, error } = await supabaseClient
+    // ⚠️ _supabase, не supabaseClient
+    const { data, error } = await _supabase
         .from('players')
         .select('id, name, avatar, level, current_city')
         .ilike('name', `%${query}%`)
@@ -243,22 +258,27 @@ async function searchPlayersForGap(query) {
         .limit(10);
 
     if (error || !data || data.length === 0) {
-        container.innerHTML = '<div class="dash-empty">Никого не нашли</div>';
+        container.innerHTML = '<div class="dashboard-empty">Никого не нашли</div>';
         return;
     }
 
     container.innerHTML = data.map(p => `
         <div class="gap-invite-result">
-            <div class="gap-invite-result__avatar">${p.avatar || '🧑‍💼'}</div>
+            <div class="gap-invite-result__avatar">${renderAvatarHtml(p.avatar)}</div>
             <div class="gap-invite-result__info">
                 <div><strong>${escapeHtml(p.name)}</strong></div>
-                <div class="gap-invite-result__meta">⭐ ${p.level || 1} · ${p.current_city ? cityName(p.current_city) : '—'}</div>
+                <div class="gap-invite-result__meta">
+                    <i data-lucide="star"></i> ${p.level || 1}
+                    · ${p.current_city ? cityName(p.current_city) : '—'}
+                </div>
             </div>
             <button class="btn btn-primary btn-sm" data-gap-invite-send="${p.id}" data-gap-id="${gapId}">
                 Пригласить
             </button>
         </div>
     `).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -278,12 +298,21 @@ function cityName(cityKey) {
     return CITIES[cityKey]?.name || cityKey;
 }
 
+// Универсальный рендер аватара: URL → <img>, иначе эмодзи
+function renderAvatarHtml(avatar) {
+    if (!avatar) return '🧑‍💼';
+    if (typeof avatar === 'string' && avatar.startsWith('http')) {
+        return `<img src="${avatar}" alt="" loading="lazy">`;
+    }
+    return avatar;
+}
+
 // ============================================
 // ОБРАБОТЧИКИ СОБЫТИЙ
 // ============================================
 document.addEventListener('click', async (e) => {
     // Открыть карточку гапа
-    const gapCard = e.target.closest('.gap-card');
+    const gapCard = e.target.closest('.dashboard-row[data-gap-id]');
     if (gapCard) {
         openGapModal(gapCard.dataset.gapId);
         return;
@@ -349,7 +378,12 @@ document.addEventListener('click', async (e) => {
             showWarningToast(result.error);
             return;
         }
-        inviteSend.outerHTML = '<span class="gap-invite-result__sent">✅ Отправлено</span>';
+        inviteSend.outerHTML = `
+            <span class="gap-invite-result__sent">
+                <i data-lucide="check"></i> Отправлено
+            </span>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 
@@ -361,7 +395,7 @@ document.addEventListener('click', async (e) => {
             showWarningToast(result.error);
             return;
         }
-        showWarningToast('✅ Ты в гапе!');
+        showWarningToast('Ты в гапе!');
         await renderGapInvites();
         await renderGapsDashboard();
         return;
@@ -377,7 +411,8 @@ document.addEventListener('click', async (e) => {
 
     // Выйти из гапа
     if (e.target.id === 'gapLeaveBtn') {
-        if (!confirm('Выйти из гапа?')) return;
+        const ok = await showConfirm('Выйти из гапа?', { okText: 'Выйти' });
+        if (!ok) return;
         await leaveGap(e.target.dataset.gapId);
         document.getElementById('gapModal').style.display = 'none';
         await renderGapsDashboard();
@@ -385,10 +420,10 @@ document.addEventListener('click', async (e) => {
     }
 
     // Закрыть модалки
-    if (e.target.id === 'gapModal' || e.target.id === 'gapClose') {
+    if (e.target.id === 'gapModal' || e.target.closest('#gapClose')) {
         document.getElementById('gapModal').style.display = 'none';
     }
-    if (e.target.id === 'gapInviteModal' || e.target.id === 'gapInviteClose') {
+    if (e.target.id === 'gapInviteModal' || e.target.closest('#gapInviteClose')) {
         document.getElementById('gapInviteModal').style.display = 'none';
     }
 });
@@ -402,31 +437,3 @@ document.addEventListener('input', (e) => {
         }, 300);
     }
 });
-
-// ============================================
-// СТАТИСТИКА ГОРОДА: ГАПЫ И ХАШАРЫ
-// ============================================
-async function renderCityGapHasharStats() {
-    if (typeof currentCity === 'undefined' || !currentCity) return;
-
-    // Счётчик гапов
-    const gapEl = document.getElementById('cityGapsCount');
-    const hasharEl = document.getElementById('cityHasharsCount');
-    if (!gapEl && !hasharEl) return;
-
-    try {
-        // Гапы — через RPC (там только цифра, без деталей — приватность!)
-        if (gapEl) {
-            const gapStats = await loadCityGapStats();
-            gapEl.textContent = gapStats[currentCity] || 0;
-        }
-
-        // Хашары — через RPC
-        if (hasharEl) {
-            const hasharStats = await loadCityHasharStats();
-            hasharEl.textContent = hasharStats[currentCity] || 0;
-        }
-    } catch (err) {
-        console.warn('Ошибка статистики города:', err);
-    }
-}

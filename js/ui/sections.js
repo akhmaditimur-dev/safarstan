@@ -54,11 +54,6 @@ function renderCityInfo() {
     setText('statLanguage', city.language);
     setText('statTime', city.time);
 
-    // Гапы и хашары по городу
-    if (typeof renderCityGapHasharStats === 'function') {
-        renderCityGapHasharStats();
-    }
-
 }
 
 // ============ ТАБЫ ТРАНСПОРТА ============

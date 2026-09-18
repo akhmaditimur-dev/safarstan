@@ -36,6 +36,7 @@ let currentCity = localStorage.getItem('shahr_city') || 'tashkent';
 let currentTransportType = localStorage.getItem('shahr_transport') || 'train';
 let currentLang = localStorage.getItem('shahr_lang') || 'ru';
 let currentRatingType = 'residents';
+let currentRatingPeriod = 'week';
 
 // Проверка сохранённого города
 if (typeof CITIES !== 'undefined' && !CITIES[currentCity]) {

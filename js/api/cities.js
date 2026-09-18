@@ -41,3 +41,31 @@ async function updateCityScore(cityKey, field, amount) {
 
     if (error) console.error('Ошибка обновления очков города:', error);
 }
+
+// ============================================
+// РЕЙТИНГИ ГОРОДОВ (RPC)
+// ============================================
+
+// Загрузить рейтинг городов
+// metric: 'residents' | 'home' | 'hospitality' | 'tourists' | 'content'
+// period: 'all' | 'month' | 'week'
+async function loadCityRankings(metric, period) {
+    try {
+        const { data, error } = await _supabase
+            .rpc('get_city_rankings', {
+                p_metric: metric,
+                p_period: period || 'all',
+            });
+
+        if (error) throw error;
+
+        const map = {};
+        (data || []).forEach(row => {
+            map[row.city_key] = Number(row.score);
+        });
+        return map;
+    } catch (err) {
+        console.warn('Ошибка загрузки рейтингов:', err);
+        return {};
+    }
+}

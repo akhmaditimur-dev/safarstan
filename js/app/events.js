@@ -37,9 +37,19 @@ on('transportTabs', 'click', (e) => {
 // ============================================
 // РЕЙТИНГ / КВЕСТЫ
 // ============================================
+// Табы метрик
 on('ratingTabs', 'click', (e) => {
     if (!e.target.classList.contains('tab')) return;
     currentRatingType = e.target.dataset.rating;
+    renderRatingTabs();
+    renderRatings();
+});
+
+// Периоды рейтинга
+on('ratingPeriods', 'click', (e) => {
+    const btn = e.target.closest('.rating-period');
+    if (!btn) return;
+    currentRatingPeriod = btn.dataset.period;
     renderRatingTabs();
     renderRatings();
 });
@@ -1119,4 +1129,25 @@ window.addEventListener('scroll', () => {
 
         scrollTicking = false;
     });
+});
+
+// ============================================
+// КЛИКИ ПО СТРОКАМ ДАШБОРДА (Гапы / Хашары)
+// ============================================
+document.addEventListener('click', (e) => {
+    const gapRow = e.target.closest('[data-gap-id]');
+    if (gapRow) {
+        if (typeof openGapModal === 'function') {
+            openGapModal(gapRow.dataset.gapId);
+        }
+        return;
+    }
+
+    const hasharRow = e.target.closest('[data-hashar-id]');
+    if (hasharRow) {
+        if (typeof openHasharModal === 'function') {
+            openHasharModal(hasharRow.dataset.hasharId);
+        }
+        return;
+    }
 });

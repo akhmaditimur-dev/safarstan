@@ -126,6 +126,7 @@ async function checkIn(checkinKey) {
         });
     }
 
+    if (typeof resetRatingsCache === 'function') resetRatingsCache();
     renderAll();
     renderRatings();
     renderQuests();

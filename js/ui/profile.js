@@ -98,9 +98,9 @@ function renderProfile() {
             let cls = 'city-chip';
             let icon = '';
 
-            if (isHome) { cls += ' home'; icon = '🏠 '; }
-            else if (isCurrent) { cls += ' current'; icon = '📍 '; }
-            else if (isVisited) { cls += ' visited'; icon = '✅ '; }
+            if (isHome)         { cls += ' home';    icon = '<i data-lucide="home"></i>'; }
+            else if (isCurrent) { cls += ' current'; icon = '<i data-lucide="map-pin"></i>'; }
+            else if (isVisited) { cls += ' visited'; icon = '<i data-lucide="check"></i>'; }
 
             return `<span class="${cls}">${icon}${city.name}</span>`;
         }).join('');
@@ -129,13 +129,16 @@ function renderProfile() {
             const has = earned.has(badge.id);
             return `
                 <div class="profile-badge ${has ? 'earned' : 'locked'}">
-                    <div class="badge-icon">${badge.icon}</div>
+                    <div class="badge-icon"><i data-lucide="${badge.icon}"></i></div>
                     <div class="badge-name">${badge.name}</div>
                     <div class="badge-desc">${badge.desc}</div>
                 </div>
             `;
         }).join('');
     }
+
+    // Превращаем иконки
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -438,11 +441,13 @@ async function openMyReviewsModal() {
                 <div class="my-review-text">${escapeHtml(r.text)}</div>
                 <div class="my-review-footer">
                     <span class="my-review-date">${formatDate(r.created_at)}</span>
-                    <button class="my-review-delete" data-delete-my-review="${r.id}">🗑 Удалить</button>
+                    <button class="my-review-delete" data-delete-my-review="${r.id}"><i data-lucide="trash-2"></i> Удалить</button>
                 </div>
             </div>
         `;
     }).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function closeMyReviewsModal() {
@@ -521,10 +526,10 @@ async function openPlayerProfile(playerId) {
 
     let citiesHtml = '';
     if (homeCity) {
-        citiesHtml += `<span class="city-chip home">🏠 ${homeCity.name}</span>`;
+        citiesHtml += `<span class="city-chip home"><i data-lucide="home"></i> ${homeCity.name}</span>`;
     }
     if (currentCity && player.current_city !== player.home_city) {
-        citiesHtml += `<span class="city-chip current">📍 ${currentCity.name}</span>`;
+        citiesHtml += `<span class="city-chip current"><i data-lucide="map-pin"></i> ${currentCity.name}</span>`;
     }
     citiesEl.innerHTML = citiesHtml || '<span class="city-chip">—</span>';
 
@@ -535,7 +540,7 @@ async function openPlayerProfile(playerId) {
         if (key === player.home_city || key === player.current_city) return;
         const city = CITIES[key];
         if (city) {
-            citiesEl.innerHTML += `<span class="city-chip visited">✅ ${city.name}</span>`;
+            citiesEl.innerHTML += `<span class="city-chip visited"><i data-lucide="check"></i> ${city.name}</span>`;
         }
     });
 
@@ -554,11 +559,14 @@ async function openPlayerProfile(playerId) {
         const has = earned.has(badge.id);
         return `
             <div class="profile-badge ${has ? 'earned' : 'locked'}">
-                <div class="badge-icon">${badge.icon}</div>
+                <div class="badge-icon"><i data-lucide="${badge.icon}"></i></div>
                 <div class="badge-name">${badge.name}</div>
             </div>
         `;
     }).join('');
+
+    // Превращаем иконки в SVG
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 
     updatePlayerProfileActions(playerId);
 }

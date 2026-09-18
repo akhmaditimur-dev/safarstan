@@ -19,8 +19,8 @@ function renderQuests() {
 
     if (quests.length === 0) {
         const emptyMsg = currentQuestTab === 'completed'
-            ? 'Пока нет выполненных квестов.<br>Сделай чек-ин — начнём! ✅'
-            : '🎉 Все квесты выполнены! Ты — легенда!';
+            ? 'Пока нет выполненных квестов.<br>Сделай чек-ин — начнём!'
+            : 'Все квесты выполнены! Ты — легенда!';
         container.innerHTML = `<div class="quest-empty">${emptyMsg}</div>`;
         return;
     }
@@ -34,14 +34,14 @@ function renderQuests() {
         return `
             <div class="quest-card ${done ? 'done' : ''}">
                 <div class="quest-header">
-                    <div class="quest-icon">${quest.icon}</div>
+                    <div class="quest-icon"><i data-lucide="${quest.icon}"></i></div>
                     <div class="quest-title">
                         <h3>${quest.name}</h3>
                         <p>${quest.desc}</p>
                     </div>
-                    ${done ? '<div class="quest-done-badge">✅ Готово</div>' : ''}
+                    ${done ? '<div class="quest-done-badge"><i data-lucide="check"></i> Готово</div>' : ''}
                 </div>
-                
+
                 ${!done ? `
                     <div class="quest-progress">
                         <div class="quest-progress-bar">
@@ -50,11 +50,17 @@ function renderQuests() {
                         <div class="quest-progress-text">${current} / ${target}</div>
                     </div>
                 ` : ''}
-                
-                <div class="quest-reward">🎁 Награда: +${quest.xp} XP ${done ? '· получено' : ''}</div>
+
+                <div class="quest-reward">
+                    <i data-lucide="gift"></i>
+                    Награда: +${quest.xp} XP ${done ? '· получено' : ''}
+                </div>
             </div>
         `;
     }).join('');
+
+    // Превращаем <i data-lucide> в SVG
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function renderQuestTabs() {

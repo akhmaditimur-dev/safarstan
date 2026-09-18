@@ -113,3 +113,62 @@
         font-size: 14px;
     }
 }
+
+/* ============================================
+   ПЕРИОДЫ РЕЙТИНГА
+   ============================================ */
+.rating-periods {
+    display: flex;
+    gap: 8px;
+    margin: 16px 0 20px;
+    flex-wrap: wrap;
+}
+
+.rating-period {
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-soft);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    font-family: inherit;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.rating-period:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.rating-period.active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+/* ============================================
+   ФЛАГ В РЕЙТИНГЕ
+   ============================================ */
+.rating-flag {
+    font-size: 18px;
+    margin-right: 4px;
+}
+
+/* Горизонтальная прокрутка табов на мобильном */
+.tabs--scroll {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.tabs--scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.tabs--scroll .tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+}

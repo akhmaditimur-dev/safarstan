@@ -3,7 +3,7 @@ const CITIES = {
     tashkent: {
         name: 'Ташкент',
         country: 'Узбекистан',
-        flag: '🇺🇿',
+        flag: 'UZ',
         description: 'Столица Узбекистана, крупнейший город Центральной Азии.',
         population: '2.9 млн',
         currency: 'Сум',
@@ -35,7 +35,7 @@ const CITIES = {
     samarkand: {
         name: 'Самарканд',
         country: 'Узбекистан',
-        flag: '🇺🇿',
+        flag: 'UZ',
         description: 'Древний город на Шёлковом пути.',
         population: '550 тыс',
         currency: 'Сум',
@@ -64,7 +64,7 @@ const CITIES = {
     almaty: {
         name: 'Алматы',
         country: 'Казахстан',
-        flag: '🇰🇿',
+        flag: 'KZ',
         description: 'Крупнейший город Казахстана.',
         population: '2 млн',
         currency: 'Тенге',
@@ -93,7 +93,7 @@ const CITIES = {
     bishkek: {
         name: 'Бишкек',
         country: 'Кыргызстан',
-        flag: '🇰🇬',
+        flag: 'KG',
         description: 'Столица Кыргызстана у гор Ала-Тоо.',
         population: '1.1 млн',
         currency: 'Сом',
@@ -122,7 +122,7 @@ const CITIES = {
     bukhara: {
         name: 'Бухара',
         country: 'Узбекистан',
-        flag: '🇺🇿',
+        flag: 'UZ',
         description: 'Древний город-музей на Шёлковом пути. Более 2500 лет истории, центр исламской культуры.',
         population: '280 тыс',
         currency: 'Сум',
@@ -158,7 +158,7 @@ const CITIES = {
     khiva: {
         name: 'Хива',
         country: 'Узбекистан',
-        flag: '🇺🇿',
+        flag: 'UZ',
         description: 'Город-музей под открытым небом. Ичан-Кала — внутренний город, объект ЮНЕСКО.',
         population: '90 тыс',
         currency: 'Сум',
@@ -192,7 +192,7 @@ const CITIES = {
     osh: {
         name: 'Ош',
         country: 'Кыргызстан',
-        flag: '🇰🇬',
+        flag: 'KG',
         description: 'Второй по величине город Кыргызстана. Священная гора Сулайман-Тоо, древний базар.',
         population: '300 тыс',
         currency: 'Сом',
@@ -226,7 +226,7 @@ const CITIES = {
     astana: {
         name: 'Астана',
         country: 'Казахстан',
-        flag: '🇰🇿',
+        flag: 'KZ',
         description: 'Столица Казахстана с 1997 года. Футуристическая архитектура, Байтерек, Хан-Шатыр.',
         population: '1.4 млн',
         currency: 'Тенге (KZT)',
@@ -261,7 +261,7 @@ const CITIES = {
     dushanbe: {
         name: 'Душанбе',
         country: 'Таджикистан',
-        flag: '🇹🇯',
+        flag: 'TJ',
         description: 'Столица Таджикистана. Зелёный город, крупнейшая чайхана в ЦА, рынок Мехргон.',
         population: '900 тыс',
         currency: 'Сомони (TJS)',
@@ -297,7 +297,7 @@ const CITIES = {
     khujand: {
         name: 'Худжанд',
         country: 'Таджикистан',
-        flag: '🇹🇯',
+        flag: 'TJ',
         description: 'Второй по величине город Таджикистана. Древний Александровский город, на реке Сырдарья.',
         population: '180 тыс',
         currency: 'Сомони (TJS)',
@@ -332,7 +332,7 @@ const CITIES = {
     ashgabat: {
         name: 'Ашхабад',
         country: 'Туркменистан',
-        flag: '🇹🇲',
+        flag: 'TM',
         description: 'Столица Туркменистана, «город белого мрамора». Рекорд Гиннесса по количеству беломраморных зданий. ⚠️ Особый режим: виза, регистрация, ограничения на фото и перемещение.',
         population: '1 млн',
         currency: 'Манат (TMT)',
@@ -368,7 +368,7 @@ const CITIES = {
     shymkent: {
         name: 'Шымкент',
         country: 'Казахстан',
-        flag: '🇰🇿',
+        flag: 'KZ',
         coords: { lat: 42.3172, lng: 69.5861 },
         description: 'Третий по величине город Казахстана, крупный торговый и промышленный центр на юге страны.',
         population: '1.2 млн',
@@ -403,7 +403,7 @@ const CITIES = {
     kokand: {
         name: 'Коканд',
         country: 'Узбекистан',
-        flag: '🇺🇿',
+        flag: 'UZ',
         coords: { lat: 40.5286, lng: 70.9425 },
         description: 'Древний город Ферганской долины, бывшая столица Кокандского ханства. Дворец Худояр-хана.',
         population: '260 тыс',
@@ -436,7 +436,7 @@ const CITIES = {
     bokhtar: {
         name: 'Бохтар',
         country: 'Таджикистан',
-        flag: '🇹🇯',
+        flag: 'TJ',
         coords: { lat: 37.8364, lng: 68.7803 },
         description: 'Административный центр Хатлонской области, третий по величине город Таджикистана.',
         population: '110 тыс',
@@ -468,7 +468,7 @@ const CITIES = {
     cholpon_ata: {
         name: 'Чолпон-Ата',
         country: 'Кыргызстан',
-        flag: '🇰🇬',
+        flag: 'KG',
         coords: { lat: 42.6500, lng: 77.0833 },
         description: 'Курортный город на северном берегу озера Иссык-Куль. Петроглифы, пляжи, горы.',
         population: '15 тыс',
@@ -501,7 +501,7 @@ const CITIES = {
     karaganda: {
         name: 'Караганда',
         country: 'Казахстан',
-        flag: '🇰🇿',
+        flag: 'KZ',
         coords: { lat: 49.8047, lng: 73.1094 },
         description: 'Крупный промышленный центр в центре Казахстана. Известен как «шахтёрская столица».',
         population: '500 тыс',
@@ -535,7 +535,7 @@ const CITIES = {
     namangan: {
         name: 'Наманган',
         country: 'Узбекистан',
-        flag: '🇺🇿',
+        flag: 'UZ',
         coords: { lat: 40.9983, lng: 71.6726 },
         description: 'Второй по величине город Ферганской долины, известен цветами и ремесленниками.',
         population: '640 тыс',
@@ -568,7 +568,7 @@ const CITIES = {
     khorog: {
         name: 'Хорог',
         country: 'Таджикистан',
-        flag: '🇹🇯',
+        flag: 'TJ',
         coords: { lat: 37.4894, lng: 71.5536 },
         description: 'Столица Горно-Бадахшанской автономной области. Ворота Памирского тракта, город в горах.',
         population: '30 тыс',
@@ -601,7 +601,7 @@ const CITIES = {
     jalal_abad: {
         name: 'Джалал-Абад',
         country: 'Кыргызстан',
-        flag: '🇰🇬',
+        flag: 'KG',
         coords: { lat: 40.9333, lng: 73.0000 },
         description: 'Третий по величине город Кыргызстана. Известен минеральными источниками и ореховыми лесами.',
         population: '120 тыс',
@@ -634,7 +634,7 @@ const CITIES = {
     aktau: {
         name: 'Актау',
         country: 'Казахстан',
-        flag: '🇰🇿',
+        flag: 'KZ',
         coords: { lat: 43.6532, lng: 51.1978 },
         description: 'Город-порт на Каспийском море. Известен набережной, скалами и нефтяной столицей Казахстана.',
         population: '200 тыс',
@@ -669,7 +669,7 @@ const CITIES = {
     fergana: {
         name: 'Фергана',
         country: 'Узбекистан',
-        flag: '🇺🇿',
+        flag: 'UZ',
         coords: { lat: 40.3864, lng: 71.7864 },
         description: 'Административный центр Ферганской области. Город в плодородной долине, известен шёлком и керамикой.',
         population: '300 тыс',
@@ -702,7 +702,7 @@ const CITIES = {
     penjikent: {
         name: 'Пенджикент',
         country: 'Таджикистан',
-        flag: '🇹🇯',
+        flag: 'TJ',
         coords: { lat: 39.4958, lng: 67.6100 },
         description: 'Древний город на Шёлковом пути, «Помпеи Центральной Азии». Родина Рудаки.',
         population: '45 тыс',
@@ -734,7 +734,7 @@ const CITIES = {
     naryn: {
         name: 'Нарын',
         country: 'Кыргызстан',
-        flag: '🇰🇬',
+        flag: 'KG',
         coords: { lat: 41.4287, lng: 75.9911 },
         description: 'Город на высоте 2000 м, административный центр Нарынской области. Ворота к озеру Сон-Куль и Торугартскому перевалу.',
         population: '40 тыс',
@@ -766,7 +766,7 @@ const CITIES = {
     turkmenabat: {
         name: 'Туркменабад',
         country: 'Туркменистан',
-        flag: '🇹🇲',
+        flag: 'TM',
         coords: { lat: 39.0833, lng: 63.5833 },
         description: 'Второй по величине город Туркменистана, на реке Амударья. Крупный промышленный и транспортный узел.',
         population: '250 тыс',
@@ -823,15 +823,15 @@ const I18N = {
 
 // ============ БЕЙДЖИ ============
 const BADGES = [
-    { id: 'novice',         icon: '🌱', name: 'Новичок',         desc: 'Первый чек-ин' },
-    { id: 'homebody',       icon: '🏠', name: 'Домосед',         desc: '10 чек-инов в своём городе' },
-    { id: 'neighbor',       icon: '🚌', name: 'Сосед',           desc: '2 города' },
-    { id: 'traveler',       icon: '🧭', name: 'Путешественник',  desc: '4 города' },
-    { id: 'legend',         icon: '🌏', name: 'Легенда ЦА',      desc: 'Все 11 городов' },
-    { id: 'silk_road',      icon: '🕌', name: 'Шёлковый путь',   desc: 'Самарканд + Бухара + Хива' },
-    { id: 'mountain_eagle', icon: '🏔', name: 'Горный орёл',     desc: 'Бишкек + Ош + Худжанд' },
-    { id: 'pioneer',        icon: '⭐', name: 'Первооткрыватель', desc: '5 разных городов' },
-    { id: 'place_pioneer', icon: '🌟', name: 'Первооткрыватель', desc: 'Добавил первое место' },
+    { id: 'novice',         icon: 'sprout',      name: 'Новичок',         desc: 'Первый чек-ин' },
+    { id: 'homebody',       icon: 'home',        name: 'Домосед',         desc: '10 чек-инов в своём городе' },
+    { id: 'neighbor',       icon: 'bus',         name: 'Сосед',           desc: '2 города' },
+    { id: 'traveler',       icon: 'compass',     name: 'Путешественник',  desc: '4 города' },
+    { id: 'legend',         icon: 'globe',       name: 'Легенда ЦА',      desc: 'Все 11 городов' },
+    { id: 'silk_road',      icon: 'landmark',    name: 'Шёлковый путь',   desc: 'Самарканд + Бухара + Хива' },
+    { id: 'mountain_eagle', icon: 'mountain',    name: 'Горный орёл',     desc: 'Бишкек + Ош + Худжанд' },
+    { id: 'pioneer',        icon: 'star',        name: 'Первооткрыватель', desc: '5 разных городов' },
+    { id: 'place_pioneer',  icon: 'sparkles',    name: 'Пионер мест',     desc: 'Добавил первое место' },
 ];
 
 // ============ КВЕСТЫ ============
@@ -845,7 +845,7 @@ const BADGES = [
 const QUESTS = [
     {
         id: 'city_expert',
-        icon: '🌆',
+        icon: 'building-2',
         name: 'Знаток города',
         desc: '5 чек-инов в текущем городе',
         xp: 50,
@@ -854,7 +854,7 @@ const QUESTS = [
     },
     {
         id: 'architect',
-        icon: '🏛',
+        icon: 'landmark',
         name: 'Архитектор',
         desc: 'Регистан + Ичан-Кала + Ляби-Хауз',
         xp: 100,
@@ -866,7 +866,7 @@ const QUESTS = [
     },
     {
         id: 'railroader',
-        icon: '🚂',
+        icon: 'train-front',
         name: 'Железнодорожник',
         desc: '3 чек-ина в поездах',
         xp: 30,
@@ -876,7 +876,7 @@ const QUESTS = [
     },
     {
         id: 'gourmet',
-        icon: '🍽',
+        icon: 'utensils',
         name: 'Гурман',
         desc: '5 чек-инов в сервисах',
         xp: 40,
@@ -886,7 +886,7 @@ const QUESTS = [
     },
     {
         id: 'highlander',
-        icon: '🏔',
+        icon: 'mountain',
         name: 'Высокогорный',
         desc: 'Бишкек + Ош + Худжанд',
         xp: 80,
@@ -895,7 +895,7 @@ const QUESTS = [
     },
     {
         id: 'silk_road',
-        icon: '🕌',
+        icon: 'landmark',
         name: 'Шёлковый путь',
         desc: 'Самарканд + Бухара + Хива',
         xp: 80,
@@ -904,7 +904,7 @@ const QUESTS = [
     },
     {
         id: 'tourist',
-        icon: '🎒',
+        icon: 'backpack',
         name: 'Турист',
         desc: '3 разных города',
         xp: 60,
@@ -913,7 +913,7 @@ const QUESTS = [
     },
     {
         id: 'explorer',
-        icon: '🧭',
+        icon: 'compass',
         name: 'Исследователь',
         desc: '5 разных городов',
         xp: 120,
@@ -922,7 +922,7 @@ const QUESTS = [
     },
     {
         id: 'hotelier',
-        icon: '🏨',
+        icon: 'hotel',
         name: 'Постоялец',
         desc: '3 чек-ина в отелях',
         xp: 30,
@@ -932,7 +932,7 @@ const QUESTS = [
     },
     {
         id: 'pioneer',
-        icon: '🌟',
+        icon: 'sparkles',
         name: 'Первопроходец',
         desc: 'Первый чек-ин в новом городе',
         xp: 30,
@@ -941,7 +941,7 @@ const QUESTS = [
     },
     {
         id: 'cartographer',
-        icon: '🗺',
+        icon: 'map',
         name: 'Картограф',
         desc: 'Добавить 5 мест',
         xp: 150,
@@ -950,7 +950,7 @@ const QUESTS = [
     },
     {
         id: 'place_legend',
-        icon: '👑',
+        icon: 'crown',
         name: 'Легенда мест',
         desc: 'Добавить 10 мест',
         xp: 300,

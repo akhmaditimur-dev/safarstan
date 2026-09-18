@@ -74,13 +74,13 @@
     <!-- ШАПКА -->
     <header class="header">
         <div class="container header__inner">
-            <div class="logo">🌏 Safarstan</div>
+            <div class="logo"><i data-lucide="globe"></i> Safarstan</div>
 
             <div class="header-search" id="headerSearch">
                 <div class="header-search__input-wrap">
-                    <span class="header-search__icon">🔍</span>
+                    <span class="header-search__icon"><i data-lucide="search"></i></span>
                     <input type="text" id="headerSearchInput" class="header-search__input" placeholder="Поиск" autocomplete="off">
-                    <button id="headerSearchClear" class="header-search__clear" style="display:none;">✕</button>
+                    <button id="headerSearchClear" class="header-search__clear" style="display:none;"><i data-lucide="x"></i></button>
                 </div>
                 <div id="headerSearchResults" class="header-search__results" style="display:none;"></div>
             </div>
@@ -125,9 +125,9 @@
                             <div class="dashboard-user__info">
                                 <div class="dashboard-name-row">
                                     <h2 id="dashName">Игрок</h2>
-                                    <button class="profile-edit-btn" id="editNameBtnDash" title="Редактировать имя">✏️</button>
+                                    <button class="profile-edit-btn" id="editNameBtnDash" title="Редактировать имя"><i data-lucide="pencil"></i></button>
                                 </div>
-                                <div class="dashboard-level">⭐ Уровень <span id="dashLevel">1</span></div>
+                                <div class="dashboard-level"><i data-lucide="star"></i> Уровень <span id="dashLevel">1</span></div>
                             </div>
                         </div>
 
@@ -258,7 +258,7 @@
                     <div class="dashboard-card">
                         <div class="dashboard-card__header">
                             <h3>Мои планы</h3>
-                            <button class="btn btn-ghost btn-sm" id="dashAddPlanBtn">+ Добавить</button>
+                            <button class="btn btn-ghost btn-sm" id="dashAddPlanBtn"><i data-lucide="plus"></i> Добавить</button>
                         </div>
                         <div class="dashboard-plans" id="dashPlans"></div>
                     </div>
@@ -266,7 +266,7 @@
                     <div class="dashboard-card">
                         <div class="dashboard-card__header">
                             <h3>Мои гапы</h3>
-                            <button class="btn btn-ghost btn-sm" id="gapCreateBtn">+</button>
+                            <button class="btn btn-ghost btn-sm" id="gapCreateBtn"><i data-lucide="plus"></i></button>
                         </div>
                         <div class="dashboard-gaps" id="dashGaps"></div>
                     </div>
@@ -274,7 +274,7 @@
                     <div class="dashboard-card">
                         <div class="dashboard-card__header">
                             <h3>Мои хашары</h3>
-                            <button class="btn btn-ghost btn-sm" id="dashHasharCreateBtn">+</button>
+                            <button class="btn btn-ghost btn-sm" id="dashHasharCreateBtn"><i data-lucide="plus"></i></button>
                         </div>
                         <div class="dashboard-hashars" id="dashHashars"></div>
                     </div>
@@ -294,21 +294,21 @@
                 <div class="hero__col hero__col--left">
                     <div class="city-search">
                         <div class="city-search__input-wrap">
-                            <span class="city-search__icon">🔍</span>
+                            <span class="city-search__icon"><i data-lucide="search"></i></span>
                             <input type="text" id="citySearchInput" class="city-search__input" placeholder="Найти город..." autocomplete="off">
-                            <button id="citySearchClear" class="city-search__clear" style="display:none;">✕</button>
+                            <button id="citySearchClear" class="city-search__clear" style="display:none;"><i data-lucide="x"></i></button>
                         </div>
                         <div id="citySearchResults" class="city-search__results" style="display:none;"></div>
                     </div>
 
                     <div class="city-section" id="myCitiesSection" style="display:none;">
-                        <h3 class="city-section__title">📍 Твои города</h3>
+                        <h3 class="city-section__title"><i data-lucide="map-pin"></i> Твои города</h3>
                         <div class="city-chips" id="myCitiesChips"></div>
                     </div>
                 </div>
 
                 <div class="hero__col hero__col--right">
-                    <h3 class="city-section__title">🌍 Все страны</h3>
+                    <h3 class="city-section__title"><i data-lucide="globe"></i> Все страны</h3>
                     <div class="country-accordion" id="countryAccordion"></div>
                 </div>
             </div>
@@ -321,7 +321,7 @@
             <div class="city-header">
                 <h2 id="cityTitle">Ташкент</h2>
                 <span id="cityCountry" class="badge">Узбекистан</span>
-                <button class="btn btn-secondary btn-sm" id="planCityBtn">📌 Запланировать визит</button>
+                <button class="btn btn-secondary btn-sm" id="planCityBtn"><i data-lucide="calendar-plus"></i> Запланировать визит</button>
             </div>
             <p id="cityDescription" class="city-description"></p>
             <div class="city-stats">
@@ -331,37 +331,24 @@
                 <div class="stat"><span id="statTime">—</span><small>Время</small></div>
             </div>
 
-            <div class="city-gap-hashar-stats" id="cityGapHasharStats">
-                <div class="city-gap-hashar-stats__item">
-                    <span class="city-gap-hashar-stats__icon">☕</span>
-                    <strong id="cityGapsCount">0</strong>
-                    <small>гапов</small>
-                </div>
-                <div class="city-gap-hashar-stats__item">
-                    <span class="city-gap-hashar-stats__icon">🤝</span>
-                    <strong id="cityHasharsCount">0</strong>
-                    <small>хашаров</small>
-                </div>
-            </div>
-
             <div class="city-analytics" id="cityAnalytics" style="display:none;">
                 <h3 class="city-analytics__title">Статистика города</h3>
                 <div class="city-analytics__grid">
                     <div class="city-analytics__card">
-                        <h4>👥 Активность</h4>
+                        <h4><i data-lucide="users"></i> Активность</h4>
                         <div class="city-analytics__stats" id="cityAnalyticsSummary">
                             <div class="city-analytics__stat"><strong>—</strong><small>Игроков</small></div>
                             <div class="city-analytics__stat"><strong>—</strong><small>Чек-инов</small></div>
                         </div>
                     </div>
                     <div class="city-analytics__card">
-                        <h4>🏆 Топ места</h4>
+                        <h4><i data-lucide="trophy"></i> Топ места</h4>
                         <div class="city-analytics__list" id="cityTopPlaces">
                             <div class="city-analytics__empty">Пока нет данных</div>
                         </div>
                     </div>
                     <div class="city-analytics__card">
-                        <h4>⭐ Топ игроков</h4>
+                        <h4><i data-lucide="star"></i> Топ игроков</h4>
                         <div class="city-analytics__list" id="cityTopPlayers">
                             <div class="city-analytics__empty">Пока нет данных</div>
                         </div>
@@ -373,15 +360,25 @@
 
     <!-- РЕЙТИНГ -->
     <section class="section section--alt" id="ratings">
-        <div class="container">
-            <h2>Рейтинг городов</h2>
-            <div class="tabs" id="ratingTabs">
-                <button class="tab active" data-rating="residents">Активные жители</button>
-                <button class="tab" data-rating="home">Родной дом</button>
-                <button class="tab" data-rating="hospitality">Гостеприимство</button>
-            </div>
-            <div id="ratingList" class="rating-list"></div>
+    <div class="container">
+        <h2>Рейтинг городов</h2>
+
+        <div class="tabs tabs--scroll" id="ratingTabs">
+            <button class="tab active" data-rating="residents"><i data-lucide="home"></i> Жители</button>
+            <button class="tab" data-rating="home"><i data-lucide="house"></i> Родной дом</button>
+            <button class="tab" data-rating="hospitality"><i data-lucide="hand-heart"></i> Гостеприимство</button>
+            <button class="tab" data-rating="tourists"><i data-lucide="luggage"></i> Туристы</button>
+            <button class="tab" data-rating="content"><i data-lucide="camera"></i> Контент</button>
         </div>
+
+        <div class="rating-periods" id="ratingPeriods">
+            <button class="rating-period" data-period="all">Всё время</button>
+            <button class="rating-period" data-period="month">Месяц</button>
+            <button class="rating-period active" data-period="week">Неделя</button>
+        </div>
+
+        <div id="ratingList" class="rating-list"></div>
+    </div>
     </section>
 
     <!-- КВЕСТЫ -->
@@ -409,7 +406,7 @@
                 <span class="legend-item"><span class="dot home"></span> Родной</span>
                 <span class="legend-item"><span class="dot current"></span> Текущий</span>
             </p>
-            <button class="map-settings-btn" id="mapSettingsBtn" title="Настройки карты">⚙️</button>
+            <button class="map-settings-btn" id="mapSettingsBtn" title="Настройки карты"><i data-lucide="settings"></i></button>
         </div>
 
         <div class="map-wrapper">
@@ -424,7 +421,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>Междугородний транспорт</h2>
-                <button class="add-place-btn" data-category="train">Добавить место</button>
+                <button class="add-place-btn" data-category="train"><i data-lucide="plus"></i> Добавить место</button>
             </div>
             <div class="tabs" id="transportTabs">
                 <button class="tab active" data-type="train">Поезда</button>
@@ -440,7 +437,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>Где остановиться</h2>
-                <button class="add-place-btn" data-category="hotel">Добавить место</button>
+                <button class="add-place-btn" data-category="hotel"><i data-lucide="plus"></i> Добавить место</button>
             </div>
             <div id="hotelsList" class="cards"></div>
         </div>
@@ -451,7 +448,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>Локальные сервисы</h2>
-                <button class="add-place-btn" data-category="service">Добавить место</button>
+                <button class="add-place-btn" data-category="service"><i data-lucide="plus"></i> Добавить место</button>
             </div>
             <div id="servicesList" class="cards"></div>
         </div>
@@ -461,18 +458,18 @@
     <section class="section" id="hashars">
         <div class="container">
             <div class="section-header">
-                <h2>🤝 Хашары</h2>
-                <button class="btn btn-primary btn-sm" id="hasharCreateBtn">+ Создать</button>
+                <h2><i data-lucide="hand-heart"></i> Хашары</h2>
+                <button class="btn btn-primary btn-sm" id="hasharCreateBtn"><i data-lucide="plus"></i> Создать</button>
             </div>
             <p class="hashar-subtitle">Собери соседей для общего дела: ремонт, деревья, уборка, помощь</p>
 
             <div class="hashar-filters" id="hasharFilters">
                 <button class="hashar-filter active" data-hashar-filter-cat="">Все</button>
-                <button class="hashar-filter" data-hashar-filter-cat="repair">🔨 Ремонт</button>
-                <button class="hashar-filter" data-hashar-filter-cat="trees">🌳 Деревья</button>
-                <button class="hashar-filter" data-hashar-filter-cat="cleanup">🧹 Уборка</button>
-                <button class="hashar-filter" data-hashar-filter-cat="help">🤝 Помощь</button>
-                <button class="hashar-filter" data-hashar-filter-cat="charity">❤️ Благое</button>
+                <button class="hashar-filter" data-hashar-filter-cat="repair"><i data-lucide="hammer"></i> Ремонт</button>
+                <button class="hashar-filter" data-hashar-filter-cat="trees"><i data-lucide="trees"></i> Деревья</button>
+                <button class="hashar-filter" data-hashar-filter-cat="cleanup"><i data-lucide="brush"></i> Уборка</button>
+                <button class="hashar-filter" data-hashar-filter-cat="help"><i data-lucide="hand-heart"></i> Помощь</button>
+                <button class="hashar-filter" data-hashar-filter-cat="charity"><i data-lucide="heart"></i> Благое</button>
             </div>
 
             <div id="hasharsList" class="hashars-list"></div>
@@ -539,9 +536,9 @@
                     <button type="button" class="avatar-option" data-avatar="🦅">🦅</button>
                     <button type="button" class="avatar-option" data-avatar="🐎">🐎</button>
                 </div>
-                <label class="modal-label">🏠 Родной город</label>
+                <label class="modal-label"><i data-lucide="home"></i> Родной город</label>
                 <select id="regHomeCity" class="modal-input"></select>
-                <label class="modal-label">📍 Где живёшь сейчас</label>
+                <label class="modal-label"><i data-lucide="map-pin"></i> Где живёшь сейчас</label>
                 <select id="regCurrentCity" class="modal-input"></select>
             </div>
             <button id="authSubmit" class="modal-btn">Создать аккаунт</button>
@@ -551,15 +548,15 @@
 
     <div id="profileModal" class="modal-overlay" style="display:none;">
         <div class="modal modal--profile">
-            <button id="profileClose" class="modal-close">✕</button>
+            <button id="profileClose" class="modal-close"><i data-lucide="x"></i></button>
             <div class="profile-header">
                 <div class="profile-avatar" id="profileAvatar">🧑‍💼</div>
                 <div style="flex:1;min-width:0;">
                     <div class="profile-name-row">
                         <h2 id="profileName">—</h2>
-                        <button class="profile-edit-btn" id="editNameBtnProfile" title="Редактировать имя">✏️</button>
+                        <button class="profile-edit-btn" id="editNameBtnProfile" title="Редактировать имя"><i data-lucide="pencil"></i></button>
                     </div>
-                    <div class="profile-level">⭐ Уровень <span id="profileLevel">1</span></div>
+                    <div class="profile-level"><i data-lucide="star"></i> Уровень <span id="profileLevel">1</span></div>
                 </div>
             </div>
             <div class="profile-xp-block">
@@ -579,28 +576,28 @@
 
     <div id="playerProfileModal" class="modal-overlay" style="display:none;">
         <div class="modal modal--profile">
-            <button id="playerProfileClose" class="modal-close">✕</button>
+            <button id="playerProfileClose" class="modal-close"><i data-lucide="x"></i></button>
             <div class="profile-header">
                 <div class="profile-avatar" id="ppAvatar">🧑‍💼</div>
                 <div style="flex:1;min-width:0;">
                     <div class="profile-name-row"><h2 id="ppName">—</h2></div>
-                    <div class="profile-level">⭐ Уровень <span id="ppLevel">1</span></div>
+                    <div class="profile-level"><i data-lucide="star"></i> Уровень <span id="ppLevel">1</span></div>
                 </div>
             </div>
-            <div class="profile-section"><h3>🏙 Города</h3><div class="profile-cities" id="ppCities"></div></div>
-            <div class="profile-section"><h3>📊 Статистика</h3><div class="profile-stats" id="ppStats"></div></div>
-            <div class="profile-section"><h3>🎖 Бейджи</h3><div class="profile-badges" id="ppBadges"></div></div>
+            <div class="profile-section"><h3><i data-lucide="building-2"></i> Города</h3><div class="profile-cities" id="ppCities"></div></div>
+            <div class="profile-section"><h3><i data-lucide="bar-chart-3"></i> Статистика</h3><div class="profile-stats" id="ppStats"></div></div>
+            <div class="profile-section"><h3><i data-lucide="award"></i> Бейджи</h3><div class="profile-badges" id="ppBadges"></div></div>
             <div class="profile-section" id="ppActionsSection">
-                <button id="ppAddFriendBtn" class="btn btn-primary btn-block" style="display:none;">👥 Добавить в друзья</button>
-                <button id="ppRemoveFriendBtn" class="btn btn-secondary btn-block" style="display:none;">✓ Уже друзья</button>
-                <button id="ppPendingBtn" class="btn btn-secondary btn-block" style="display:none;" disabled>⏳ Заявка отправлена</button>
+                <button id="ppAddFriendBtn" class="btn btn-primary btn-block" style="display:none;"><i data-lucide="user-plus"></i> Добавить в друзья</button>
+                <button id="ppRemoveFriendBtn" class="btn btn-secondary btn-block" style="display:none;"><i data-lucide="check"></i> Уже друзья</button>
+                <button id="ppPendingBtn" class="btn btn-secondary btn-block" style="display:none;" disabled><i data-lucide="clock"></i> Заявка отправлена</button>
             </div>
         </div>
     </div>
 
     <div id="galleryModal" class="modal-overlay" style="display:none;">
         <div class="modal modal--wide">
-            <button id="galleryClose" class="modal-close">✕</button>
+            <button id="galleryClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Моя галерея</h2>
             <p class="modal-subtitle">Все фото, которые ты загрузил</p>
             <div id="galleryGrid" class="gallery-grid"></div>
@@ -609,7 +606,7 @@
 
     <div id="myReviewsModal" class="modal-overlay" style="display:none;">
         <div class="modal modal--wide">
-            <button id="myReviewsClose" class="modal-close">✕</button>
+            <button id="myReviewsClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Мои отзывы</h2>
             <p class="modal-subtitle">Все твои отзывы о местах</p>
             <div id="myReviewsList" class="my-reviews-list"></div>
@@ -618,7 +615,7 @@
 
     <div id="settingsModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="settingsClose" class="modal-close">✕</button>
+            <button id="settingsClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Настройки</h2>
             <p class="modal-subtitle">Язык, тема, аккаунт</p>
             <label class="modal-label">Язык</label>
@@ -645,7 +642,7 @@
 
     <div id="avatarModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="avatarClose" class="modal-close">✕</button>
+            <button id="avatarClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Сменить аватар</h2>
             <p class="modal-subtitle">Выбери эмодзи или загрузи своё фото</p>
             <label class="modal-label">Готовые эмодзи</label>
@@ -671,7 +668,7 @@
 
     <div id="addPlaceModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="addPlaceClose" class="modal-close">✕</button>
+            <button id="addPlaceClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Добавить место</h2>
             <p class="modal-subtitle" id="addPlaceCityLabel">Город: —</p>
             <label class="modal-label">Название</label>
@@ -694,7 +691,7 @@
 
     <div id="planModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="planClose" class="modal-close">✕</button>
+            <button id="planClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Запланировать визит</h2>
             <p class="modal-subtitle">Куда и когда собираешься?</p>
             <label class="modal-label">Город</label>
@@ -711,7 +708,7 @@
 
     <div id="friendsModal" class="modal-overlay" style="display:none;">
         <div class="modal modal--friends">
-            <button id="friendsClose" class="modal-close">✕</button>
+            <button id="friendsClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Друзья</h2>
             <label class="modal-label">Найти игрока (имя или email)</label>
             <input type="text" id="friendSearch" class="modal-input" placeholder="Начни вводить...">
@@ -729,16 +726,16 @@
 
     <div id="reviewModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="reviewClose" class="modal-close">✕</button>
+            <button id="reviewClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Оставить отзыв</h2>
             <p class="modal-subtitle" id="reviewPlaceName">—</p>
             <label class="modal-label">Оценка (опционально)</label>
             <div class="rating-picker" id="ratingPicker">
-                <button type="button" class="rating-star" data-rating="1">★</button>
-                <button type="button" class="rating-star" data-rating="2">★</button>
-                <button type="button" class="rating-star" data-rating="3">★</button>
-                <button type="button" class="rating-star" data-rating="4">★</button>
-                <button type="button" class="rating-star" data-rating="5">★</button>
+                <button type="button" class="rating-star" data-rating="1"><i data-lucide="star"></i></button>
+                <button type="button" class="rating-star" data-rating="2"><i data-lucide="star"></i></button>
+                <button type="button" class="rating-star" data-rating="3"><i data-lucide="star"></i></button>
+                <button type="button" class="rating-star" data-rating="4"><i data-lucide="star"></i></button>
+                <button type="button" class="rating-star" data-rating="5"><i data-lucide="star"></i></button>
             </div>
             <label class="modal-label">Отзыв</label>
             <textarea id="reviewText" class="modal-input" rows="4" placeholder="Что понравилось? Что нет?"></textarea>
@@ -749,7 +746,7 @@
 
     <div id="photoModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="photoClose" class="modal-close">✕</button>
+            <button id="photoClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Добавить фото</h2>
             <p class="modal-subtitle" id="photoPlaceName">—</p>
             <label class="modal-label">Выбери фото (макс. 3 МБ)</label>
@@ -762,14 +759,14 @@
 
     <div id="gapModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="gapClose" class="modal-close">✕</button>
+            <button id="gapClose" class="modal-close"><i data-lucide="x"></i></button>
             <div id="gapModalBody"></div>
         </div>
     </div>
 
     <div id="gapInviteModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="gapInviteClose" class="modal-close">✕</button>
+            <button id="gapInviteClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Пригласить в гап</h2>
             <p class="modal-subtitle">Найди игрока по имени</p>
             <input type="text" id="gapInviteSearch" class="modal-input" placeholder="Начни вводить имя...">
@@ -779,14 +776,14 @@
 
     <div id="hasharModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="hasharClose" class="modal-close">✕</button>
+            <button id="hasharClose" class="modal-close"><i data-lucide="x"></i></button>
             <div id="hasharModalBody"></div>
         </div>
     </div>
 
     <div id="hasharCreateModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="hasharCreateClose" class="modal-close">✕</button>
+            <button id="hasharCreateClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Создать хашар</h2>
             <p class="modal-subtitle">Собери людей на общее дело</p>
 
@@ -831,7 +828,7 @@
 
     <div id="mapSettingsModal" class="modal-overlay" style="display:none;">
         <div class="modal">
-            <button id="mapSettingsClose" class="modal-close">✕</button>
+            <button id="mapSettingsClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Настройки карты</h2>
             <p class="modal-subtitle">Что показывать при наведении на город</p>
             <div class="modules-settings" id="mapModulesSettings"></div>
@@ -839,7 +836,7 @@
     </div>
 
     <div id="lightbox" class="lightbox" style="display:none;">
-        <button id="lightboxClose" class="lightbox__close">✕</button>
+        <button id="lightboxClose" class="lightbox__close"><i data-lucide="x"></i></button>
         <div id="lightboxCounter" class="lightbox__counter" style="display:none;">1 / 1</div>
         <button id="lightboxPrev" class="lightbox__nav lightbox__nav--prev" style="display:none;">‹</button>
         <button id="lightboxNext" class="lightbox__nav lightbox__nav--next" style="display:none;">›</button>
@@ -847,18 +844,15 @@
     </div>
 
     <!-- СКРИПТЫ -->
-    <!-- Внешние библиотеки (без defer — загружаются в первую очередь) -->
     <script src="https://cdn.jsdelivr.net/npm/ol@v9.2.4/dist/ol.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Конфиг и данные -->
     <script defer src="config.js"></script>
     <script defer src="data.js"></script>
     <script defer src="supabase.js"></script>
     <script defer src="storage.js"></script>
 
-    <!-- API -->
     <script defer src="js/api/auth.js"></script>
     <script defer src="js/api/player.js"></script>
     <script defer src="js/api/checkins.js"></script>
@@ -872,14 +866,12 @@
     <script defer src="js/api/gaps.js"></script>
     <script defer src="js/api/hashars.js"></script>
 
-    <!-- Game -->
     <script defer src="js/game/helpers.js"></script>
     <script defer src="js/game/checkin.js"></script>
     <script defer src="js/game/badges.js"></script>
     <script defer src="js/game/quests.js"></script>
     <script defer src="js/game/ugc.js"></script>
 
-    <!-- UI -->
     <script defer src="js/ui/toast.js"></script>
     <script defer src="js/ui/cards.js"></script>
     <script defer src="js/ui/sections.js"></script>
@@ -898,7 +890,6 @@
     <script defer src="js/ui/gaps.js"></script>
     <script defer src="js/ui/hashars.js"></script>
 
-    <!-- App -->
     <script defer src="js/app/init.js"></script>
     <script defer src="js/app/events.js"></script>
     <script defer src="js/app/start.js"></script>

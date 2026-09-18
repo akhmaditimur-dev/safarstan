@@ -147,16 +147,6 @@
     transform: translateY(0) scale(0.98);
 }
 
-.checkin-btn::before {
-    content: '';
-    width: 16px;
-    height: 16px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    display: inline-block;
-}
-
 /* === Кнопка "Добавить место" === */
 .add-place-btn {
     display: inline-flex;
@@ -386,4 +376,19 @@
 
 .theme-btn:active {
     transform: scale(0.95);
+}
+
+/* Убираем дублирующий "+" из CSS — теперь используется Lucide */
+.add-place-btn::before,
+.add-place-btn::after,
+#hasharCreateBtn::before,
+#hasharCreateBtn::after,
+#dashAddPlanBtn::before,
+#dashAddPlanBtn::after,
+#gapCreateBtn::before,
+#gapCreateBtn::after,
+#dashHasharCreateBtn::before,
+#dashHasharCreateBtn::after {
+    content: none !important;
+    display: none !important;
 }

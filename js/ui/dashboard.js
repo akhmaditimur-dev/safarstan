@@ -10,7 +10,6 @@ function showLanding() {
     if (dashboard) dashboard.style.display = 'none';
     if (hero) hero.style.display = 'none';
 
-    // Скрываем секции для не-залогиненных
     hidePrivateSections();
 }
 
@@ -31,7 +30,6 @@ async function showDashboard() {
     await renderFriends();
     await renderFeed();
 
-    // Обновить иконки
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
@@ -65,7 +63,7 @@ function showPrivateSections() {
 function renderDashboard() {
     if (!PLAYER) return;
 
-    // === АВАТАР: через renderAvatar (из profile.js) ===
+    // === АВАТАР ===
     const dashAvatar = document.getElementById('dashAvatar');
     if (dashAvatar && typeof renderAvatar === 'function') {
         renderAvatar(dashAvatar, PLAYER.avatar);
@@ -98,16 +96,20 @@ function renderDashboard() {
         const visitedCount = Object.values(visited).filter(n => n > 0).length;
 
         if (visitedCount === 0) {
-            citiesEl.innerHTML = '<div class="dashboard-empty">Пока нет посещённых городов. Начни с чек-ина! ✅</div>';
+            citiesEl.innerHTML = `
+                <div class="dashboard-empty">
+                    Пока нет посещённых городов. Начни с чек-ина!
+                </div>
+            `;
         } else {
-                citiesEl.innerHTML = Object.entries(CITIES).map(([key, city]) => {
+            citiesEl.innerHTML = Object.entries(CITIES).map(([key, city]) => {
                 const isHome = key === PLAYER.homeCity;
                 const isCurrent = key === PLAYER.currentCity;
                 const isVisited = visited[key] > 0;
                 let cls = 'city-chip';
                 let icon = '';
 
-                if (isHome) { cls += ' home'; icon = '<i data-lucide="home"></i>'; }
+                if (isHome)         { cls += ' home';    icon = '<i data-lucide="home"></i>'; }
                 else if (isCurrent) { cls += ' current'; icon = '<i data-lucide="map-pin"></i>'; }
                 else if (isVisited) { cls += ' visited'; icon = '<i data-lucide="check"></i>'; }
                 else return '';
@@ -131,11 +133,15 @@ function renderDashboard() {
             .slice(0, 3);
 
         if (activeQuests.length === 0) {
-            questsEl.innerHTML = '<div class="dashboard-empty">🎉 Все квесты выполнены!</div>';
+            questsEl.innerHTML = `
+                <div class="dashboard-empty">
+                    <i data-lucide="party-popper"></i> Все квесты выполнены!
+                </div>
+            `;
         } else {
             questsEl.innerHTML = activeQuests.map(({ quest, result }) => `
                 <div class="dashboard-quest">
-                    <div class="dashboard-quest__icon">${quest.icon}</div>
+                    <div class="dashboard-quest__icon"><i data-lucide="${quest.icon}"></i></div>
                     <div class="dashboard-quest__info">
                         <div class="dashboard-quest__name">${quest.name}</div>
                         <div class="dashboard-quest__progress">${result.progress[0]} / ${result.progress[1]}</div>
@@ -152,18 +158,26 @@ function renderDashboard() {
         const visitedCount = Object.values(visited).filter(n => n > 0).length;
         const homeCityScores = CITY_SCORES[PLAYER.homeCity] || { residents: 0, home: 0, hospitality: 0 };
         const currentCityScores = CITY_SCORES[PLAYER.currentCity] || { residents: 0, home: 0, hospitality: 0 };
+        const homeCityName = CITIES[PLAYER.homeCity] ? CITIES[PLAYER.homeCity].name : PLAYER.homeCity;
+        const currentCityName = CITIES[PLAYER.currentCity] ? CITIES[PLAYER.currentCity].name : PLAYER.currentCity;
 
         contribEl.innerHTML = `
             <div class="dashboard-contribution__item">
-                <span class="dashboard-contribution__label">🏠 ${CITIES[PLAYER.homeCity].name}</span>
+                <span class="dashboard-contribution__label">
+                    <i data-lucide="home"></i> ${homeCityName}
+                </span>
                 <span class="dashboard-contribution__value">${homeCityScores.residents + homeCityScores.home + homeCityScores.hospitality}</span>
             </div>
             <div class="dashboard-contribution__item">
-                <span class="dashboard-contribution__label">📍 ${CITIES[PLAYER.currentCity].name}</span>
+                <span class="dashboard-contribution__label">
+                    <i data-lucide="map-pin"></i> ${currentCityName}
+                </span>
                 <span class="dashboard-contribution__value">${currentCityScores.residents + currentCityScores.home + currentCityScores.hospitality}</span>
             </div>
             <div class="dashboard-contribution__item">
-                <span class="dashboard-contribution__label">🗺 Городов посещено</span>
+                <span class="dashboard-contribution__label">
+                    <i data-lucide="map"></i> Городов посещено
+                </span>
                 <span class="dashboard-contribution__value">${visitedCount}</span>
             </div>
         `;
@@ -193,7 +207,7 @@ async function renderPlans() {
     if (PLANS.length === 0) {
         container.innerHTML = `
             <div class="dashboard-empty">
-                Пока нет планов. Куда собираешься? 📌
+                Пока нет планов. Куда собираешься?
             </div>
         `;
         return;
@@ -209,27 +223,47 @@ async function renderPlans() {
         const city = CITIES[plan.city_key];
 
         let countdownText = '';
-        if (diffDays === 0) countdownText = '🔥 Сегодня!';
-        else if (diffDays === 1) countdownText = '⏰ Завтра';
-        else if (diffDays > 1) countdownText = `📅 Через ${diffDays} дн.`;
-        else countdownText = '⚠️ Просрочен';
+        let countdownIcon = '';
+
+        if (diffDays === 0) {
+            countdownIcon = 'flame';
+            countdownText = 'Сегодня!';
+        } else if (diffDays === 1) {
+            countdownIcon = 'clock';
+            countdownText = 'Завтра';
+        } else if (diffDays > 1) {
+            countdownIcon = 'calendar';
+            countdownText = `Через ${diffDays} дн.`;
+        } else {
+            countdownIcon = 'alert-triangle';
+            countdownText = 'Просрочен';
+        }
 
         return `
             <div class="plan-item ${isNext ? 'plan-item--next' : ''}">
                 <div class="plan-item__info">
                     <div class="plan-item__city">${city ? city.name : plan.city_key}</div>
-                    ${plan.place_title ? `<div class="plan-item__place">📍 ${plan.place_title}</div>` : ''}
+                    ${plan.place_title ? `<div class="plan-item__place"><i data-lucide="map-pin"></i> ${plan.place_title}</div>` : ''}
                     ${plan.note ? `<div class="plan-item__note">"${plan.note}"</div>` : ''}
                     <div class="plan-item__date">${formatDate(plan.visit_date)}</div>
-                    <div class="plan-item__countdown">${countdownText}</div>
+                    <div class="plan-item__countdown">
+                        <i data-lucide="${countdownIcon}"></i> ${countdownText}
+                    </div>
                 </div>
                 <div class="plan-item__actions">
-                    <button class="plan-item__btn" data-plan-complete="${plan.id}" title="Выполнено">✅</button>
-                    <button class="plan-item__btn" data-plan-delete="${plan.id}" title="Удалить">🗑</button>
+                    <button class="plan-item__btn" data-plan-complete="${plan.id}" title="Выполнено">
+                        <i data-lucide="check"></i>
+                    </button>
+                    <button class="plan-item__btn" data-plan-delete="${plan.id}" title="Удалить">
+                        <i data-lucide="trash-2"></i>
+                    </button>
                 </div>
             </div>
         `;
     }).join('');
+
+    // Превращаем Lucide-иконки в SVG
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // === Утилита: формат даты ===
