@@ -1,6 +1,6 @@
 /* ============ КВЕСТЫ ============ */
 
-/* === Сетка квестов (гибкая) === */
+/* === Сетка квестов === */
 .quests-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -13,7 +13,8 @@
     border-radius: var(--radius-lg);
     padding: 16px;
     box-shadow: var(--shadow-sm);
-    transition: all var(--transition-base);
+    transition: transform var(--transition-base),
+                box-shadow var(--transition-base);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -37,18 +38,6 @@
     gap: 12px;
 }
 
-.quest-icon {
-    font-size: 22px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-bg-soft);
-    border-radius: var(--radius-md);
-    flex-shrink: 0;
-}
-
 .quest-title {
     flex: 1;
     min-width: 0;
@@ -70,7 +59,66 @@
     margin: 0;
 }
 
+/* === Иконка квеста — зелёный кружок === */
+.quest-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-primary-light, #dcfce7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+    color: var(--color-primary);
+    box-shadow: 0 0 0 1px rgba(22, 163, 74, 0.15);
+}
+
+.quest-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2;
+    color: var(--color-primary);
+}
+
+/* Выполненный квест — серый кружок */
+.quest-card.done .quest-icon {
+    background: var(--color-border-soft, #f1f5f9);
+    color: var(--color-text-soft, #94a3b8);
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+.quest-card.done .quest-icon svg {
+    color: var(--color-text-soft, #94a3b8);
+}
+
+/* Тёмная тема */
+[data-theme="dark"] .quest-icon {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3);
+}
+
+[data-theme="dark"] .quest-icon svg {
+    color: #4ade80;
+}
+
+[data-theme="dark"] .quest-card.done .quest-icon {
+    background: rgba(148, 163, 184, 0.1);
+    color: #64748b;
+    box-shadow: none;
+}
+
+[data-theme="dark"] .quest-card.done .quest-icon svg {
+    color: #64748b;
+}
+
+/* === Бейдж «Готово» === */
 .quest-done-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     background: var(--color-success);
     color: #fff;
     padding: 4px 10px;
@@ -79,6 +127,12 @@
     font-weight: var(--fw-bold);
     white-space: nowrap;
     flex-shrink: 0;
+}
+
+.quest-done-badge svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
 }
 
 /* === Прогресс === */
@@ -121,9 +175,18 @@
 
 /* === Награда === */
 .quest-reward {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: var(--fs-xs);
     color: var(--color-accent);
     font-weight: var(--fw-semibold);
+}
+
+.quest-reward svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
 }
 
 .quest-card.done .quest-reward {
@@ -140,113 +203,61 @@
     line-height: 1.6;
 }
 
+/* ============================================
+   КНОПКА «ПОКАЗАТЬ ВСЕ»
+   ============================================ */
+.quests-show-more-btn {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin: 32px 0 0 auto;
+    padding: 10px 20px;
+    background: var(--color-bg-soft);
+    border: none;
+    border-radius: var(--radius-full);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: background var(--transition-fast),
+                color var(--transition-fast);
+}
+
+.quests-show-more-btn.is-visible {
+    display: inline-flex !important; ;
+}
+
+.quests-show-more-btn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.quests-show-more-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
 /* === Мобильный === */
 @media (max-width: 500px) {
     .quests-list {
         grid-template-columns: 1fr;
     }
-    
+
     .quest-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
+        width: 40px;
+        height: 40px;
     }
-}
 
-/* ============================================
-   ИКОНКА КВЕСТА (единый зелёный кружок)
-   ============================================ */
-.quest-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--color-primary-light, #dcfce7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-    line-height: 1;
-    color: var(--color-primary);
-    box-shadow: 0 0 0 1px rgba(22, 163, 74, 0.15);
-}
+    .quest-icon svg {
+        width: 18px;
+        height: 18px;
+    }
 
-/* Выполненный квест — серый кружок */
-.quest-card.done .quest-icon {
-    background: var(--color-border-soft, #f1f5f9);
-    color: var(--color-text-soft, #94a3b8);
-    box-shadow: none;
-    opacity: 0.7;
-}
-
-/* Тёмная тема */
-[data-theme="dark"] .quest-icon {
-    background: rgba(34, 197, 94, 0.15);
-    color: #4ade80;
-    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3);
-}
-
-[data-theme="dark"] .quest-card.done .quest-icon {
-    background: rgba(148, 163, 184, 0.1);
-    color: #64748b;
-    box-shadow: none;
-}
-
-/* Иконки Lucide внутри элементов */
-.quest-icon svg,
-.badge-icon svg,
-.quest-done-badge svg,
-.quest-reward svg,
-.my-review-delete svg,
-.city-chip svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2;
-    flex-shrink: 0;
-}
-
-.quest-icon svg {
-    width: 22px;
-    height: 22px;
-    color: var(--color-primary);
-}
-
-.badge-icon svg {
-    width: 24px;
-    height: 24px;
-    color: var(--color-primary);
-}
-
-.quest-done-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.quest-reward {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.city-chip svg {
-    width: 14px;
-    height: 14px;
-    margin-right: 2px;
-    vertical-align: -2px;
-}
-
-.city-chip.home svg    { color: #f59e0b; }
-.city-chip.current svg { color: #3b82f6; }
-.city-chip.visited svg { color: #16a34a; }
-
-.my-review-delete {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.my-review-delete svg {
-    width: 14px;
-    height: 14px;
+    .quests-show-more-btn {
+        margin-right: auto;
+        margin-left: auto;
+    }
 }

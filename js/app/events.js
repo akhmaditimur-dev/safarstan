@@ -57,6 +57,7 @@ on('ratingPeriods', 'click', (e) => {
 on('questTabs', 'click', (e) => {
     if (!e.target.classList.contains('tab')) return;
     currentQuestTab = e.target.dataset.quest;
+    _questsExpanded = false;   // ← сбрасываем при смене таба
     renderQuestTabs();
     renderQuests();
 });
