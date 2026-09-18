@@ -3,7 +3,7 @@
 // Регистрация Service Worker (только через http://, не file://)
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+            navigator.serviceWorker.register('./sw.js')
             .then((reg) => console.log('✅ SW зарегистрирован:', reg.scope))
             .catch((err) => console.warn('⚠️ SW не зарегистрирован:', err));
     });
