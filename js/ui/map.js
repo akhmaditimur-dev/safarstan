@@ -8,11 +8,9 @@ let hasharLayer = null;
 let cityTooltipOverlay = null;
 let currentHoveredCity = null;
 
-// Кэш статистики
 let _cityGapStatsCache = null;
 let _cityHasharStatsCache = null;
 
-// Центр карты — мир
 const MAP_CENTER = [40.0, 40.0];
 const MAP_ZOOM = 3;
 
@@ -28,7 +26,6 @@ function renderMap() {
         return;
     }
 
-    // --- Слой городов ---
     citySource = new ol.source.Vector();
     cityLayer = new ol.layer.Vector({
         source: citySource,
@@ -36,7 +33,6 @@ function renderMap() {
         zIndex: 10,
     });
 
-    // --- Слой хашаров ---
     hasharSource = new ol.source.Vector();
     hasharLayer = new ol.layer.Vector({
         source: hasharSource,
@@ -107,7 +103,6 @@ function renderMap() {
     safarstanMap.on('pointermove', async (evt) => {
         if (evt.dragging) return;
 
-        // Ищем город
         const feature = safarstanMap.forEachFeatureAtPixel(
             evt.pixel,
             (f) => f,
@@ -184,7 +179,6 @@ function updateMapMarkers() {
         citySource.addFeature(feature);
     });
 
-    // Обновляем хашары — если тумблер включён
     if (typeof isMapLayerEnabled !== 'function' || isMapLayerEnabled('hashars')) {
         renderHasharMarkers();
     } else if (hasharSource) {
@@ -234,12 +228,10 @@ function resetCityStatsCache() {
 }
 
 // ============================================
-// БЕЙДЖИ ГАПОВ — теперь только в тултипе
+// БЕЙДЖИ ГАПОВ — только в тултипе
 // ============================================
-// Функция оставлена для совместимости, но не рисует на карте
 async function renderGapBadges() {
-    // Умышленно пусто — бейджи гапов не показываем на карте.
-    // Данные показываются в тултипе при наведении на город.
+    // На карте бейджи не рисуем. Данные — в тултипе.
     return;
 }
 
@@ -263,15 +255,20 @@ async function renderHasharMarkers() {
         return;
     }
 
-    const catIcons = {
-        repair: '🔨', trees: '🌳', cleanup: '🧹',
-        help: '🤝', charity: '❤️', other: '📌',
+    // Текстовые метки категорий
+    const catSymbols = {
+        repair: 'Р',
+        trees:  'Д',
+        cleanup:'У',
+        help:   'П',
+        charity:'Б',
+        other:  '•',
     };
 
     hashars.forEach(h => {
         if (!h.coords || !h.coords.lat || !h.coords.lng) return;
 
-        const emoji = catIcons[h.category] || '📌';
+        const symbol = catSymbols[h.category] || '•';
 
         const feature = new ol.Feature({
             geometry: new ol.geom.Point(
@@ -287,25 +284,15 @@ async function renderHasharMarkers() {
                 stroke: new ol.style.Stroke({ color: '#ffffff', width: 2 }),
             }),
             text: new ol.style.Text({
-                text: emoji,
-                font: '13px sans-serif',
+                text: symbol,
+                font: 'bold 12px Inter, Arial, sans-serif',
+                fill: new ol.style.Fill({ color: '#ffffff' }),
                 offsetY: 0,
             }),
         }));
 
         hasharSource.addFeature(feature);
     });
-}
-
-// ============================================
-// ХЕЛПЕР: СКЛОНЕНИЕ
-// ============================================
-function plural(n, one, few, many) {
-    const mod10 = n % 10;
-    const mod100 = n % 100;
-    if (mod10 === 1 && mod100 !== 11) return one;
-    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
-    return many;
 }
 
 // ============================================
@@ -374,7 +361,6 @@ async function showCityTooltip(cityKey) {
     cityTooltipOverlay.setPosition(coords);
     tooltipEl.style.display = 'block';
 
-    // Превращаем Lucide-иконки в SVG
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 

@@ -7,5 +7,7 @@ async function renderAll() {
     await renderHotels();
     await renderServices();
     renderTabs();
-    renderIcons();
+
+    // Иконки — после всех рендеров
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }

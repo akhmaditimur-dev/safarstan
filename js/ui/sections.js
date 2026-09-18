@@ -1,6 +1,6 @@
 // ============ UI: СЕКЦИИ (город, табы, язык) ============
 
-// ----- Хелперы (безопасная установка текста и HTML) -----
+// ----- Хелперы -----
 function $(sel, root = document) {
     return typeof sel === 'string' ? root.querySelector(sel) : sel;
 }
@@ -41,8 +41,9 @@ function renderCityInfo() {
                 const warn = document.createElement('div');
                 warn.id = 'cityWarning';
                 warn.className = 'city-warning';
-                warn.textContent = '⚠️ Особый режим въезда: проверьте визовые требования';
+                warn.innerHTML = '<i data-lucide="alert-triangle"></i> Особый режим въезда: проверьте визовые требования';
                 desc.after(warn);
+                if (typeof lucide !== 'undefined') lucide.createIcons();
             }
         }
     } else if (warnEl) {
@@ -53,7 +54,6 @@ function renderCityInfo() {
     setText('statCurrency', city.currency);
     setText('statLanguage', city.language);
     setText('statTime', city.time);
-
 }
 
 // ============ ТАБЫ ТРАНСПОРТА ============
@@ -82,7 +82,7 @@ function applyLang() {
     setText('#hotels h2',    dict.hotels    || '');
     setText('#services h2',  dict.services  || '');
 
-    // Кнопка языка (если она есть в HTML — обновится, если нет — просто пропустится)
+    // Кнопка языка
     setText('langBtn', currentLang === 'ru' ? 'EN' : 'RU');
 
     // Табы транспорта
@@ -134,10 +134,9 @@ async function renderCityAnalytics() {
         if (topPlaces.length === 0) {
             placesEl.innerHTML = '<div class="city-analytics__empty">Пока нет данных</div>';
         } else {
-            const medals = ['🥇', '🥈', '🥉'];
             placesEl.innerHTML = topPlaces.map((p, i) => `
                 <div class="city-analytics__item">
-                    <span class="city-analytics__item-rank">${medals[i] || ''}</span>
+                    <span class="city-analytics__item-rank">${i + 1}</span>
                     <span class="city-analytics__item-name">${p.title || '—'}</span>
                     <span class="city-analytics__item-value">${p.count || 0}</span>
                 </div>
@@ -152,14 +151,15 @@ async function renderCityAnalytics() {
         if (topPlayers.length === 0) {
             playersEl.innerHTML = '<div class="city-analytics__empty">Пока нет данных</div>';
         } else {
-            const medals = ['🥇', '🥈', '🥉'];
             playersEl.innerHTML = topPlayers.map((p, i) => `
                 <div class="city-analytics__item" data-player-profile="${p.id}" style="cursor:pointer;">
-                    <span class="city-analytics__item-rank">${medals[i] || ''}</span>
+                    <span class="city-analytics__item-rank">${i + 1}</span>
                     <span class="city-analytics__item-name">${p.name || '—'}</span>
                     <span class="city-analytics__item-value">${p.count || 0}</span>
                 </div>
             `).join('');
         }
     }
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }

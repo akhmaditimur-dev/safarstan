@@ -8,8 +8,20 @@ let authMode = 'signup';
 async function initApp() {
     const session = await getCurrentSession();
 
+    // ─── Всегда инициализируем базовые вещи ───
+    initCitySearch();
+    renderCitySelector();
+    renderMap();
+
+    // Применяем язык (заголовки секций, hero)
+    applyLang();
+
+    // ─── Если НЕ залогинен ───
     if (!session) {
         showLanding();
+        await renderAll();
+        renderTabs();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 
@@ -17,6 +29,9 @@ async function initApp() {
 
     if (!serverPlayer) {
         showLanding();
+        await renderAll();
+        renderTabs();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 
@@ -41,10 +56,6 @@ async function initApp() {
         settings: serverPlayer.settings || {},
     };
 
-    // Инициализация поиска и выбора города
-    initCitySearch();
-    renderCitySelector();
-
     // Загрузка чек-инов
     const checkins = await loadCheckins(serverPlayer.id);
     PLAYER.checkins = checkins;
@@ -63,11 +74,9 @@ async function initApp() {
 
     // Профиль и навигация
     updatePlayerBadge();
-
-    // Применяем видимость модулей
     if (typeof applyModuleVisibility === 'function') applyModuleVisibility();
 
-    // Табы (активные состояния)
+    // Табы
     if (typeof renderRatingTabs === 'function') renderRatingTabs();
     if (typeof renderQuestTabs === 'function') renderQuestTabs();
 
@@ -89,13 +98,8 @@ async function initApp() {
     renderMap();
     await renderAll();
 
-    // Сохранение состояния
     if (typeof saveState === 'function') saveState();
-
-    // Показ дашборда
     await showDashboard();
-
-    // Инициализация поиска в шапке
     if (typeof initHeaderSearch === 'function') initHeaderSearch();
 }
 
@@ -131,6 +135,27 @@ function updateAuthUI() {
     if (errEl) errEl.style.display = 'none';
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// ============================================
+// ТЕМА
+// ============================================
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('safarstan_theme', theme);
+}
+
+function initTheme() {
+    const saved = localStorage.getItem('safarstan_theme') || 'light';
+    applyTheme(saved);
+}
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
 }
 
 // ============================================
@@ -204,27 +229,6 @@ function openPhotoModal(placeKey, placeName) {
     if (errEl) errEl.style.display = 'none';
 
     document.getElementById('photoModal').style.display = 'flex';
-}
-
-// ============================================
-// ТЕМА
-// ============================================
-function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    const btn = document.getElementById('themeBtn');
-    if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
-    localStorage.setItem('safarstan_theme', theme);
-}
-
-function initTheme() {
-    const saved = localStorage.getItem('safarstan_theme') || 'light';
-    applyTheme(saved);
-}
-
-function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme') || 'light';
-    const next = current === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
 }
 
 // ============================================

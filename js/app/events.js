@@ -87,7 +87,7 @@ document.addEventListener('click', async (e) => {
 // ЛЕНДИНГ
 // ============================================
 on('landingStartBtn', 'click', () => {
-    showAuthModal('signup');
+    showAuthModal('signin');
 });
 
 // ============================================
@@ -306,6 +306,17 @@ on('authSubmit', 'click', async () => {
 
         setPlayerFromServer(serverPlayer);
         await afterAuth();
+    }
+});
+
+// Закрытие модалки авторизации
+on('authClose', 'click', () => {
+    document.getElementById('authModal').style.display = 'none';
+});
+
+on('authModal', 'click', (e) => {
+    if (e.target.id === 'authModal') {
+        e.target.style.display = 'none';
     }
 });
 

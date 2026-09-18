@@ -315,8 +315,53 @@
         </div>
     </section>
 
+    <!-- КАРТА -->
+    <section class="section section--alt" id="map">
+    <div class="container">
+        <h2>Карта Центральной Азии</h2>
+
+        <div class="map-header">
+            <p class="map-legend">
+                <span class="legend-item"><span class="dot visited"></span> Посещённые</span>
+                <span class="legend-item"><span class="dot unvisited"></span> Не посещённые</span>
+                <span class="legend-item"><span class="dot home"></span> Родной</span>
+                <span class="legend-item"><span class="dot current"></span> Текущий</span>
+            </p>
+            <button class="map-settings-btn" id="mapSettingsBtn" title="Настройки карты"><i data-lucide="settings"></i></button>
+        </div>
+
+        <div class="map-wrapper">
+            <div id="safarstanMap" class="map-container"></div>
+            <div id="cityTooltip" class="city-tooltip" style="display:none;"></div>
+        </div>
+    </div>
+    </section>
+
+    <!-- РЕЙТИНГ -->
+    <section class="section" id="ratings">
+    <div class="container">
+        <h2>Рейтинг городов</h2>
+
+        <div class="tabs tabs--scroll" id="ratingTabs">
+            <button class="tab active" data-rating="residents"><i data-lucide="home"></i> Жители</button>
+            <button class="tab" data-rating="home"><i data-lucide="house"></i> Родной дом</button>
+            <button class="tab" data-rating="hospitality"><i data-lucide="hand-heart"></i> Гостеприимство</button>
+            <button class="tab" data-rating="tourists"><i data-lucide="luggage"></i> Туристы</button>
+            <button class="tab" data-rating="content"><i data-lucide="camera"></i> Контент</button>
+        </div>
+
+        <div class="rating-periods" id="ratingPeriods">
+            <button class="rating-period" data-period="all">Всё время</button>
+            <button class="rating-period" data-period="month">Месяц</button>
+            <button class="rating-period active" data-period="week">Неделя</button>
+        </div>
+
+        <div id="ratingList" class="rating-list"></div>
+    </div>
+    </section>
+
     <!-- О ГОРОДЕ -->
-    <section class="section" id="info">
+    <section class="section section--alt" id="info">
         <div class="container">
             <div class="city-header">
                 <h2 id="cityTitle">Ташкент</h2>
@@ -358,29 +403,6 @@
         </div>
     </section>
 
-    <!-- РЕЙТИНГ -->
-    <section class="section section--alt" id="ratings">
-    <div class="container">
-        <h2>Рейтинг городов</h2>
-
-        <div class="tabs tabs--scroll" id="ratingTabs">
-            <button class="tab active" data-rating="residents"><i data-lucide="home"></i> Жители</button>
-            <button class="tab" data-rating="home"><i data-lucide="house"></i> Родной дом</button>
-            <button class="tab" data-rating="hospitality"><i data-lucide="hand-heart"></i> Гостеприимство</button>
-            <button class="tab" data-rating="tourists"><i data-lucide="luggage"></i> Туристы</button>
-            <button class="tab" data-rating="content"><i data-lucide="camera"></i> Контент</button>
-        </div>
-
-        <div class="rating-periods" id="ratingPeriods">
-            <button class="rating-period" data-period="all">Всё время</button>
-            <button class="rating-period" data-period="month">Месяц</button>
-            <button class="rating-period active" data-period="week">Неделя</button>
-        </div>
-
-        <div id="ratingList" class="rating-list"></div>
-    </div>
-    </section>
-
     <!-- КВЕСТЫ -->
     <section class="section" id="quests">
         <div class="container">
@@ -394,33 +416,22 @@
         </div>
     </section>
 
-    <!-- КАРТА -->
-    <section class="section section--alt" id="map">
-    <div class="container">
-        <h2>Карта Центральной Азии</h2>
-
-        <div class="map-header">
-            <p class="map-legend">
-                <span class="legend-item"><span class="dot visited"></span> Посещённые</span>
-                <span class="legend-item"><span class="dot unvisited"></span> Не посещённые</span>
-                <span class="legend-item"><span class="dot home"></span> Родной</span>
-                <span class="legend-item"><span class="dot current"></span> Текущий</span>
-            </p>
-            <button class="map-settings-btn" id="mapSettingsBtn" title="Настройки карты"><i data-lucide="settings"></i></button>
+    <!-- ОТЕЛИ -->
+    <section class="section section--alt" id="hotels">
+        <div class="container">
+            <div class="section-header">
+                <h2>Где остановиться</h2>
+                <button class="add-place-btn" data-category="hotel"><i data-lucide="plus"></i> Добавить место</button>
+            </div>
+            <div id="hotelsList" class="cards"></div>
         </div>
-
-        <div class="map-wrapper">
-            <div id="safarstanMap" class="map-container"></div>
-            <div id="cityTooltip" class="city-tooltip" style="display:none;"></div>
-        </div>
-    </div>
     </section>
 
     <!-- ТРАНСПОРТ -->
-    <section class="section section--alt" id="transport">
+    <section class="section" id="transport">
         <div class="container">
             <div class="section-header">
-                <h2>Междугородний транспорт</h2>
+                <h2>Транспорт</h2>
                 <button class="add-place-btn" data-category="train"><i data-lucide="plus"></i> Добавить место</button>
             </div>
             <div class="tabs" id="transportTabs">
@@ -432,29 +443,18 @@
         </div>
     </section>
 
-    <!-- ОТЕЛИ -->
-    <section class="section" id="hotels">
-        <div class="container">
-            <div class="section-header">
-                <h2>Где остановиться</h2>
-                <button class="add-place-btn" data-category="hotel"><i data-lucide="plus"></i> Добавить место</button>
-            </div>
-            <div id="hotelsList" class="cards"></div>
-        </div>
-    </section>
-
     <!-- СЕРВИСЫ -->
     <section class="section section--alt" id="services">
         <div class="container">
             <div class="section-header">
-                <h2>Локальные сервисы</h2>
+                <h2>Сервисы</h2>
                 <button class="add-place-btn" data-category="service"><i data-lucide="plus"></i> Добавить место</button>
             </div>
             <div id="servicesList" class="cards"></div>
         </div>
     </section>
 
-        <!-- ПОДВАЛ -->
+    <!-- ПОДВАЛ -->
     <footer class="footer">
         <div class="container">
             <p>© 2026 Safarstan</p>
@@ -487,8 +487,9 @@
 
     <!-- МОДАЛКИ -->
     <div id="authModal" class="modal-overlay" style="display:none;">
-        <div class="modal">
-            <h2 id="authTitle">Добро пожаловать в Safarstan!</h2>
+    <div class="modal">
+        <button id="authClose" class="modal-close"><i data-lucide="x"></i></button>
+        <h2 id="authTitle">Добро пожаловать в Safarstan!</h2>
             <p class="modal-subtitle" id="authSubtitle">Войди или зарегистрируйся</p>
             <div class="auth-tabs">
                 <button class="auth-tab active" data-mode="signup">Регистрация</button>
