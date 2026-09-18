@@ -375,3 +375,65 @@
         font-size: 11px;
     }
 }
+
+/* ============================================
+   ЧИПЫ ГОРОДОВ И СТРАНЫ В HERO
+   ============================================ */
+
+/* Чипы городов на тёмном фоне */
+.hero .city-chip {
+    background: rgba(255, 255, 255, 0.15);
+    color: #d1d5db;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero .city-chip:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+
+.hero .city-chip.active {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-primary-dark);
+}
+
+.hero .city-chip svg {
+    color: #d1d5db;
+}
+
+.hero .city-chip.active svg {
+    color: var(--color-primary-dark);
+}
+
+/* Страны */
+.hero .country-item__name {
+    color: #d1d5db;
+    font-weight: 500;
+}
+
+.hero .country-item__count {
+    color: #9ca3af;
+}
+
+.hero .country-item__flag {
+    color: #d1d5db;
+    font-weight: 600;
+}
+
+.hero .country-item__arrow svg {
+    color: #9ca3af;
+}
+
+.hero .country-item__header:hover .country-item__name {
+    color: #fff;
+}
+
+/* Заголовки секций «ТВОИ ГОРОДА» и «ВСЕ СТРАНЫ» */
+.hero .city-section__title {
+    color: #d1d5db;
+}
+
+.hero .city-section__title svg {
+    color: #d1d5db;
+}

@@ -2,18 +2,17 @@
 
 // Список модулей (общие настройки в профиле)
 const AVAILABLE_MODULES = [
-    { id: 'friends', icon: '👥', label: 'Друзья' },
-    { id: 'quests',  icon: '🎯', label: 'Квесты' },
-    { id: 'gaps',    icon: '☕', label: 'Гапы' },
-    { id: 'hashars', icon: '🤝', label: 'Хашары' },
+    { id: 'friends', icon: 'users',      label: 'Друзья' },
+    { id: 'quests',  icon: 'target',     label: 'Квесты' },
+    { id: 'gaps',    icon: 'coffee',     label: 'Гапы' },
+    { id: 'hashars', icon: 'hand-heart', label: 'Хашары' },
 ];
 
-// Слои карты (что показывать в тултипе)
 const MAP_LAYERS = [
-    { id: 'friends', icon: '👥', label: 'Друзья' },
-    { id: 'quests',  icon: '🎯', label: 'Квесты' },
-    { id: 'gaps',    icon: '☕', label: 'Гапы' },
-    { id: 'hashars', icon: '🤝', label: 'Хашары' },
+    { id: 'friends', icon: 'users',      label: 'Друзья' },
+    { id: 'quests',  icon: 'target',     label: 'Квесты' },
+    { id: 'gaps',    icon: 'coffee',     label: 'Гапы' },
+    { id: 'hashars', icon: 'hand-heart', label: 'Хашары' },
 ];
 
 // ============================================
@@ -41,7 +40,7 @@ function renderModulesSettings() {
     container.innerHTML = AVAILABLE_MODULES.map(mod => `
         <div class="module-row">
             <div class="module-label">
-                <span class="module-emoji">${mod.icon}</span>
+                <span class="module-emoji"><i data-lucide="${mod.icon}"></i></span>
                 <span>${mod.label}</span>
             </div>
             <label class="toggle">
@@ -52,6 +51,8 @@ function renderModulesSettings() {
             </label>
         </div>
     `).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -64,7 +65,7 @@ function renderMapSettings() {
     container.innerHTML = MAP_LAYERS.map(layer => `
         <div class="module-row">
             <div class="module-label">
-                <span class="module-emoji">${layer.icon}</span>
+                <span class="module-emoji"><i data-lucide="${layer.icon}"></i></span>
                 <span>${layer.label}</span>
             </div>
             <label class="toggle">
@@ -75,6 +76,8 @@ function renderMapSettings() {
             </label>
         </div>
     `).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -133,9 +136,9 @@ async function saveMapSetting(layerName, value) {
 // ============================================
 function applyModuleVisibility() {
     const sections = {
-        gaps:    ['dashGaps', 'gapInvitesBlock', 'navGapsBtn'],
-        hashars: ['dashHashars', 'hashars', 'navHasharsBtn'],
-        quests:  ['quests', 'navQuestsBtn'],
+        gaps:    ['dashGapsCard', 'gapInvitesBlock', 'navGapsBtn'],
+        hashars: ['dashHasharsCard', 'navHasharsBtn'],
+        quests:  ['dashQuestsCard', 'quests', 'navQuestsBtn'],
         friends: ['navFriendsBtn'],
     };
 

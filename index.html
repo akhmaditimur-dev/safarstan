@@ -79,7 +79,7 @@
             <div class="header-search" id="headerSearch">
                 <div class="header-search__input-wrap">
                     <span class="header-search__icon"><i data-lucide="search"></i></span>
-                    <input type="text" id="headerSearchInput" class="header-search__input" placeholder="Поиск" autocomplete="off">
+                    <input type="text" id="headerSearchInput" class="header-search__input" placeholder="Поиск" autocomplete="off" name="header-search-no-autofill" readonly onfocus="this.removeAttribute('readonly')">
                     <button id="headerSearchClear" class="header-search__clear" style="display:none;"><i data-lucide="x"></i></button>
                 </div>
                 <div id="headerSearchResults" class="header-search__results" style="display:none;"></div>
@@ -250,7 +250,7 @@
                         <div class="dashboard-contribution" id="dashContribution"></div>
                     </div>
 
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" id="dashQuestsCard">
                         <h3>Активные квесты</h3>
                         <div class="dashboard-quests" id="dashQuests"></div>
                     </div>
@@ -263,7 +263,7 @@
                         <div class="dashboard-plans" id="dashPlans"></div>
                     </div>
 
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" id="dashGapsCard">
                         <div class="dashboard-card__header">
                             <h3>Мои гапы</h3>
                             <button class="btn btn-ghost btn-sm" id="gapCreateBtn"><i data-lucide="plus"></i></button>
@@ -271,7 +271,7 @@
                         <div class="dashboard-gaps" id="dashGaps"></div>
                     </div>
 
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" id="dashHasharsCard">
                         <div class="dashboard-card__header">
                             <h3>Мои хашары</h3>
                             <button class="btn btn-ghost btn-sm" id="dashHasharCreateBtn"><i data-lucide="plus"></i></button>
@@ -295,7 +295,7 @@
                     <div class="city-search">
                         <div class="city-search__input-wrap">
                             <span class="city-search__icon"><i data-lucide="search"></i></span>
-                            <input type="text" id="citySearchInput" class="city-search__input" placeholder="Найти город..." autocomplete="off">
+                            <input type="text" id="citySearchInput" class="city-search__input" placeholder="Поиск" autocomplete="off" name="city-search-no-autofill" readonly onfocus="this.removeAttribute('readonly')">
                             <button id="citySearchClear" class="city-search__clear" style="display:none;"><i data-lucide="x"></i></button>
                         </div>
                         <div id="citySearchResults" class="city-search__results" style="display:none;"></div>
@@ -454,29 +454,7 @@
         </div>
     </section>
 
-    <!-- ХАШАРЫ -->
-    <section class="section" id="hashars">
-        <div class="container">
-            <div class="section-header">
-                <h2><i data-lucide="hand-heart"></i> Хашары</h2>
-                <button class="btn btn-primary btn-sm" id="hasharCreateBtn"><i data-lucide="plus"></i> Создать</button>
-            </div>
-            <p class="hashar-subtitle">Собери соседей для общего дела: ремонт, деревья, уборка, помощь</p>
-
-            <div class="hashar-filters" id="hasharFilters">
-                <button class="hashar-filter active" data-hashar-filter-cat="">Все</button>
-                <button class="hashar-filter" data-hashar-filter-cat="repair"><i data-lucide="hammer"></i> Ремонт</button>
-                <button class="hashar-filter" data-hashar-filter-cat="trees"><i data-lucide="trees"></i> Деревья</button>
-                <button class="hashar-filter" data-hashar-filter-cat="cleanup"><i data-lucide="brush"></i> Уборка</button>
-                <button class="hashar-filter" data-hashar-filter-cat="help"><i data-lucide="hand-heart"></i> Помощь</button>
-                <button class="hashar-filter" data-hashar-filter-cat="charity"><i data-lucide="heart"></i> Благое</button>
-            </div>
-
-            <div id="hasharsList" class="hashars-list"></div>
-        </div>
-    </section>
-
-    <!-- ПОДВАЛ -->
+        <!-- ПОДВАЛ -->
     <footer class="footer">
         <div class="container">
             <p>© 2026 Safarstan</p>

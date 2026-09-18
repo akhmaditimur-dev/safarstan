@@ -3,8 +3,6 @@
 let safarstanMap = null;
 let citySource = null;
 let cityLayer = null;
-let gapBadgeSource = null;
-let gapBadgeLayer = null;
 let hasharSource = null;
 let hasharLayer = null;
 let cityTooltipOverlay = null;
@@ -38,13 +36,6 @@ function renderMap() {
         zIndex: 10,
     });
 
-    // --- Слой бейджей гапов ---
-    gapBadgeSource = new ol.source.Vector();
-    gapBadgeLayer = new ol.layer.Vector({
-        source: gapBadgeSource,
-        zIndex: 20,
-    });
-
     // --- Слой хашаров ---
     hasharSource = new ol.source.Vector();
     hasharLayer = new ol.layer.Vector({
@@ -58,7 +49,6 @@ function renderMap() {
             new ol.layer.Tile({ source: new ol.source.OSM() }),
             cityLayer,
             hasharLayer,
-            gapBadgeLayer,
         ],
         view: new ol.View({
             center: ol.proj.fromLonLat(MAP_CENTER),
@@ -71,36 +61,7 @@ function renderMap() {
 
     // --- Клик по карте ---
     safarstanMap.on('click', (evt) => {
-        const feature = safarstanMap.forEachFeatureAtPixel(
-            evt.pixel,
-            (f) => f,
-            { hitTolerance: 8, layerFilter: (l) => l !== hasharLayer }
-        );
-        if (!feature) return;
-
-        // Клик по городу
-        const cityKey = feature.get('cityKey');
-        if (cityKey && CITIES[cityKey]) {
-            currentCity = cityKey;
-            renderAll();
-            if (typeof renderCitySelector === 'function') renderCitySelector();
-            saveState();
-            return;
-        }
-
-        // Клик по бейджу гапов — тоже открываем город
-        const gapCityKey = feature.get('gapCityKey');
-        if (gapCityKey && CITIES[gapCityKey]) {
-            currentCity = gapCityKey;
-            renderAll();
-            if (typeof renderCitySelector === 'function') renderCitySelector();
-            saveState();
-            return;
-        }
-    });
-
-    // --- Клик по хашару (отдельно) ---
-    safarstanMap.on('click', (evt) => {
+        // Сначала ищем хашар
         const hasharFeature = safarstanMap.forEachFeatureAtPixel(
             evt.pixel,
             (f) => f,
@@ -110,6 +71,23 @@ function renderMap() {
             const hasharId = hasharFeature.get('hasharId');
             if (hasharId && typeof openHasharModal === 'function') {
                 openHasharModal(hasharId);
+            }
+            return;
+        }
+
+        // Потом — город
+        const cityFeature = safarstanMap.forEachFeatureAtPixel(
+            evt.pixel,
+            (f) => f,
+            { hitTolerance: 8, layerFilter: (l) => l === cityLayer }
+        );
+        if (cityFeature) {
+            const cityKey = cityFeature.get('cityKey');
+            if (cityKey && CITIES[cityKey]) {
+                currentCity = cityKey;
+                renderAll();
+                if (typeof renderCitySelector === 'function') renderCitySelector();
+                saveState();
             }
         }
     });
@@ -129,20 +107,14 @@ function renderMap() {
     safarstanMap.on('pointermove', async (evt) => {
         if (evt.dragging) return;
 
-        // Ищем город ИЛИ бейдж гапа — оба ведут к городу
+        // Ищем город
         const feature = safarstanMap.forEachFeatureAtPixel(
             evt.pixel,
             (f) => f,
-            {
-                hitTolerance: 8,
-                layerFilter: (l) => l === cityLayer || l === gapBadgeLayer,
-            }
+            { hitTolerance: 8, layerFilter: (l) => l === cityLayer }
         );
 
-        let cityKey = null;
-        if (feature) {
-            cityKey = feature.get('cityKey') || feature.get('gapCityKey') || null;
-        }
+        const cityKey = feature ? feature.get('cityKey') : null;
 
         safarstanMap.getTargetElement().style.cursor = cityKey ? 'pointer' : '';
 
@@ -212,13 +184,7 @@ function updateMapMarkers() {
         citySource.addFeature(feature);
     });
 
-    // Обновляем доп. слои — с проверкой isMapLayerEnabled
-    if (typeof isMapLayerEnabled !== 'function' || isMapLayerEnabled('gaps')) {
-        renderGapBadges();
-    } else if (gapBadgeSource) {
-        gapBadgeSource.clear();
-    }
-
+    // Обновляем хашары — если тумблер включён
     if (typeof isMapLayerEnabled !== 'function' || isMapLayerEnabled('hashars')) {
         renderHasharMarkers();
     } else if (hasharSource) {
@@ -231,9 +197,9 @@ function getCityStatus(cityKey) {
 
     const visited = PLAYER.visitedCities || {};
 
-    if (cityKey === PLAYER.homeCity) return { cls: 'home', label: '🏠 Родной город' };
-    if (cityKey === PLAYER.currentCity) return { cls: 'current', label: '📍 Текущий город' };
-    if (visited[cityKey] > 0) return { cls: 'visited', label: `✅ Посещён (${visited[cityKey]} чек-инов)` };
+    if (cityKey === PLAYER.homeCity) return { cls: 'home', label: 'Родной город' };
+    if (cityKey === PLAYER.currentCity) return { cls: 'current', label: 'Текущий город' };
+    if (visited[cityKey] > 0) return { cls: 'visited', label: `Посещён (${visited[cityKey]} чек-инов)` };
     return { cls: 'unvisited', label: 'Не посещено' };
 }
 
@@ -268,51 +234,13 @@ function resetCityStatsCache() {
 }
 
 // ============================================
-// БЕЙДЖИ ГАПОВ (☕ N)
+// БЕЙДЖИ ГАПОВ — теперь только в тултипе
 // ============================================
+// Функция оставлена для совместимости, но не рисует на карте
 async function renderGapBadges() {
-    if (!safarstanMap || !gapBadgeSource) return;
-
-    gapBadgeSource.clear();
-
-    // Проверка слоя карты
-    if (typeof isMapLayerEnabled === 'function' && !isMapLayerEnabled('gaps')) {
-        return;
-    }
-
-    const stats = await getCityGapStatsCached();
-
-    Object.entries(stats).forEach(([cityKey, count]) => {
-        if (!count || count <= 0) return;
-
-        const city = CITIES[cityKey];
-        if (!city || !city.coords) return;
-
-        const feature = new ol.Feature({
-            geometry: new ol.geom.Point(
-                ol.proj.fromLonLat([city.coords.lng, city.coords.lat])
-            ),
-            gapCityKey: cityKey,
-            gapCount: count,
-        });
-
-        // Бейдж — маленький кружок поверх города, со смещением вверх
-        feature.setStyle(new ol.style.Style({
-            image: new ol.style.Circle({
-                radius: 11,
-                fill: new ol.style.Fill({ color: '#16a34a' }),
-                stroke: new ol.style.Stroke({ color: '#ffffff', width: 2 }),
-            }),
-            text: new ol.style.Text({
-                text: '☕' + count,
-                font: 'bold 10px Inter, Arial, sans-serif',
-                fill: new ol.style.Fill({ color: '#ffffff' }),
-                offsetY: 0,
-            }),
-        }));
-
-        gapBadgeSource.addFeature(feature);
-    });
+    // Умышленно пусто — бейджи гапов не показываем на карте.
+    // Данные показываются в тултипе при наведении на город.
+    return;
 }
 
 // ============================================
@@ -323,7 +251,6 @@ async function renderHasharMarkers() {
 
     hasharSource.clear();
 
-    // Проверка слоя карты
     if (typeof isMapLayerEnabled === 'function' && !isMapLayerEnabled('hashars')) {
         return;
     }
@@ -395,41 +322,41 @@ async function showCityTooltip(cityKey) {
 
     const items = [];
 
-    // ☕ Гапы
+    // Гапы
     if (typeof isMapLayerEnabled !== 'function' || isMapLayerEnabled('gaps')) {
         const stats = await getCityGapStatsCached();
         const count = stats[cityKey] || 0;
         if (count > 0) {
-            items.push(`<span class="city-tooltip__item">☕ <strong>${count}</strong></span>`);
+            items.push(`<span class="city-tooltip__item"><i data-lucide="coffee"></i> <strong>${count}</strong></span>`);
         }
     }
 
-    // 🤝 Хашары
+    // Хашары
     if (typeof isMapLayerEnabled !== 'function' || isMapLayerEnabled('hashars')) {
         const stats = await getCityHasharStatsCached();
         const count = stats[cityKey] || 0;
         if (count > 0) {
-            items.push(`<span class="city-tooltip__item">🤝 <strong>${count}</strong></span>`);
+            items.push(`<span class="city-tooltip__item"><i data-lucide="hand-heart"></i> <strong>${count}</strong></span>`);
         }
     }
 
-    // 👥 Друзья
+    // Друзья
     if (typeof isMapLayerEnabled !== 'function' || isMapLayerEnabled('friends')) {
         if (typeof getCityFriendsStatsCached === 'function') {
             const stats = await getCityFriendsStatsCached();
             const count = stats[cityKey] || 0;
             if (count > 0) {
-                items.push(`<span class="city-tooltip__item">👥 <strong>${count}</strong></span>`);
+                items.push(`<span class="city-tooltip__item"><i data-lucide="users"></i> <strong>${count}</strong></span>`);
             }
         }
     }
 
-    // 🎯 Квесты
+    // Квесты
     if (typeof isMapLayerEnabled !== 'function' || isMapLayerEnabled('quests')) {
         if (typeof countQuestsForCity === 'function') {
             const count = countQuestsForCity(cityKey);
             if (count > 0) {
-                items.push(`<span class="city-tooltip__item">🎯 <strong>${count}</strong></span>`);
+                items.push(`<span class="city-tooltip__item"><i data-lucide="target"></i> <strong>${count}</strong></span>`);
             }
         }
     }
@@ -446,6 +373,9 @@ async function showCityTooltip(cityKey) {
     const coords = ol.proj.fromLonLat([city.coords.lng, city.coords.lat]);
     cityTooltipOverlay.setPosition(coords);
     tooltipEl.style.display = 'block';
+
+    // Превращаем Lucide-иконки в SVG
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function hideCityTooltip() {

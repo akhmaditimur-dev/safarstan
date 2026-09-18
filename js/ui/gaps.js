@@ -32,7 +32,7 @@ async function renderGapsDashboard() {
     container.innerHTML = CURRENT_GAPS.map(gap => `
         <div class="dashboard-row" data-gap-id="${gap.id}">
             <div class="dashboard-row__icon">
-                <span class="gap-emoji">${gap.avatar_emoji || '☕'}</span>
+                <i data-lucide="coffee"></i>
             </div>
             <div class="dashboard-row__info">
                 <div class="dashboard-row__name">${escapeHtml(gap.name)}</div>

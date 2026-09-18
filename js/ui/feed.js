@@ -18,28 +18,33 @@ async function renderFeed() {
     } else if (currentFeedFilter === 'friends') {
         const friendIds = (typeof FRIENDS !== 'undefined' ? FRIENDS : []).map(f => f.id);
         if (friendIds.length === 0) {
-            container.innerHTML = '<div class="feed-empty">Добавь друзей, чтобы видеть их события 👥</div>';
+            container.innerHTML = `
+                <div class="feed-empty">
+                    Добавь друзей, чтобы видеть их события
+                </div>
+            `;
             return;
         }
         items = await loadFriendsFeed(friendIds, 10);
     } else if (currentFeedFilter === 'recommend') {
         container.innerHTML = renderRecommendations();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 
     if (items.length === 0) {
         container.innerHTML = `
             <div class="feed-empty">
-                Пока пусто. Сделай чек-ин или добавь место! 🎯
+                Пока пусто. Сделай чек-ин или добавь место!
             </div>
         `;
         return;
     }
 
     container.innerHTML = items.map(item => renderFeedItem(item)).join('');
-
-    // Дозагрузка аватаров (если ссылка на игрока не пришла с бэка)
     fillFeedAvatars();
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -56,31 +61,28 @@ function renderFeedItem(item) {
 
     switch (item.event_type) {
         case 'checkin':
-            text = `<strong>${name}</strong> был в <strong>${data.place || 'месте'}</strong>${cityName ? ` (${cityName})` : ''}`;
+            text = `<strong>${escapeHtml(name)}</strong> был в <strong>${escapeHtml(data.place || 'месте')}</strong>${cityName ? ` (${escapeHtml(cityName)})` : ''}`;
             break;
         case 'ugc':
-            text = `<strong>${name}</strong> добавил место <strong>${data.title || ''}</strong>${cityName ? ` в ${cityName}` : ''}`;
+            text = `<strong>${escapeHtml(name)}</strong> добавил место <strong>${escapeHtml(data.title || '')}</strong>${cityName ? ` в ${escapeHtml(cityName)}` : ''}`;
             break;
         case 'quest':
-            text = `<strong>${name}</strong> выполнил квест <strong>${data.questName || ''}</strong> 🎯`;
+            text = `<strong>${escapeHtml(name)}</strong> выполнил квест <strong>${escapeHtml(data.questName || '')}</strong>`;
             break;
         case 'badge':
-            text = `<strong>${name}</strong> получил бейдж <strong>${data.badgeName || ''}</strong> ${data.badgeIcon || ''}`;
+            text = `<strong>${escapeHtml(name)}</strong> получил бейдж <strong>${escapeHtml(data.badgeName || '')}</strong>`;
             break;
         case 'plan':
-            text = `<strong>${name}</strong> запланировал визит${cityName ? ` в <strong>${cityName}</strong>` : ''}`;
+            text = `<strong>${escapeHtml(name)}</strong> запланировал визит${cityName ? ` в <strong>${escapeHtml(cityName)}</strong>` : ''}`;
             break;
         case 'level':
-            text = `<strong>${name}</strong> достиг <strong>уровня ${data.level || ''}</strong> ⭐`;
+            text = `<strong>${escapeHtml(name)}</strong> достиг <strong>уровня ${data.level || ''}</strong>`;
             break;
         default:
-            text = `<strong>${name}</strong> что-то сделал`;
+            text = `<strong>${escapeHtml(name)}</strong> что-то сделал`;
     }
 
-    // Аватар: эмодзи или <img>
-    const avatarHtml = avatar.startsWith('http')
-        ? `<img src="${avatar}" alt="avatar" loading="lazy">`
-        : avatar;
+    const avatarHtml = renderAvatarHtml(avatar);
 
     return `
         <div class="feed-item" data-player-id="${item.player_id || ''}">
@@ -102,17 +104,22 @@ async function fillFeedAvatars() {
 
     items.forEach(el => {
         const avatarEl = el.querySelector('.feed-item__avatar');
-        const img = avatarEl?.querySelector('img');
-        // Нужно дозагрузить, если аватар — не img и не эмодзи
-        if (!img && avatarEl && !avatarEl.textContent.match(/\p{Emoji}/u)) {
-            const pid = el.dataset.playerId;
-            if (pid) idsToLoad.add(pid);
-        }
+        if (!avatarEl) return;
+
+        // Если аватар уже <img> — всё ок
+        if (avatarEl.querySelector('img')) return;
+
+        // Если эмодзи — всё ок
+        const text = avatarEl.textContent.trim();
+        if (text && !text.startsWith('http')) return;
+
+        // Нужно дозагрузить
+        const pid = el.dataset.playerId;
+        if (pid) idsToLoad.add(pid);
     });
 
     if (idsToLoad.size === 0) return;
 
-    // Загружаем всех игроков одним запросом
     const { data, error } = await _supabase
         .from('players')
         .select('id, avatar')
@@ -128,12 +135,7 @@ async function fillFeedAvatars() {
         const avatarEl = el.querySelector('.feed-item__avatar');
         if (!avatarEl || !pid || !map[pid]) return;
 
-        const av = map[pid];
-        if (av.startsWith('http')) {
-            avatarEl.innerHTML = `<img src="${av}" alt="avatar" loading="lazy">`;
-        } else {
-            avatarEl.textContent = av;
-        }
+        avatarEl.innerHTML = renderAvatarHtml(map[pid]);
     });
 }
 
@@ -164,7 +166,7 @@ function renderRecommendations() {
 
     allPlaces.slice(0, 3).forEach(({ city, place }) => {
         recommendations.push({
-            icon: '🏙',
+            icon: 'building-2',
             text: `Новое место в <strong>${CITIES[city].name}</strong>: <strong>${place.title}</strong>`,
         });
     });
@@ -174,7 +176,7 @@ function renderRecommendations() {
         const next = PLANS[0];
         const cityName = CITIES[next.city_key] ? CITIES[next.city_key].name : '';
         recommendations.push({
-            icon: '📌',
+            icon: 'calendar-plus',
             text: `Не забудь: <strong>${cityName}</strong> ${next.place_title ? `— ${next.place_title}` : ''} (${formatDate(next.visit_date)})`,
         });
     }
@@ -183,7 +185,7 @@ function renderRecommendations() {
     if (myCities.length > 0) {
         const cityName = CITIES[PLAYER.currentCity]?.name || '';
         recommendations.push({
-            icon: '🎯',
+            icon: 'target',
             text: `В <strong>${cityName}</strong> есть непосещённые места — загляни!`,
         });
     }
@@ -197,18 +199,24 @@ function renderRecommendations() {
 
     nearQuests.forEach(({ q, r }) => {
         recommendations.push({
-            icon: q.icon,
+            icon: q.icon || 'target',
             text: `Квест <strong>${q.name}</strong> почти готов: ${r.progress[0]} / ${r.progress[1]}`,
         });
     });
 
     if (recommendations.length === 0) {
-        return `<div class="feed-empty">Пока нет рекомендаций. Исследуй города! 🗺</div>`;
+        return `
+            <div class="feed-empty">
+                Пока нет рекомендаций. Исследуй города!
+            </div>
+        `;
     }
 
     return recommendations.map(r => `
         <div class="feed-item feed-item--recommend">
-            <div class="feed-item__avatar">${r.icon}</div>
+            <div class="feed-item__avatar">
+                <i data-lucide="${r.icon}"></i>
+            </div>
             <div class="feed-item__body">
                 <div class="feed-item__text">${r.text}</div>
             </div>
@@ -233,4 +241,15 @@ function timeAgo(timestamp) {
     if (diffSec < 604800) return `${Math.floor(diffSec / 86400)} дн назад`;
 
     return formatDate(timestamp);
+}
+
+// ============================================
+// ХЕЛПЕР: АВАТАР (URL → img, эмодзи → текст)
+// ============================================
+function renderAvatarHtml(avatar) {
+    if (!avatar) return '🧑‍💼';
+    if (typeof avatar === 'string' && avatar.startsWith('http')) {
+        return `<img src="${avatar}" alt="" loading="lazy">`;
+    }
+    return avatar;
 }

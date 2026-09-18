@@ -1,11 +1,12 @@
 // ============ UI: ВЫБОР ГОРОДА ============
 
+// Флаги стран — буквенные коды (без эмодзи)
 const COUNTRY_FLAGS = {
-    'Узбекистан': '🇺🇿',
-    'Казахстан': '🇰🇿',
-    'Кыргызстан': '🇰🇬',
-    'Таджикистан': '🇹🇯',
-    'Туркменистан': '🇹🇲',
+    'Узбекистан': 'UZ',
+    'Казахстан': 'KZ',
+    'Кыргызстан': 'KG',
+    'Таджикистан': 'TJ',
+    'Туркменистан': 'TM',
 };
 
 // ============================================
@@ -40,7 +41,7 @@ function initCitySearch() {
 
         results.innerHTML = matches.map(([key, city]) => `
             <button class="city-search__result" data-city-key="${key}">
-                <span class="city-search__result-flag">${city.flag || ''}</span>
+                <span class="city-search__result-flag">${city.flag || '—'}</span>
                 <span class="city-search__result-name">${city.name}</span>
                 <span class="city-search__result-country">${city.country}</span>
             </button>
@@ -103,13 +104,13 @@ function renderMyCities() {
 
     // 1. Родной
     if (PLAYER.homeCity && CITIES[PLAYER.homeCity]) {
-        cities.push({ key: PLAYER.homeCity, icon: '🏠', label: 'Родной' });
+        cities.push({ key: PLAYER.homeCity, icon: '<i data-lucide="home"></i>', label: 'Родной' });
         seen.add(PLAYER.homeCity);
     }
 
     // 2. Текущий
     if (PLAYER.currentCity && CITIES[PLAYER.currentCity] && !seen.has(PLAYER.currentCity)) {
-        cities.push({ key: PLAYER.currentCity, icon: '📍', label: 'Текущий' });
+        cities.push({ key: PLAYER.currentCity, icon: '<i data-lucide="map-pin"></i>', label: 'Текущий' });
         seen.add(PLAYER.currentCity);
     }
 
@@ -124,7 +125,7 @@ function renderMyCities() {
         .find(({ cityKey }) => !seen.has(cityKey) && CITIES[cityKey]);
 
     if (lastVisitedCity) {
-        cities.push({ key: lastVisitedCity.cityKey, icon: '✅', label: 'Недавно' });
+        cities.push({ key: lastVisitedCity.cityKey, icon: '<i data-lucide="check"></i>', label: 'Недавно' });
         seen.add(lastVisitedCity.cityKey);
     }
 
@@ -132,7 +133,7 @@ function renderMyCities() {
     if (typeof PLANS !== 'undefined' && PLANS.length > 0) {
         const planCity = PLANS[0].city_key;
         if (planCity && CITIES[planCity] && !seen.has(planCity)) {
-            cities.push({ key: planCity, icon: '📌', label: 'Планируешь' });
+            cities.push({ key: planCity, icon: '<i data-lucide="calendar"></i>', label: 'Планируешь' });
             seen.add(planCity);
         }
     }
@@ -149,6 +150,8 @@ function renderMyCities() {
             ${CITIES[c.key].name}
         </button>
     `).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -169,7 +172,7 @@ function renderCountryAccordion() {
     const sortedCountries = Object.entries(byCountry).sort((a, b) => b[1].length - a[1].length);
 
     container.innerHTML = sortedCountries.map(([country, cities]) => {
-        const flag = COUNTRY_FLAGS[country] || '🏳';
+        const flag = COUNTRY_FLAGS[country] || '—';
 
         return `
             <div class="country-item" data-country="${country}">
@@ -177,7 +180,7 @@ function renderCountryAccordion() {
                     <span class="country-item__flag">${flag}</span>
                     <span class="country-item__name">${country}</span>
                     <span class="country-item__count">${cities.length}</span>
-                    <span class="country-item__arrow">▶</span>
+                    <span class="country-item__arrow"><i data-lucide="chevron-right"></i></span>
                 </button>
                 <div class="country-item__cities">
                     ${cities.map(({ key, city }) => `
@@ -192,28 +195,26 @@ function renderCountryAccordion() {
 
     // Обработчик аккордеона
     container.addEventListener('click', (e) => {
-        // Клик по шапке страны
         const header = e.target.closest('.country-item__header');
         if (header) {
             const item = header.closest('.country-item');
             const isOpen = item.classList.contains('open');
 
-            // Закрыть все
             container.querySelectorAll('.country-item').forEach(el => {
                 el.classList.remove('open');
             });
 
-            // Открыть/закрыть текущий
             if (!isOpen) item.classList.add('open');
             return;
         }
 
-        // Клик по городу
         const cityBtn = e.target.closest('[data-city-key]');
         if (cityBtn) {
             selectCity(cityBtn.dataset.cityKey);
         }
     });
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================

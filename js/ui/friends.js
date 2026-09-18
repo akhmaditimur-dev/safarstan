@@ -9,11 +9,9 @@ async function renderFriends() {
     FRIENDS = await loadFriends(PLAYER.playerId);
     INCOMING_REQUESTS = await loadIncomingRequests(PLAYER.playerId);
 
-    // Счётчик в модалке
     const countEl = document.getElementById('friendsCount');
     if (countEl) countEl.textContent = FRIENDS.length;
 
-    // Счётчик в дашборде
     const dashCountEl = document.getElementById('dashFriendsCount');
     if (dashCountEl) dashCountEl.textContent = FRIENDS.length;
 
@@ -30,14 +28,18 @@ async function renderFriends() {
                 const p = req.from_player || {};
                 return `
                     <div class="friend-item">
-                        <div class="friend-item__avatar">${p.avatar || '🧑‍💼'}</div>
+                        <div class="friend-item__avatar">${renderAvatarHtml(p.avatar)}</div>
                         <div class="friend-item__info">
-                            <div class="friend-item__name">${p.name || 'Игрок'}</div>
+                            <div class="friend-item__name">${escapeHtml(p.name || 'Игрок')}</div>
                             <div class="friend-item__sub">Уровень ${p.level || 1}</div>
                         </div>
                         <div class="friend-item__actions">
-                            <button class="friend-action-btn" data-accept="${req.id}" data-from="${req.from_player_id}">Принять</button>
-                            <button class="friend-action-btn friend-action-btn--secondary" data-decline="${req.id}">✕</button>
+                            <button class="friend-action-btn" data-accept="${req.id}" data-from="${req.from_player_id}">
+                                Принять
+                            </button>
+                            <button class="friend-action-btn friend-action-btn--secondary" data-decline="${req.id}" title="Отклонить">
+                                <i data-lucide="x"></i>
+                            </button>
                         </div>
                     </div>
                 `;
@@ -54,18 +56,22 @@ async function renderFriends() {
         } else {
             listEl.innerHTML = FRIENDS.map(f => `
                 <div class="friend-item">
-                    <div class="friend-item__avatar">${f.avatar || '🧑‍💼'}</div>
+                    <div class="friend-item__avatar">${renderAvatarHtml(f.avatar)}</div>
                     <div class="friend-item__info">
-                        <div class="friend-item__name">${f.name}</div>
+                        <div class="friend-item__name">${escapeHtml(f.name)}</div>
                         <div class="friend-item__sub">Уровень ${f.level} · ${CITIES[f.current_city]?.name || ''}</div>
                     </div>
                     <div class="friend-item__actions">
-                        <button class="friend-action-btn friend-action-btn--secondary" data-remove-friend="${f.friendsRowId}">Удалить</button>
+                        <button class="friend-action-btn friend-action-btn--secondary" data-remove-friend="${f.friendsRowId}">
+                            Удалить
+                        </button>
                     </div>
                 </div>
             `).join('');
         }
     }
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 async function searchPlayersAndRender(query) {
@@ -95,22 +101,43 @@ async function searchPlayersAndRender(query) {
 
         let action = '';
         if (isFriend) {
-            action = '<span class="friend-item__sub">✅ Друг</span>';
+            action = `<span class="friend-item__sub friend-item__sub--status"><i data-lucide="check"></i> Друг</span>`;
         } else if (isPending) {
-            action = '<span class="friend-item__sub">⏳ Заявка</span>';
+            action = `<span class="friend-item__sub friend-item__sub--status"><i data-lucide="clock"></i> Заявка</span>`;
         } else {
-            action = `<button class="friend-action-btn" data-add-friend="${p.id}">+ Добавить</button>`;
+            action = `<button class="friend-action-btn" data-add-friend="${p.id}"><i data-lucide="user-plus"></i> Добавить</button>`;
         }
 
         return `
             <div class="friend-item">
-                <div class="friend-item__avatar">${p.avatar || '🧑‍💼'}</div>
+                <div class="friend-item__avatar">${renderAvatarHtml(p.avatar)}</div>
                 <div class="friend-item__info">
-                    <div class="friend-item__name">${p.name}</div>
+                    <div class="friend-item__name">${escapeHtml(p.name)}</div>
                     <div class="friend-item__sub">Уровень ${p.level} · ${CITIES[p.current_city]?.name || ''}</div>
                 </div>
                 <div class="friend-item__actions">${action}</div>
             </div>
         `;
     }).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// ============================================
+// ХЕЛПЕРЫ
+// ============================================
+function renderAvatarHtml(avatar) {
+    if (!avatar) return '🧑‍💼';
+    if (typeof avatar === 'string' && avatar.startsWith('http')) {
+        return `<img src="${avatar}" alt="" loading="lazy">`;
+    }
+    return avatar;
+}
+
+if (typeof escapeHtml === 'undefined') {
+    window.escapeHtml = function(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    };
 }

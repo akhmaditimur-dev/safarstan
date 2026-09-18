@@ -112,15 +112,15 @@ function showAuthModal(mode) {
 
 function updateAuthUI() {
     const isSignup = authMode === 'signup';
-    document.getElementById('authTitle').textContent = isSignup
-        ? '🏙 Добро пожаловать в Safarstan!'
-        : '👋 С возвращением!';
+    document.getElementById('authTitle').innerHTML = isSignup
+        ? '<i data-lucide="building-2"></i> Добро пожаловать в Safarstan!'
+        : '<i data-lucide="hand"></i> С возвращением!';
     document.getElementById('authSubtitle').textContent = isSignup
         ? 'Создай аккаунт — и в путь'
         : 'Войди, чтобы продолжить путешествие';
-    document.getElementById('authSubmit').textContent = isSignup
-        ? 'Создать аккаунт 🚀'
-        : 'Войти 🔑';
+    document.getElementById('authSubmit').innerHTML = isSignup
+        ? '<i data-lucide="rocket"></i> Создать аккаунт'
+        : '<i data-lucide="key"></i> Войти';
     document.getElementById('signupFields').style.display = isSignup ? 'block' : 'none';
 
     document.querySelectorAll('.auth-tab').forEach(tab => {
@@ -129,6 +129,8 @@ function updateAuthUI() {
 
     const errEl = document.getElementById('authError');
     if (errEl) errEl.style.display = 'none';
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ============================================
@@ -244,7 +246,7 @@ function showInstallButton() {
     btn.id = 'installBtn';
     btn.className = 'theme-btn';
     btn.title = 'Установить приложение';
-    btn.textContent = '📲';
+    btn.innerHTML = '<i data-lucide="download"></i>';
     btn.addEventListener('click', async () => {
         if (!deferredPrompt) return;
         deferredPrompt.prompt();

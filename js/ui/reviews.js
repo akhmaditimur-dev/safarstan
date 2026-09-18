@@ -12,7 +12,11 @@ async function loadVisibleReviews() {
             const reviews = await loadReviews(placeKey);
 
             if (reviews.length === 0) {
-                listEl.innerHTML = '<div class="reviews-empty">Отзывов пока нет. Будь первым! 💬</div>';
+                listEl.innerHTML = `
+                    <div class="reviews-empty">
+                        Отзывов пока нет. Будь первым!
+                    </div>
+                `;
                 continue;
             }
 
@@ -22,6 +26,8 @@ async function loadVisibleReviews() {
             listEl.innerHTML = '<div class="reviews-empty">Ошибка загрузки</div>';
         }
     }
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function renderReviewItem(review) {
@@ -30,16 +36,22 @@ function renderReviewItem(review) {
     const avatar = player.avatar || '🧑‍💼';
     const isMine = PLAYER && review.player_id === PLAYER.playerId;
 
-    const stars = review.rating 
-        ? '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating) 
-        : '';
+    // Звёзды — через Lucide
+    let stars = '';
+    if (review.rating) {
+        const filled = '<i data-lucide="star"></i>'.repeat(review.rating);
+        const empty = '<i data-lucide="star-off"></i>'.repeat(5 - review.rating);
+        stars = filled + empty;
+    }
+
+    const avatarHtml = renderAvatarHtml(avatar);
 
     return `
         <div class="review-item">
-            <div class="review-item__avatar" data-player-profile="${review.player_id || ''}" style="cursor:pointer;">${avatar}</div>
+            <div class="review-item__avatar" data-player-profile="${review.player_id || ''}" style="cursor:pointer;">${avatarHtml}</div>
             <div class="review-item__body">
                 <div class="review-item__header">
-                    <span class="review-item__name" data-player-profile="${review.player_id || ''}" style="cursor:pointer;">${name}</span>
+                    <span class="review-item__name" data-player-profile="${review.player_id || ''}" style="cursor:pointer;">${escapeHtml(name)}</span>
                     ${stars ? `<span class="review-item__rating">${stars}</span>` : ''}
                 </div>
                 <div class="review-item__text">${escapeHtml(review.text)}</div>
@@ -47,15 +59,34 @@ function renderReviewItem(review) {
             </div>
             ${isMine ? `
                 <div class="review-item__actions">
-                    <button class="review-item__delete" data-delete-review="${review.id}">🗑</button>
+                    <button class="review-item__delete" data-delete-review="${review.id}" title="Удалить">
+                        <i data-lucide="trash-2"></i>
+                    </button>
                 </div>
             ` : ''}
         </div>
     `;
 }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+// ============================================
+// ХЕЛПЕР: АВАТАР (URL → img, эмодзи → текст)
+// ============================================
+function renderAvatarHtml(avatar) {
+    if (!avatar) return '🧑‍💼';
+    if (typeof avatar === 'string' && avatar.startsWith('http')) {
+        return `<img src="${avatar}" alt="" loading="lazy">`;
+    }
+    return avatar;
+}
+
+// ============================================
+// ХЕЛПЕР: ЭКРАНИРОВАНИЕ HTML
+// ============================================
+// ⚠️ Если escapeHtml уже объявлен в другом файле — не переобъявляем
+if (typeof escapeHtml === 'undefined') {
+    window.escapeHtml = function(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    };
 }

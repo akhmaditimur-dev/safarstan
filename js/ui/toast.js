@@ -25,7 +25,7 @@ function showLevelUp(level) {
     const toast = document.createElement('div');
     toast.className = 'xp-toast';
     toast.style.background = 'linear-gradient(135deg, #16a34a, #22c55e)';
-    toast.innerHTML = `🎉 Новый уровень: ${level}!`;
+    toast.innerHTML = `Новый уровень: ${level}!`;
     document.body.appendChild(toast);
 
     setTimeout(() => toast.classList.add('fade-out'), 2500);
@@ -37,17 +37,19 @@ function showBadgeToast(badge) {
     const toast = document.createElement('div');
     toast.className = 'badge-toast';
     toast.innerHTML = `
-        <span class="badge-toast-icon">${badge.icon}</span>
-        🎖 Новый бейдж:<br><strong>${badge.name}</strong>
+        <span class="badge-toast-icon"><i data-lucide="${badge.icon}"></i></span>
+        Новый бейдж:<br><strong>${badge.name}</strong>
     `;
     document.body.appendChild(toast);
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 
     setTimeout(() => toast.classList.add('fade-out'), 3000);
     setTimeout(() => toast.remove(), 3400);
 }
 
 // ============================================
-// КАСТОМНЫЙ CONFIRM (замена window.confirm)
+// КАСТОМНЫЙ CONFIRM
 // ============================================
 let _confirmResolve = null;
 

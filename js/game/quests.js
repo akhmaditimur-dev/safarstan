@@ -93,8 +93,14 @@ function showQuestToast(quest) {
     const toast = document.createElement('div');
     toast.className = 'xp-toast';
     toast.style.background = 'linear-gradient(135deg, #16a34a, #22c55e)';
-    toast.innerHTML = `${quest.icon} Квест выполнен!<br><strong>${quest.name}</strong> · +${quest.xp} XP`;
+    toast.innerHTML = `
+        <span class="quest-toast-icon"><i data-lucide="${quest.icon}"></i></span>
+        Квест выполнен!<br>
+        <strong>${quest.name}</strong> · +${quest.xp} XP
+    `;
     document.body.appendChild(toast);
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 
     setTimeout(() => toast.classList.add('fade-out'), 3200);
     setTimeout(() => toast.remove(), 3600);

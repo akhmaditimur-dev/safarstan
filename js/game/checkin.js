@@ -15,7 +15,7 @@ async function checkIn(checkinKey) {
     // === АНТИ-СПАМ: 2 секунды между кликами ===
     const now = Date.now();
     if (now - lastCheckinTime < 2000) {
-        showWarningToast('⏳ Слишком быстро! Подожди 2 сек');
+        showWarningToast('Слишком быстро! Подожди 2 секунды');
         return;
     }
     lastCheckinTime = now;
@@ -29,7 +29,7 @@ async function checkIn(checkinKey) {
 
     // === ЛИМИТ 5 В ДЕНЬ ===
     if (PLAYER.todayCheckins >= DAILY_CHECKIN_LIMIT) {
-        showWarningToast(`🚫 Лимит ${DAILY_CHECKIN_LIMIT} чек-инов в день`);
+        showWarningToast(`Лимит ${DAILY_CHECKIN_LIMIT} чек-инов в день`);
         return;
     }
 
@@ -38,7 +38,7 @@ async function checkIn(checkinKey) {
     const elapsed = now - lastTime;
     if (elapsed < CHECKIN_COOLDOWN_MS) {
         const remainingMin = Math.ceil((CHECKIN_COOLDOWN_MS - elapsed) / 60000);
-        showWarningToast(`⏳ Это место — через ${remainingMin} мин`);
+        showWarningToast(`Это место — через ${remainingMin} мин`);
         return;
     }
 
@@ -61,7 +61,7 @@ async function checkIn(checkinKey) {
 
     if (isFirstTimeInCity) {
         xpGained += 30;
-        reason = '🌟 Новый город!';
+        reason = 'Новый город!';
     }
 
     // Обновляем PLAYER

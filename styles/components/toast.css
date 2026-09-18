@@ -42,3 +42,34 @@
     background: linear-gradient(90deg, #2563eb, #7c3aed);
     transition: width .3s;
 }
+
+/* Иконка в тосте квеста */
+.quest-toast-icon {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: -3px;
+    margin-right: 4px;
+}
+
+.quest-toast-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+    color: #fff;
+}
+
+/* Иконка в тосте бейджа */
+.badge-toast-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: -3px;
+    margin-right: 4px;
+}
+
+.badge-toast-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2;
+    color: var(--color-primary);
+}
