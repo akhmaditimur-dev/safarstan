@@ -41,3 +41,44 @@ async function getCurrentSession() {
     const { data: { session } } = await _supabase.auth.getSession();
     return session;
 }
+
+// ============================================
+// СМЕНА EMAIL
+// ============================================
+async function changeEmail(newEmail) {
+    const { data, error } = await _supabase.auth.updateUser({
+        email: newEmail,
+    });
+
+    if (error) {
+        console.warn('Ошибка смены email:', error);
+        return { error: error.message };
+    }
+
+    return { ok: true, user: data.user };
+}
+
+// ============================================
+// СМЕНА ПАРОЛЯ
+// ============================================
+async function changePassword(newPassword) {
+    const { data, error } = await _supabase.auth.updateUser({
+        password: newPassword,
+    });
+
+    if (error) {
+        console.warn('Ошибка смены пароля:', error);
+        return { error: error.message };
+    }
+
+    return { ok: true, user: data.user };
+}
+
+// ============================================
+// ПОЛУЧИТЬ EMAIL ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
+// ============================================
+async function getCurrentUserEmail() {
+    const { data, error } = await _supabase.auth.getUser();
+    if (error || !data.user) return null;
+    return data.user.email;
+}

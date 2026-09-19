@@ -218,3 +218,86 @@
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
 }
+
+/* === СЕТКА ТЕМ === */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.theme-option {
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 8px 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    transition: border-color var(--transition-fast),
+                transform var(--transition-fast);
+}
+
+.theme-option:hover {
+    transform: translateY(-2px);
+}
+
+.theme-option.active {
+    border-color: var(--color-primary);
+}
+
+.theme-option__preview {
+    width: 100%;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+}
+
+.theme-option__preview--light {
+    background: linear-gradient(135deg, #fafafa 0%, #16a34a 100%);
+}
+
+.theme-option__preview--dark {
+    background: linear-gradient(135deg, #0f1419 0%, #22c55e 100%);
+}
+
+.theme-option__preview--sky {
+    background: linear-gradient(135deg, #f0f9ff 0%, #0ea5e9 100%);
+}
+
+.theme-option__preview--nature {
+    background: linear-gradient(135deg, #f7f5ef 0%, #4d7c0f 100%);
+}
+
+.theme-option__preview--space {
+    background: linear-gradient(135deg, #0b0620 0%, #a855f7 50%, #ec4899 100%);
+}
+
+.theme-option__preview--orient {
+    background: linear-gradient(135deg, #fdf8f0 0%, #c2410c 50%, #d97706 100%);
+}
+
+.theme-option__label {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-soft);
+}
+
+.theme-option.active .theme-option__label {
+    color: var(--color-primary);
+}
+
+/* Сообщение об успехе в модалках */
+.auth-success {
+    background: var(--color-success-light, #dcfce7);
+    color: var(--color-success-dark, #15803d);
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    margin-top: 12px;
+}

@@ -1,8 +1,8 @@
 /* ============ ДАШБОРД ============ */
 
 .dashboard {
-    padding: 40px 0;
-    background: var(--color-bg);
+    padding: 24px 0 60px;
+    background: var(--color-bg-soft);
 }
 
 /* === СЕТКА: 3 КОЛОНКИ === */
@@ -57,11 +57,6 @@
     margin: 0;
 }
 
-.dashboard-card__btn {
-    width: 100%;
-    margin-top: auto;
-}
-
 /* === ПРОФИЛЬ === */
 .dashboard-user {
     display: flex;
@@ -70,7 +65,6 @@
 }
 
 .dashboard-avatar {
-    font-size: 40px;
     width: 72px;
     height: 72px;
     display: flex;
@@ -79,14 +73,32 @@
     background: var(--gradient-primary);
     border-radius: 50%;
     flex-shrink: 0;
+    overflow: hidden;
 }
 
-.dashboard-user h2 {
+.dashboard-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+.dashboard-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.dashboard-name-row h2 {
+    margin: 0;
+    flex: 1;
+    min-width: 0;
     font-family: var(--font-heading);
     font-size: var(--fs-xl);
     font-weight: var(--fw-extrabold);
     color: var(--color-text);
-    margin-bottom: 4px;
     line-height: 1.2;
 }
 
@@ -96,6 +108,27 @@
     font-size: var(--fs-sm);
 }
 
+.profile-edit-btn {
+    background: var(--color-bg-soft);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-edit-btn:hover {
+    background: var(--color-primary-light);
+    transform: scale(1.1);
+}
+
+/* === XP === */
 .dashboard-xp__text {
     display: flex;
     justify-content: space-between;
@@ -154,14 +187,48 @@
     gap: 6px;
 }
 
-/* === АКТИВНЫЕ КВЕСТЫ === */
-.dashboard-quests {
-    display: flex;
-    flex-direction: column;
+/* === ЧИПЫ ГОРОДОВ === */
+.city-chip {
+    display: inline-flex;
+    align-items: center;
     gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    background: var(--color-bg-soft);
+    color: var(--color-text-soft);
+    transition: background var(--transition-fast), color var(--transition-fast);
 }
 
-.dashboard-quest {
+.city-chip svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.5;
+    flex-shrink: 0;
+}
+
+.city-chip.home {
+    background: #bbf7d0;
+    color: #14532d;
+}
+
+.city-chip.current {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.city-chip.visited {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+/* === СТРОКИ ДАШБОРДА (Мой вклад, Квесты, Гапы, Хашары) === */
+.dashboard-row,
+.dashboard-quest,
+.dashboard-contribution__item,
+.gap-card,
+.hashar-card {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -169,62 +236,80 @@
     background: var(--color-bg-soft);
     border-radius: var(--radius-md);
     font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    color: var(--color-text);
 }
 
+.dashboard-row {
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    justify-content: space-between;
+}
+
+.dashboard-row:hover {
+    background: var(--color-primary-light);
+}
+
+.dashboard-row__icon,
 .dashboard-quest__icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    color: var(--color-text);
 }
 
+.dashboard-row__icon svg,
 .dashboard-quest__icon svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     stroke-width: 2;
-    color: var(--color-text-soft);
+    color: var(--color-text);
 }
 
+.dashboard-row__info,
 .dashboard-quest__info {
     flex: 1;
     min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
 }
 
+.dashboard-row__name,
 .dashboard-quest__name {
     color: var(--color-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex: 1;
-    min-width: 0;
+    font-weight: var(--fw-medium);
 }
 
-.dashboard-quest__progress {
-    color: var(--color-primary);
-    font-weight: var(--fw-bold);
+.dashboard-row__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-text-soft);
+    font-size: var(--fs-xs);
+    margin-top: 2px;
+}
+
+.dashboard-row__meta svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2;
     flex-shrink: 0;
 }
 
-/* === МОЙ ВКЛАД === */
-.dashboard-contribution {
+.dashboard-quest__info {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 }
 
-.dashboard-contribution__item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 14px;
-    background: var(--color-bg-soft);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-sm);
-    gap: 8px;
+.dashboard-quest__progress,
+.dashboard-contribution__value {
+    color: var(--color-primary);
+    font-weight: var(--fw-bold);
+    flex-shrink: 0;
 }
 
 .dashboard-contribution__label {
@@ -232,6 +317,7 @@
     align-items: center;
     gap: 8px;
     color: var(--color-text);
+    font-weight: var(--fw-medium);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -246,38 +332,104 @@
     flex-shrink: 0;
 }
 
-.dashboard-contribution__value {
-    font-weight: var(--fw-bold);
-    color: var(--color-primary);
-    flex-shrink: 0;
+/* === НАВИГАЦИЯ В КАРТОЧКЕ === */
+.dashboard-card--nav {
+    padding: 16px;
+    gap: 0;
 }
 
-/* === ДРУЗЬЯ === */
-.dashboard-friends {
+.dashboard-nav-section {
     display: flex;
     flex-direction: column;
+    gap: 4px;
+}
+
+.dashboard-nav-title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 8px 12px 4px;
+    margin: 0;
+}
+
+.dashboard-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+    text-align: left;
+    width: 100%;
+}
+
+.dashboard-nav-item:hover {
+    background: var(--color-primary-light);
+    transform: translateX(4px);
+}
+
+.dashboard-nav-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    padding: 8px 0;
-    text-align: center;
-}
-
-.dashboard-friends__count {
-    font-family: var(--font-heading);
-    font-size: var(--fs-4xl);
-    font-weight: var(--fw-extrabold);
+    flex-shrink: 0;
     color: var(--color-primary);
-    line-height: 1;
 }
 
-.dashboard-friends__count::after {
-    content: ' друзей';
-    font-size: var(--fs-xs);
-    font-weight: var(--fw-medium);
-    color: var(--color-text-soft);
+.dashboard-nav-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
     display: block;
-    margin-top: 4px;
+}
+
+.dashboard-nav-item:hover .dashboard-nav-icon {
+    color: var(--color-primary-dark, #15803d);
+}
+
+.dashboard-nav-label {
+    flex: 1;
+    min-width: 0;
+}
+
+.dashboard-nav-count {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
+.dashboard-nav-arrow {
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.dashboard-nav-item:hover .dashboard-nav-arrow {
+    transform: translateX(4px);
+    color: var(--color-primary);
+}
+
+.dashboard-nav-divider {
+    height: 1px;
+    background: var(--color-border-soft);
+    margin: 12px 0;
 }
 
 /* === ПЛАНЫ === */
@@ -295,16 +447,11 @@
     padding: 12px;
     background: var(--color-bg-soft);
     border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+    transition: background var(--transition-fast);
 }
 
 .plan-item:hover {
     background: var(--color-primary-light);
-}
-
-.plan-item--next {
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
-    border: 2px solid var(--color-primary);
 }
 
 .plan-item__info {
@@ -384,7 +531,7 @@
     font-weight: var(--fw-semibold);
     color: var(--color-text-soft);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: background var(--transition-fast), color var(--transition-fast);
     font-family: inherit;
     white-space: nowrap;
 }
@@ -413,7 +560,7 @@
     padding: 12px;
     background: var(--color-bg-soft);
     border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+    transition: background var(--transition-fast);
     align-items: flex-start;
 }
 
@@ -431,6 +578,15 @@
     background: var(--color-surface);
     border-radius: 50%;
     flex-shrink: 0;
+    overflow: hidden;
+}
+
+.feed-item__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
 }
 
 .feed-item__body {
@@ -459,10 +615,6 @@
     background: linear-gradient(135deg, #fef3c7 0%, #ffffff 60%);
 }
 
-.feed-item--recommend .feed-item__avatar {
-    background: var(--color-warm-light);
-}
-
 .feed-empty {
     text-align: center;
     color: var(--color-text-muted);
@@ -479,12 +631,10 @@
     line-height: 1.4;
 }
 
-/* ============ АДАПТАЦИЯ ============ */
-
-/* Мобильный: 1 колонка */
+/* === АДАПТАЦИЯ === */
 @media (max-width: 700px) {
     .dashboard {
-        padding: 20px 0;
+        padding: 16px 0 40px;
     }
 
     .dashboard__grid {
@@ -503,388 +653,9 @@
     .dashboard-avatar {
         width: 56px;
         height: 56px;
-        font-size: 32px;
     }
 
     .dashboard-user h2 {
         font-size: var(--fs-lg);
     }
-}
-
-/* === Строка с именем + кнопка ✏️ === */
-.dashboard-name-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
-}
-
-.dashboard-name-row h2 {
-    margin: 0;
-    flex: 1;
-    min-width: 0;
-    font-family: var(--font-heading);
-    font-size: var(--fs-xl);
-    font-weight: var(--fw-extrabold);
-    color: var(--color-text);
-    line-height: 1.2;
-}
-
-/* === Кнопка редактирования ✏️ === */
-.profile-edit-btn {
-    background: var(--color-bg-soft);
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.profile-edit-btn:hover {
-    background: var(--color-primary-light);
-    transform: scale(1.1);
-}
-
-/* ============ НАВИГАЦИЯ В КАРТОЧКЕ ============ */
-
-.dashboard-card--nav {
-    padding: 16px;
-    gap: 0;
-}
-
-.dashboard-nav-section {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.dashboard-nav-title {
-    font-family: var(--font-heading);
-    font-size: var(--fs-xs);
-    font-weight: var(--fw-bold);
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 8px 12px 4px;
-    margin: 0;
-}
-
-.dashboard-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-md);
-    font-family: inherit;
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-semibold);
-    color: var(--color-text);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    text-align: left;
-    width: 100%;
-}
-
-.dashboard-nav-item:hover {
-    background: var(--color-primary-light);
-    transform: translateX(4px);
-}
-
-.dashboard-nav-icon {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--color-primary);   /* ← ЗЕЛЁНЫЙ ЦВЕТ */
-}
-
-.dashboard-nav-icon svg {
-    width: 22px;
-    height: 22px;
-    stroke: currentColor;          /* ← наследует зелёный */
-    stroke-width: 2;
-    fill: none;
-}
-
-.dashboard-nav-item:hover .dashboard-nav-icon {
-    color: #15803d;                /* ← темнее при hover */
-}
-
-.dashboard-nav-icon svg {
-    width: 22px;
-    height: 22px;
-    stroke: currentColor;
-    stroke-width: 2;
-    fill: none;
-    display: block;
-}
-
-.dashboard-nav-label {
-    flex: 1;
-    min-width: 0;
-}
-
-.dashboard-nav-count {
-    font-size: var(--fs-xs);
-    font-weight: var(--fw-bold);
-    color: var(--color-primary);
-    background: var(--color-primary-light);
-    padding: 2px 8px;
-    border-radius: var(--radius-full);
-}
-
-.dashboard-nav-arrow {
-    color: var(--color-text-muted);
-    font-size: var(--fs-sm);
-    transition: transform var(--transition-fast);
-}
-
-.dashboard-nav-item:hover .dashboard-nav-arrow {
-    transform: translateX(4px);
-    color: var(--color-primary);
-}
-
-.dashboard-nav-divider {
-    height: 1px;
-    background: var(--color-border-soft);
-    margin: 12px 0;
-}
-
-/* === Аватар с фото === */
-.dashboard-avatar img,
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    display: block;
-}
-
-.dashboard-avatar,
-.profile-avatar {
-    overflow: hidden;
-}
-
-/* === Аватар в ленте === */
-.feed-item__avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    display: block;
-}
-
-/* === Чипы городов === */
-.city-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: var(--radius-full);
-    font-size: var(--fs-xs);
-    font-weight: var(--fw-semibold);
-    background: var(--color-bg-soft);
-    color: var(--color-text-soft);
-    transition: all var(--transition-fast);
-}
-
-/* Иконки в чипах */
-.city-chip svg {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.5;
-    flex-shrink: 0;
-    stroke: currentColor;
-}
-
-/* === 🏠 Родной — насыщенный зелёный === */
-.city-chip.home {
-    background: #bbf7d0;   /* светлый зелёный */
-    color: #14532d;        /* тёмно-зелёный */
-}
-
-/* === 📍 Текущий — средний зелёный === */
-.city-chip.current {
-    background: #dcfce7;   /* чуть светлее */
-    color: #166534;
-}
-
-/* === ✅ Посещённый — мягкий зелёный === */
-.city-chip.visited {
-    background: #f0fdf4;   /* почти белый с зеленью */
-    color: #15803d;
-}
-
-/* ============================================
-   ЕДИНЫЙ СТИЛЬ СТРОК ДАШБОРДА
-   (Мой вклад, Квесты, Планы, Гапы, Хашары)
-   ============================================ */
-
-.dashboard-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    background: var(--color-bg-soft);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-medium);
-    color: var(--color-text);
-    cursor: pointer;
-    transition: background var(--transition-fast);
-}
-
-.dashboard-row:hover {
-    background: var(--color-primary-light);
-}
-
-.dashboard-row__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--color-text);
-}
-
-.dashboard-row__icon svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2;
-    color: var(--color-text);
-}
-
-.dashboard-row__info {
-    flex: 1;
-    min-width: 0;
-}
-
-.dashboard-row__name {
-    color: var(--color-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: var(--fw-medium);
-}
-
-.dashboard-row__meta {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    color: var(--color-text-soft);
-    font-size: var(--fs-xs);
-    margin-top: 2px;
-}
-
-.dashboard-row__meta svg {
-    width: 12px;
-    height: 12px;
-    stroke-width: 2;
-    flex-shrink: 0;
-}
-
-/* --- Приводим существующие блоки к единому виду --- */
-
-.dashboard-contribution__label,
-.dashboard-quest__name {
-    color: var(--color-text);
-    font-weight: var(--fw-medium);
-}
-
-.dashboard-contribution__label svg,
-.dashboard-quest__icon svg {
-    color: var(--color-text);
-}
-
-.dashboard-contribution__value,
-.dashboard-quest__progress {
-    color: var(--color-primary);
-    font-weight: var(--fw-bold);
-}
-
-/* ============================================
-   ЕДИНЫЙ СТИЛЬ СТРОК ДАШБОРДА
-   ============================================ */
-
-.dashboard-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    background: var(--color-bg-soft);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-medium);
-    color: var(--color-text);
-    cursor: pointer;
-    transition: background var(--transition-fast);
-}
-
-.dashboard-row:hover {
-    background: var(--color-primary-light);
-}
-
-.dashboard-row__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--color-text);
-}
-
-.dashboard-row__icon svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2;
-    color: var(--color-text);
-}
-
-.dashboard-row__info {
-    flex: 1;
-    min-width: 0;
-}
-
-.dashboard-row__name {
-    color: var(--color-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: var(--fw-medium);
-}
-
-.dashboard-row__meta {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    color: var(--color-text-soft);
-    font-size: var(--fs-xs);
-    margin-top: 2px;
-}
-
-.dashboard-row__meta svg {
-    width: 12px;
-    height: 12px;
-    stroke-width: 2;
-    flex-shrink: 0;
-}
-
-/* Единый цвет текста для блоков дашборда */
-.dashboard-contribution__label,
-.dashboard-quest__name {
-    color: var(--color-text);
-    font-weight: var(--fw-medium);
-}
-
-.dashboard-contribution__label svg,
-.dashboard-quest__icon svg {
-    color: var(--color-text);
 }

@@ -243,8 +243,8 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 function showInstallButton() {
-    const header = document.querySelector('.header__inner');
-    if (!header || document.getElementById('installBtn')) return;
+    const container = document.getElementById('headerActions');
+    if (!container || document.getElementById('installBtn')) return;
 
     const btn = document.createElement('button');
     btn.id = 'installBtn';
@@ -261,10 +261,7 @@ function showInstallButton() {
         deferredPrompt = null;
     });
 
-    const themeBtn = document.getElementById('themeBtn');
-    if (themeBtn && themeBtn.parentNode) {
-        themeBtn.parentNode.insertBefore(btn, themeBtn);
-    } else {
-        header.appendChild(btn);
-    }
+    container.appendChild(btn);
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }

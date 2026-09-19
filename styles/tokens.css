@@ -3,24 +3,24 @@
 
 :root {
     /* === ЦВЕТА: БАЗА === */
-    --color-bg:            #fafafa;       /* основной фон */
-    --color-bg-soft:       #f5f5f7;       /* мягкий фон секций */
-    --color-surface:       #ffffff;       /* карточки, модалки */
-    --color-border:        #e5e7eb;       /* границы */
-    --color-border-soft:   #f3f4f6;       /* мягкие границы */
+    --color-bg:            #fafafa;
+    --color-bg-soft:       #f5f5f7;
+    --color-surface:       #ffffff;
+    --color-border:        #e5e7eb;
+    --color-border-soft:   #f3f4f6;
 
     /* === ЦВЕТА: ТЕКСТ === */
-    --color-text:          #0a0a0a;       /* основной */
-    --color-text-soft:     #4b5563;       /* второстепенный */
-    --color-text-muted:    #9ca3af;       /* приглушённый */
+    --color-text:          #0a0a0a;
+    --color-text-soft:     #4b5563;
+    --color-text-muted:    #9ca3af;
 
-    /* === ЦВЕТА: АКЦЕНТЫ (зелёные, сдержанные) === */
-    --color-primary:        #16a34a;   /* основной зелёный */
+    /* === ЦВЕТА: АКЦЕНТЫ === */
+    --color-primary:        #16a34a;
     --color-primary-dark:   #15803d;
     --color-primary-light:  #dcfce7;
     --color-primary-soft:   #f0fdf4;
 
-    --color-accent:         #059669;   /* изумруд */
+    --color-accent:         #059669;
     --color-accent-dark:    #047857;
     --color-accent-light:   #d1fae5;
 
@@ -28,14 +28,14 @@
     --color-success-dark:   #15803d;
     --color-success-light:  #dcfce7;
 
-    --color-warm:           #d97706;   /* золото для рейтинга */
+    --color-warm:           #d97706;
     --color-warm-dark:      #b45309;
     --color-warm-light:     #fef3c7;
 
     --color-danger:         #dc2626;
     --color-danger-light:   #fee2e2;
 
-    /* === ГРАДИЕНТЫ (зелёные) === */
+    /* === ГРАДИЕНТЫ === */
     --gradient-primary: linear-gradient(135deg, #16a34a 0%, #059669 100%);
     --gradient-hero:    linear-gradient(135deg, #064e3b 0%, #16a34a 100%);
     --gradient-success: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
@@ -46,15 +46,15 @@
     --font-heading: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
     /* === РАЗМЕРЫ ШРИФТА === */
-    --fs-xs:    0.75rem;    /* 12px */
-    --fs-sm:    0.875rem;   /* 14px */
-    --fs-base:  1rem;       /* 16px */
-    --fs-lg:    1.125rem;   /* 18px */
-    --fs-xl:    1.25rem;    /* 20px */
-    --fs-2xl:   1.5rem;     /* 24px */
-    --fs-3xl:   2rem;       /* 32px */
-    --fs-4xl:   2.5rem;     /* 40px */
-    --fs-5xl:   clamp(2.5rem, 6vw, 4.5rem);  /* адаптивный hero */
+    --fs-xs:    0.75rem;
+    --fs-sm:    0.875rem;
+    --fs-base:  1rem;
+    --fs-lg:    1.125rem;
+    --fs-xl:    1.25rem;
+    --fs-2xl:   1.5rem;
+    --fs-3xl:   2rem;
+    --fs-4xl:   2.5rem;
+    --fs-5xl:   clamp(2.5rem, 6vw, 4.5rem);
 
     /* === ВЕС ШРИФТА === */
     --fw-normal:  400;
@@ -63,7 +63,7 @@
     --fw-bold:    700;
     --fw-extrabold: 800;
 
-    /* === ОТСТУПЫ (шкала 4px) === */
+    /* === ОТСТУПЫ === */
     --sp-1: 4px;
     --sp-2: 8px;
     --sp-3: 12px;
@@ -84,14 +84,13 @@
     --radius-2xl:  32px;
     --radius-full: 9999px;
 
-    /* === ТЕНИ (мягкие) === */
+    /* === ТЕНИ === */
     --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.04);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
     --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.10);
 
-    /* Цветные тени для кнопок (зелёные) */
     --shadow-primary: 0 8px 24px rgba(22, 163, 74, 0.25);
     --shadow-accent:  0 8px 24px rgba(5, 150, 105, 0.25);
     --shadow-success: 0 8px 24px rgba(34, 197, 94, 0.25);
@@ -112,29 +111,21 @@
     --icon-md:  24px;
     --icon-lg:  32px;
     --icon-xl:  40px;
-
-    /* === ИКОНКИ === */
     --icon-stroke-width: 2;
-    --icon-size-sm: 18px;
-    --icon-size-md: 22px;
-    --icon-size-lg: 28px;
 }
 
-/* ============ ТЁМНАЯ ТЕМА ============ */
+/* ============ ТЁМНАЯ ============ */
 [data-theme="dark"] {
-    /* === БАЗА === */
     --color-bg:            #0f1419;
     --color-bg-soft:       #1a2028;
     --color-surface:       #1e2630;
     --color-border:        #2d3742;
     --color-border-soft:   #232c36;
 
-    /* === ТЕКСТ === */
     --color-text:          #f0f4f8;
     --color-text-soft:     #b0bcc8;
     --color-text-muted:    #6b7684;
 
-    /* === АКЦЕНТЫ (ярче для тёмной темы) === */
     --color-primary:        #22c55e;
     --color-primary-dark:   #16a34a;
     --color-primary-light:  #14532d;
@@ -155,19 +146,164 @@
     --color-danger:         #ef4444;
     --color-danger-light:   #4a1a1a;
 
-    /* === ГРАДИЕНТЫ === */
     --gradient-primary: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
     --gradient-hero:    linear-gradient(135deg, #0f2a1a 0%, #14532d 100%);
 
-    /* === ТЕНИ (для тёмной темы — глубже) === */
     --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.3);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
     --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.7);
+}
 
-    --shadow-primary: 0 8px 24px rgba(34, 197, 94, 0.35);
-    --shadow-success: 0 8px 24px rgba(34, 197, 94, 0.35);
+/* ============ НЕБЕСНАЯ ============ */
+[data-theme="sky"] {
+    --color-bg:            #f0f9ff;
+    --color-bg-soft:       #e0f2fe;
+    --color-surface:       #ffffff;
+    --color-border:        #bae6fd;
+    --color-border-soft:   #e0f2fe;
+
+    --color-text:          #0c4a6e;
+    --color-text-soft:     #0369a1;
+    --color-text-muted:    #7dd3fc;
+
+    --color-primary:        #0ea5e9;
+    --color-primary-dark:   #0284c7;
+    --color-primary-light:  #e0f2fe;
+    --color-primary-soft:   #f0f9ff;
+
+    --color-accent:         #06b6d4;
+    --color-accent-dark:    #0891b2;
+    --color-accent-light:   #cffafe;
+
+    --color-success:        #10b981;
+    --color-success-dark:   #059669;
+    --color-success-light:  #d1fae5;
+
+    --color-warm:           #f59e0b;
+    --color-warm-dark:      #d97706;
+    --color-warm-light:     #fef3c7;
+
+    --color-danger:         #ef4444;
+    --color-danger-light:   #fee2e2;
+
+    --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+    --gradient-hero:    linear-gradient(135deg, #075985 0%, #0ea5e9 100%);
+}
+
+/* ============ ПРИРОДНАЯ ============ */
+[data-theme="nature"] {
+    --color-bg:            #f7f5ef;
+    --color-bg-soft:       #ebe6d9;
+    --color-surface:       #ffffff;
+    --color-border:        #d6cdb8;
+    --color-border-soft:   #ebe6d9;
+
+    --color-text:          #1c2a1c;
+    --color-text-soft:     #4a5a3f;
+    --color-text-muted:    #94a388;
+
+    --color-primary:        #4d7c0f;
+    --color-primary-dark:   #3f6212;
+    --color-primary-light:  #ecfccb;
+    --color-primary-soft:   #f7fee7;
+
+    --color-accent:         #92400e;
+    --color-accent-dark:    #78350f;
+    --color-accent-light:   #fef3c7;
+
+    --color-success:        #65a30d;
+    --color-success-dark:   #4d7c0f;
+    --color-success-light:  #d9f99d;
+
+    --color-warm:           #b45309;
+    --color-warm-dark:      #92400e;
+    --color-warm-light:     #fef3c7;
+
+    --color-danger:         #b91c1c;
+    --color-danger-light:   #fee2e2;
+
+    --gradient-primary: linear-gradient(135deg, #4d7c0f 0%, #65a30d 100%);
+    --gradient-hero:    linear-gradient(135deg, #1a2e05 0%, #4d7c0f 100%);
+}
+
+/* ============ КОСМИЧЕСКАЯ ============ */
+[data-theme="space"] {
+    --color-bg:            #0b0620;
+    --color-bg-soft:       #160b35;
+    --color-surface:       #1a0f3d;
+    --color-border:        #3b1d6e;
+    --color-border-soft:   #2a1552;
+
+    --color-text:          #f5f3ff;
+    --color-text-soft:     #c4b5fd;
+    --color-text-muted:    #7c6cae;
+
+    --color-primary:        #a855f7;
+    --color-primary-dark:   #9333ea;
+    --color-primary-light:  #3b0764;
+    --color-primary-soft:   #2e1065;
+
+    --color-accent:         #ec4899;
+    --color-accent-dark:    #db2777;
+    --color-accent-light:   #500724;
+
+    --color-success:        #22d3ee;
+    --color-success-dark:   #06b6d4;
+    --color-success-light:  #083344;
+
+    --color-warm:           #facc15;
+    --color-warm-dark:      #eab308;
+    --color-warm-light:     #422006;
+
+    --color-danger:         #f87171;
+    --color-danger-light:   #450a0a;
+
+    --gradient-primary: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+    --gradient-hero:    linear-gradient(135deg, #1a0f3d 0%, #4c1d95 50%, #831843 100%);
+
+    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 4px 12px rgba(168, 85, 247, 0.15);
+    --shadow-md: 0 8px 24px rgba(168, 85, 247, 0.2);
+    --shadow-lg: 0 16px 40px rgba(168, 85, 247, 0.25);
+    --shadow-xl: 0 24px 60px rgba(168, 85, 247, 0.3);
+}
+
+/* ============ ВОСТОЧНАЯ ============ */
+[data-theme="orient"] {
+    --color-bg:            #fdf8f0;
+    --color-bg-soft:       #f5e9d3;
+    --color-surface:       #ffffff;
+    --color-border:        #e8d5b0;
+    --color-border-soft:   #f0e2c8;
+
+    --color-text:          #3b1f0a;
+    --color-text-soft:     #7c4a1e;
+    --color-text-muted:    #b8926a;
+
+    --color-primary:        #c2410c;
+    --color-primary-dark:   #9a3412;
+    --color-primary-light:  #ffedd5;
+    --color-primary-soft:   #fff7ed;
+
+    --color-accent:         #0891b2;
+    --color-accent-dark:    #0e7490;
+    --color-accent-light:   #cffafe;
+
+    --color-success:        #15803d;
+    --color-success-dark:   #166534;
+    --color-success-light:  #dcfce7;
+
+    --color-warm:           #d97706;
+    --color-warm-dark:      #b45309;
+    --color-warm-light:     #fef3c7;
+
+    --color-danger:         #b91c1c;
+    --color-danger-light:   #fee2e2;
+
+    --gradient-primary: linear-gradient(135deg, #c2410c 0%, #d97706 100%);
+    --gradient-hero:    linear-gradient(135deg, #7c2d12 0%, #c2410c 50%, #d97706 100%);
 }
 
 /* === Плавный переход при смене темы === */
@@ -182,46 +318,7 @@ body,
     transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
 }
 
-/* ============ ИКОНКИ ============ */
-    .icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    stroke-width: 2;
-}
-
-    .icon-xs { width: var(--icon-xs); height: var(--icon-xs); }
-    .icon-sm { width: var(--icon-sm); height: var(--icon-sm); }
-    .icon-md { width: var(--icon-md); height: var(--icon-md); }
-    .icon-lg { width: var(--icon-lg); height: var(--icon-lg); }
-    .icon-xl { width: var(--icon-xl); height: var(--icon-xl); }
-
-    /* SVG-иконки Lucide наследуют цвет текста */
-    svg.lucide {
-    display: inline-block;
-    vertical-align: middle;
-    flex-shrink: 0;
-}
-
-/* ============ ГРАДИЕНТНЫЕ ИКОНКИ ============ */
-.icon-gradient {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    /* Градиент через mask */
-    background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-}
-
-/* Обычные SVG Lucide — наследуют цвет */
+/* === ИКОНКИ === */
 svg.lucide {
     display: inline-block;
     vertical-align: middle;
@@ -229,7 +326,16 @@ svg.lucide {
     stroke-width: 2;
 }
 
-/* Модификаторы размера */
-.icon-sm svg { width: 18px; height: 18px; }
-.icon-md svg { width: 22px; height: 22px; }
-.icon-lg svg { width: 28px; height: 28px; }
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    stroke-width: 2;
+}
+
+.icon-xs { width: var(--icon-xs); height: var(--icon-xs); }
+.icon-sm { width: var(--icon-sm); height: var(--icon-sm); }
+.icon-md { width: var(--icon-md); height: var(--icon-md); }
+.icon-lg { width: var(--icon-lg); height: var(--icon-lg); }
+.icon-xl { width: var(--icon-xl); height: var(--icon-xl); }

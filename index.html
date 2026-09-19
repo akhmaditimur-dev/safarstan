@@ -74,7 +74,7 @@
     <!-- ШАПКА -->
     <header class="header">
         <div class="container header__inner">
-            <div class="logo"><i data-lucide="globe"></i> Safarstan</div>
+            <div class="logo">Safarstan</div>
 
             <div class="header-search" id="headerSearch">
                 <div class="header-search__input-wrap">
@@ -84,6 +84,8 @@
                 </div>
                 <div id="headerSearchResults" class="header-search__results" style="display:none;"></div>
             </div>
+
+            <div class="header-actions" id="headerActions"></div>
         </div>
     </header>
 
@@ -174,12 +176,6 @@
                                 <span class="dashboard-nav-label">Настройки</span>
                                 <span class="dashboard-nav-arrow">→</span>
                             </button>
-                            <button class="dashboard-nav-item" id="navGapsBtn">
-                                <span class="dashboard-nav-icon"><i data-lucide="coffee"></i></span>
-                                <span class="dashboard-nav-label">Мои гапы</span>
-                                <span class="dashboard-nav-count" id="dashGapsCount">0</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
                         </div>
 
                         <div class="dashboard-nav-divider"></div>
@@ -215,6 +211,12 @@
                             <button class="dashboard-nav-item" data-scroll="services">
                                 <span class="dashboard-nav-icon"><i data-lucide="shopping-cart"></i></span>
                                 <span class="dashboard-nav-label">Сервисы</span>
+                                <span class="dashboard-nav-arrow">→</span>
+                            </button>
+                            <button class="dashboard-nav-item" id="navGapsBtn">
+                                <span class="dashboard-nav-icon"><i data-lucide="coffee"></i></span>
+                                <span class="dashboard-nav-label">Мои гапы</span>
+                                <span class="dashboard-nav-count" id="dashGapsCount">0</span>
                                 <span class="dashboard-nav-arrow">→</span>
                             </button>
                             <button class="dashboard-nav-item" id="navHasharsBtn">
@@ -302,14 +304,9 @@
                     </div>
 
                     <div class="city-section" id="myCitiesSection" style="display:none;">
-                        <h3 class="city-section__title"><i data-lucide="map-pin"></i> Твои города</h3>
+                        <h3 class="city-section__title"><i data-lucide="map-pin"></i> Мои города</h3>
                         <div class="city-chips" id="myCitiesChips"></div>
                     </div>
-                </div>
-
-                <div class="hero__col hero__col--right">
-                    <h3 class="city-section__title"><i data-lucide="globe"></i> Все страны</h3>
-                    <div class="country-accordion" id="countryAccordion"></div>
                 </div>
             </div>
         </div>
@@ -631,20 +628,50 @@
                 <button class="settings-btn active" data-lang="ru">Русский</button>
                 <button class="settings-btn" data-lang="en">English</button>
             </div>
+
             <label class="modal-label">Тема</label>
-            <div class="settings-row">
-                <button class="settings-btn active" data-theme="light">Светлая</button>
-                <button class="settings-btn" data-theme="dark">Тёмная</button>
+            <div class="theme-grid">
+                <button class="theme-option active" data-theme="light">
+                    <span class="theme-option__preview theme-option__preview--light"></span>
+                    <span class="theme-option__label">Светлая</span>
+                </button>
+                <button class="theme-option" data-theme="dark">
+                    <span class="theme-option__preview theme-option__preview--dark"></span>
+                    <span class="theme-option__label">Тёмная</span>
+                </button>
+                <button class="theme-option" data-theme="sky">
+                    <span class="theme-option__preview theme-option__preview--sky"></span>
+                    <span class="theme-option__label">Небесная</span>
+                </button>
+                <button class="theme-option" data-theme="nature">
+                    <span class="theme-option__preview theme-option__preview--nature"></span>
+                    <span class="theme-option__label">Природная</span>
+                </button>
+                <button class="theme-option" data-theme="space">
+                    <span class="theme-option__preview theme-option__preview--space"></span>
+                    <span class="theme-option__label">Космос</span>
+                </button>
+                <button class="theme-option" data-theme="orient">
+                    <span class="theme-option__preview theme-option__preview--orient"></span>
+                    <span class="theme-option__label">Восточная</span>
+                </button>
             </div>
 
             <div class="settings-divider"></div>
 
-            <label class="modal-label">Что показывать в приложении</label>
+            <label class="modal-label">Что показывать в дашборде</label>
             <div class="modules-settings" id="modulesSettings"></div>
 
             <div class="settings-divider"></div>
-            <label class="modal-label">Аккаунт</label>
-            <button id="settingsLogout" class="btn btn-secondary btn-block">Выйти из аккаунта</button>
+                <label class="modal-label">Аккаунт</label>
+
+                <button id="settingsChangeEmailBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;">
+                    <i data-lucide="mail"></i> Сменить email
+                </button>
+                <button id="settingsChangePasswordBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;">
+                    <i data-lucide="key"></i> Сменить пароль
+                </button>
+                <button id="settingsLogout" class="btn btn-secondary btn-block">Выйти из аккаунта</button>
         </div>
     </div>
 
@@ -831,6 +858,44 @@
                 <button id="confirmCancel" class="btn btn-secondary">Отмена</button>
                 <button id="confirmOk" class="btn btn-primary">Да</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Модалка: сменить email -->
+    <div id="changeEmailModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="changeEmailClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Сменить email</h2>
+            <p class="modal-subtitle">Мы пришлём письмо на новый адрес — нужно подтвердить</p>
+
+            <label class="modal-label">Текущий email</label>
+            <input type="text" id="changeEmailCurrent" class="modal-input" disabled>
+
+            <label class="modal-label">Новый email</label>
+            <input type="email" id="changeEmailNew" class="modal-input" placeholder="new@example.com">
+
+            <button id="changeEmailSubmit" class="modal-btn">Отправить письмо</button>
+            <p id="changeEmailError" class="auth-error" style="display:none;"></p>
+            <p id="changeEmailSuccess" class="auth-success" style="display:none;"></p>
+        </div>
+    </div>
+
+    <!-- Модалка: сменить пароль -->
+    <div id="changePasswordModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="changePasswordClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Сменить пароль</h2>
+            <p class="modal-subtitle">Введи новый пароль — минимум 6 символов</p>
+
+            <label class="modal-label">Новый пароль</label>
+            <input type="password" id="changePasswordNew" class="modal-input" placeholder="Минимум 6 символов">
+
+            <label class="modal-label">Повтори пароль</label>
+            <input type="password" id="changePasswordRepeat" class="modal-input" placeholder="Ещё раз">
+
+            <button id="changePasswordSubmit" class="modal-btn">Сменить пароль</button>
+            <p id="changePasswordError" class="auth-error" style="display:none;"></p>
+            <p id="changePasswordSuccess" class="auth-success" style="display:none;"></p>
         </div>
     </div>
 

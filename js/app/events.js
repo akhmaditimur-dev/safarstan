@@ -7,23 +7,6 @@ function on(id, event, handler) {
 }
 
 // ============================================
-// ВЫБОР ГОРОДА
-// ============================================
-document.addEventListener('click', (e) => {
-    const cityBtn = e.target.closest('[data-city-key]');
-    if (!cityBtn) return;
-
-    if (!cityBtn.classList.contains('city-chip') &&
-        !cityBtn.classList.contains('country-city-btn') &&
-        !cityBtn.classList.contains('city-search__result')) return;
-
-    const cityKey = cityBtn.dataset.cityKey;
-    if (!cityKey || !CITIES[cityKey]) return;
-
-    if (typeof selectCity === 'function') selectCity(cityKey);
-});
-
-// ============================================
 // ТРАНСПОРТ
 // ============================================
 on('transportTabs', 'click', (e) => {
@@ -1162,4 +1145,136 @@ document.addEventListener('click', (e) => {
         }
         return;
     }
+});
+
+// ============================================
+// СМЕНА EMAIL
+// ============================================
+on('settingsChangeEmailBtn', 'click', async () => {
+    const modal = document.getElementById('changeEmailModal');
+    const currentInput = document.getElementById('changeEmailCurrent');
+    if (!modal) return;
+
+    // Показываем текущий email
+    if (currentInput) {
+        const email = await getCurrentUserEmail();
+        currentInput.value = email || '—';
+    }
+
+    // Сброс полей
+    document.getElementById('changeEmailNew').value = '';
+    document.getElementById('changeEmailError').style.display = 'none';
+    document.getElementById('changeEmailSuccess').style.display = 'none';
+
+    modal.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+});
+
+on('changeEmailClose', 'click', () => {
+    const modal = document.getElementById('changeEmailModal');
+    if (modal) modal.style.display = 'none';
+});
+
+on('changeEmailModal', 'click', (e) => {
+    if (e.target.id === 'changeEmailModal') e.target.style.display = 'none';
+});
+
+on('changeEmailSubmit', 'click', async () => {
+    const newEmail = document.getElementById('changeEmailNew').value.trim();
+    const errorEl = document.getElementById('changeEmailError');
+    const successEl = document.getElementById('changeEmailSuccess');
+    const btn = document.getElementById('changeEmailSubmit');
+
+    if (!newEmail || !newEmail.includes('@')) {
+        errorEl.textContent = 'Введи корректный email';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Отправка...';
+    errorEl.style.display = 'none';
+    successEl.style.display = 'none';
+
+    const result = await changeEmail(newEmail);
+
+    btn.disabled = false;
+    btn.textContent = 'Отправить письмо';
+
+    if (result.error) {
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    successEl.textContent = '✅ Письмо отправлено. Проверь новый email и подтверди.';
+    successEl.style.display = 'block';
+});
+
+// ============================================
+// СМЕНА ПАРОЛЯ
+// ============================================
+on('settingsChangePasswordBtn', 'click', () => {
+    const modal = document.getElementById('changePasswordModal');
+    if (!modal) return;
+
+    document.getElementById('changePasswordNew').value = '';
+    document.getElementById('changePasswordRepeat').value = '';
+    document.getElementById('changePasswordError').style.display = 'none';
+    document.getElementById('changePasswordSuccess').style.display = 'none';
+
+    modal.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+});
+
+on('changePasswordClose', 'click', () => {
+    const modal = document.getElementById('changePasswordModal');
+    if (modal) modal.style.display = 'none';
+});
+
+on('changePasswordModal', 'click', (e) => {
+    if (e.target.id === 'changePasswordModal') e.target.style.display = 'none';
+});
+
+on('changePasswordSubmit', 'click', async () => {
+    const newPass = document.getElementById('changePasswordNew').value;
+    const repeat = document.getElementById('changePasswordRepeat').value;
+    const errorEl = document.getElementById('changePasswordError');
+    const successEl = document.getElementById('changePasswordSuccess');
+    const btn = document.getElementById('changePasswordSubmit');
+
+    if (newPass.length < 6) {
+        errorEl.textContent = 'Пароль минимум 6 символов';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    if (newPass !== repeat) {
+        errorEl.textContent = 'Пароли не совпадают';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Сохранение...';
+    errorEl.style.display = 'none';
+    successEl.style.display = 'none';
+
+    const result = await changePassword(newPass);
+
+    btn.disabled = false;
+    btn.textContent = 'Сменить пароль';
+
+    if (result.error) {
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    successEl.textContent = '✅ Пароль изменён';
+    successEl.style.display = 'block';
+
+    setTimeout(() => {
+        document.getElementById('changePasswordModal').style.display = 'none';
+    }, 1500);
 });
