@@ -152,85 +152,7 @@
                     </div>
 
                     <div class="dashboard-card dashboard-card--nav">
-                        <div class="dashboard-nav-section">
-                            <h3 class="dashboard-nav-title">Профиль</h3>
-
-                            <button class="dashboard-nav-item" id="navFriendsBtn">
-                                <span class="dashboard-nav-icon"><i data-lucide="users"></i></span>
-                                <span class="dashboard-nav-label">Друзья</span>
-                                <span class="dashboard-nav-count" id="dashFriendsCount">0</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" id="navGalleryBtn">
-                                <span class="dashboard-nav-icon"><i data-lucide="image"></i></span>
-                                <span class="dashboard-nav-label">Моя галерея</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" id="navReviewsBtn">
-                                <span class="dashboard-nav-icon"><i data-lucide="message-circle"></i></span>
-                                <span class="dashboard-nav-label">Мои отзывы</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" id="navAccessRequestsBtn" style="display:none;">
-                                <span class="dashboard-nav-icon"><i data-lucide="user-check"></i></span>
-                                <span class="dashboard-nav-label">Запросы на профиль</span>
-                                <span class="dashboard-nav-count" id="dashAccessRequestsCount">0</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" id="navSettingsBtn">
-                                <span class="dashboard-nav-icon"><i data-lucide="settings"></i></span>
-                                <span class="dashboard-nav-label">Настройки</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                        </div>
-
-                        <div class="dashboard-nav-divider"></div>
-
-                        <div class="dashboard-nav-section">
-                            <h3 class="dashboard-nav-title">Активность</h3>
-
-                            <button class="dashboard-nav-item" data-scroll="map">
-                                <span class="dashboard-nav-icon"><i data-lucide="map"></i></span>
-                                <span class="dashboard-nav-label">Карта</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" data-scroll="ratings">
-                                <span class="dashboard-nav-icon"><i data-lucide="trophy"></i></span>
-                                <span class="dashboard-nav-label">Рейтинг</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" id="navQuestsBtn" data-scroll="quests">
-                                <span class="dashboard-nav-icon"><i data-lucide="target"></i></span>
-                                <span class="dashboard-nav-label">Квесты</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" data-scroll="transport">
-                                <span class="dashboard-nav-icon"><i data-lucide="bus"></i></span>
-                                <span class="dashboard-nav-label">Транспорт</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" data-scroll="hotels">
-                                <span class="dashboard-nav-icon"><i data-lucide="hotel"></i></span>
-                                <span class="dashboard-nav-label">Отели</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" data-scroll="services">
-                                <span class="dashboard-nav-icon"><i data-lucide="shopping-cart"></i></span>
-                                <span class="dashboard-nav-label">Сервисы</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" id="navGapsBtn">
-                                <span class="dashboard-nav-icon"><i data-lucide="coffee"></i></span>
-                                <span class="dashboard-nav-label">Мои гапы</span>
-                                <span class="dashboard-nav-count" id="dashGapsCount">0</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                            <button class="dashboard-nav-item" id="navHasharsBtn">
-                                <span class="dashboard-nav-icon"><i data-lucide="hand-heart"></i></span>
-                                <span class="dashboard-nav-label">Хашары</span>
-                                <span class="dashboard-nav-arrow">→</span>
-                            </button>
-                        </div>
+                        <div id="dashboardSidebar"></div>
                     </div>
                 </div>
 
@@ -581,7 +503,7 @@
             </div>
             <div class="profile-section"><h3>Мои города</h3><div class="profile-cities" id="profileCities"></div></div>
             <div class="profile-section"><h3>Статистика</h3><div class="profile-stats" id="profileStats"></div></div>
-            <div class="profile-section"><h3>Бейджи</h3><div class="profile-badges" id="profileBadges"></div></div>
+            <div class="profile-section"><h3>Достижения</h3><div class="profile-badges" id="profileBadges"></div></div>
         </div>
     </div>
 
@@ -597,13 +519,13 @@
             </div>
             <div class="profile-section"><h3><i data-lucide="building-2"></i> Города</h3><div class="profile-cities" id="ppCities"></div></div>
             <div class="profile-section"><h3><i data-lucide="bar-chart-3"></i> Статистика</h3><div class="profile-stats" id="ppStats"></div></div>
-            <div class="profile-section"><h3><i data-lucide="award"></i> Бейджи</h3><div class="profile-badges" id="ppBadges"></div></div>
+            <div class="profile-section"><h3><i data-lucide="award"></i> Достижения</h3><div class="profile-badges" id="ppBadges"></div></div>
             <div class="profile-section" id="ppActionsSection">
-                <button id="ppShareBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;"><i data-lucide="share-2"></i> Поделиться профилем</button>
+                <button id="ppShareBtn" class="btn btn-secondary btn-block"><i data-lucide="share-2"></i> Поделиться профилем</button>
                 <button id="ppAddFriendBtn" class="btn btn-primary btn-block" style="display:none;"><i data-lucide="user-plus"></i> Добавить в друзья</button>
                 <button id="ppRemoveFriendBtn" class="btn btn-secondary btn-block" style="display:none;"><i data-lucide="check"></i> Уже друзья</button>
                 <button id="ppPendingBtn" class="btn btn-secondary btn-block" style="display:none;" disabled><i data-lucide="clock"></i> Заявка отправлена</button>
-                <button id="ppBlockBtn" class="btn btn-danger btn-block" style="margin-top: 8px;"><i data-lucide="ban"></i> Заблокировать </button>
+                <button id="ppBlockBtn" class="btn btn-danger btn-block"><i data-lucide="ban"></i> Заблокировать</button>
             </div>
         </div>
     </div>
@@ -678,7 +600,7 @@
             </div>
 
             <button id="onboardingNextBtn" class="modal-btn">Далее</button>
-            <button id="onboardingSkipBtn" class="btn btn-ghost btn-block" style="margin-top: 8px;">Пропустить</button>
+            <button id="onboardingSkipBtn" class="btn btn-ghost btn-block">Пропустить</button>
         </div>
     </div>
 
@@ -734,24 +656,24 @@
                 <div class="settings-divider"></div>
 
                 <label class="modal-label">Данные</label>
-                <button id="settingsExportBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;">
+                <button id="settingsExportBtn" class="btn btn-secondary btn-block">
                     <i data-lucide="download"></i> Скачать мои данные
                 </button>
-                <button id="settingsBlockedListBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;">
+                <button id="settingsBlockedListBtn" class="btn btn-secondary btn-block">
                     <i data-lucide="ban"></i> Список заблокированных
                 </button>
 
                 <div class="settings-divider"></div>
 
                 <label class="modal-label">Аккаунт</label>
-                <button id="settingsChangeEmailBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;">
+                <button id="settingsChangeEmailBtn" class="btn btn-secondary btn-block">
                     <i data-lucide="mail"></i> Сменить email
                 </button>
-                <button id="settingsChangePasswordBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;">
+                <button id="settingsChangePasswordBtn" class="btn btn-secondary btn-block">
                     <i data-lucide="key"></i> Сменить пароль
                 </button>
                 <button id="settingsLogout" class="btn btn-secondary btn-block">Выйти из аккаунта</button>
-                <button id="settingsDeleteAccountBtn" class="btn btn-danger btn-block" style="margin-top: 8px;">
+                <button id="settingsDeleteAccountBtn" class="btn btn-danger btn-block">
                     <i data-lucide="trash-2"></i> Удалить аккаунт
                 </button>
             </div>
@@ -1013,7 +935,7 @@
             <p class="modal-subtitle" id="restoreAccountSubtitle">Восстановить?</p>
 
             <button id="restoreAccountSubmit" class="modal-btn">Восстановить аккаунт</button>
-            <button id="restoreAccountCancel" class="btn btn-ghost btn-block" style="margin-top: 8px;">Нет, выйти</button>
+            <button id="restoreAccountCancel" class="btn btn-ghost btn-block">Нет, выйти</button>
             <p id="restoreAccountError" class="auth-error" style="display:none;"></p>
         </div>
     </div>
@@ -1072,13 +994,20 @@
     <script defer src="js/ui/ratings.js"></script>
     <script defer src="js/ui/quests.js"></script>
     <script defer src="js/ui/map.js"></script>
-    <script defer src="js/ui/profile.js"></script>
+    <script defer src="js/ui/profile/profile-utils.js"></script>
+    <script defer src="js/ui/profile/profile-self.js"></script>
+    <script defer src="js/ui/profile/profile-other.js"></script>
+    <script defer src="js/ui/profile/profile-requests.js"></script>
+    <script defer src="js/ui/profile/profile-blocks.js"></script>
+    <script defer src="js/ui/profile/profile-public.js"></script>
+    <script defer src="js/ui/profile/profile-share.js"></script>
     <script defer src="js/ui/header-search.js"></script>
     <script defer src="js/ui/dashboard.js"></script>
     <script defer src="js/ui/feed.js"></script>
     <script defer src="js/ui/friends.js"></script>
     <script defer src="js/ui/reviews.js"></script>
     <script defer src="js/ui/all.js"></script>
+    <script defer src="js/ui/sidebar.js"></script>
     <script defer src="js/ui/modules.js"></script>
     <script defer src="js/ui/gaps.js"></script>
     <script defer src="js/ui/hashars.js"></script>
@@ -1086,7 +1015,14 @@
     <script defer src="js/ui/onboarding.js"></script>
 
     <script defer src="js/app/init.js"></script>
-    <script defer src="js/app/events.js"></script>
+    <script defer src="js/app/events/events-helpers.js"></script>
+    <script defer src="js/app/events/events-auth.js"></script>
+    <script defer src="js/app/events/events-profile.js"></script>
+    <script defer src="js/app/events/events-friends.js"></script>
+    <script defer src="js/app/events/events-content.js"></script>
+    <script defer src="js/app/events/events-gaps.js"></script>
+    <script defer src="js/app/events/events-misc.js"></script>
+    <script defer src="js/app/events/events-sidebar.js"></script>
     <script defer src="js/app/start.js"></script>
 
 </body>

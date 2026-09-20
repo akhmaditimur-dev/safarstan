@@ -532,3 +532,93 @@
     font-size: 14px;
     opacity: 0.6;
 }
+
+/* ============================================ */
+/* УНИФИКАЦИЯ КНОПОК В МОДАЛКАХ                */
+/* ============================================ */
+
+/* .modal-btn теперь = .btn.btn-primary.btn-block + отступ */
+.modal-btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: var(--radius-full);
+    font-family: var(--font-text);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    line-height: 1;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    background: var(--gradient-primary);
+    color: #fff;
+    box-shadow: var(--shadow-primary);
+    transition: all var(--transition-base);
+    margin-top: 24px;
+    user-select: none;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(22, 163, 74, 0.35);
+}
+
+.modal-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.modal-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.modal-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* Опасные действия внутри модалок */
+.modal-btn--danger {
+    background: var(--color-danger);
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.25);
+}
+
+.modal-btn--danger:hover {
+    background: var(--color-danger-dark, #b91c1c);
+    box-shadow: 0 14px 32px rgba(220, 38, 38, 0.35);
+}
+
+/* .btn внутри .modal — растягиваются на всю ширину */
+.modal .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Убираем лишние отступы между кнопками в модалке */
+.modal .btn + .btn,
+.modal .modal-btn + .btn,
+.modal .btn + .modal-btn,
+.modal .modal-btn + .modal-btn {
+    margin-top: 10px;
+}
+
+/* Кнопка "Выход" — вторичная, не primary */
+#settingsLogout {
+    margin-top: 10px;
+}
+
+/* Кнопка "Удалить аккаунт" — отделяем */
+#settingsDeleteAccountBtn {
+    margin-top: 24px;
+}
+
+/* === Единый стиль error/success === */
+.modal .auth-error,
+.modal .auth-success {
+    margin-top: 14px;
+}

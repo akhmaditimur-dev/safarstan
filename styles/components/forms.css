@@ -196,3 +196,14 @@ select.modal-input {
         font-size: 32px;
     }
 }
+
+/* Первый label в модалке — без лишнего отступа */
+.modal .modal-subtitle + .modal-label,
+.modal h2 + .modal-label {
+    margin-top: 0;
+}
+
+/* Унифицируем размеры полей в модалках */
+.modal .modal-input {
+    margin-bottom: 4px;
+}

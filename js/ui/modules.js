@@ -135,11 +135,12 @@ async function saveMapSetting(layerName, value) {
 // ВИДИМОСТЬ МОДУЛЕЙ ВО ВСЁМ ИНТЕРФЕЙСЕ
 // ============================================
 function applyModuleVisibility() {
+    // Карточки и секции, зависящие от модулей
     const sections = {
-        gaps:    ['dashGapsCard', 'gapInvitesBlock', 'navGapsBtn'],
-        hashars: ['dashHasharsCard', 'navHasharsBtn'],
-        quests:  ['dashQuestsCard', 'quests', 'navQuestsBtn'],
-        friends: ['navFriendsBtn'],
+        gaps:    ['dashGapsCard', 'gapInvitesBlock'],
+        hashars: ['dashHasharsCard'],
+        quests:  ['dashQuestsCard', 'quests'],
+        friends: [],
     };
 
     Object.entries(sections).forEach(([mod, ids]) => {
@@ -151,8 +152,12 @@ function applyModuleVisibility() {
         });
     });
 
+    // Перерисовываем сайдбар — пункты зависят от модулей
+    if (typeof renderSidebar === 'function') {
+        renderSidebar();
+    }
+
     // Обновляем карту — бейджи/точки зависят от модулей
-    // Но только если карта уже создана
     if (typeof safarstanMap !== 'undefined' && safarstanMap) {
         if (typeof renderGapBadges === 'function') renderGapBadges();
         if (typeof renderHasharMarkers === 'function') renderHasharMarkers();

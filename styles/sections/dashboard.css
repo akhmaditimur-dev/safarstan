@@ -668,3 +668,41 @@
         font-size: var(--fs-lg);
     }
 }
+
+/* === Плавающая кнопка «В дашборд» === */
+.back-to-dashboard {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: #fff;
+    border: none;
+    box-shadow: var(--shadow-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 90;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.back-to-dashboard:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 32px rgba(22, 163, 74, 0.35);
+}
+
+.back-to-dashboard svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2.5;
+}
+
+/* На мобильных — выше, чтобы не мешало нижнему меню */
+@media (max-width: 768px) {
+    .back-to-dashboard {
+        bottom: 90px;
+    }
+}

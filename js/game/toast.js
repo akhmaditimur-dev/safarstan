@@ -27,7 +27,7 @@ function showBadgeToast(badge) {
     toast.className = 'badge-toast';
     toast.innerHTML = `
         <span class="badge-toast-icon">${badge.icon}</span>
-        🎖 Новый бейдж:<br><strong>${badge.name}</strong>
+        🎖 Новое достижение:<br><strong>${badge.name}</strong>
     `;
     document.body.appendChild(toast);
 

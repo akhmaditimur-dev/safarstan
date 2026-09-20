@@ -25,6 +25,7 @@ async function showDashboard() {
 
     showPrivateSections();
 
+    renderSidebar();
     renderDashboard();
     await renderPlans();
     await renderFriends();
@@ -271,4 +272,36 @@ function formatDate(dateStr) {
     const d = new Date(dateStr);
     const months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// ============ ПЛАВАЮЩАЯ КНОПКА «В ДАШБОРД» ============
+
+function initBackToDashboardButton() {
+    if (document.getElementById('backToDashboardBtn')) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'backToDashboardBtn';
+    btn.className = 'back-to-dashboard';
+    btn.title = 'Вернуться в дашборд';
+    btn.innerHTML = '<i data-lucide="arrow-up"></i>';
+    btn.style.display = 'none';
+
+    btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.body.appendChild(btn);
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    // Показываем кнопку, когда дашборд вне зоны видимости
+    window.addEventListener('scroll', () => {
+        const dashboard = document.getElementById('dashboard');
+        if (!dashboard) return;
+
+        const rect = dashboard.getBoundingClientRect();
+        const isVisible = rect.bottom > 100;
+
+        btn.style.display = isVisible ? 'none' : 'flex';
+    }, { passive: true });
 }

@@ -345,14 +345,14 @@
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 8px;
     margin-top: 12px;
 }
 
 .gallery-item {
     aspect-ratio: 1;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     overflow: hidden;
     background: var(--color-bg-soft);
     cursor: pointer;
@@ -360,13 +360,14 @@
 }
 
 .gallery-item:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
 .gallery-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 /* ============ МОИ ОТЗЫВЫ ============ */
@@ -496,4 +497,41 @@
 .card-author[data-player-profile]:hover {
     color: var(--color-primary-dark);
     text-decoration: underline;
+}
+
+/* Кнопка раскрытия городов */
+.city-chip-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    background: var(--color-bg-soft);
+    color: var(--color-text-soft);
+    border: 1px dashed var(--color-border);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.city-chip-toggle:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.city-chip-toggle.active {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-style: solid;
+}
+
+.city-chips-extra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+    width: 100%;
 }

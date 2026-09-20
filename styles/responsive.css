@@ -10,7 +10,8 @@
         grid-template-columns: repeat(5, 1fr);
     }
     .profile-badges {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
     }
 }
 

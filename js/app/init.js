@@ -6,6 +6,10 @@ let authMode = 'signup';
 // ГЛАВНАЯ ФУНКЦИЯ ЗАПУСКА
 // ============================================
 async function initApp() {
+    // Отключаем авто-восстановление скролла браузером
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
     const session = await getCurrentSession();
 
     // ─── Всегда инициализируем базовые вещи ───
@@ -22,6 +26,7 @@ async function initApp() {
         await renderAll();
         renderTabs();
         if (typeof lucide !== 'undefined') lucide.createIcons();
+        window.scrollTo({ top: 0, behavior: 'instant' });
         return;
     }
 
@@ -32,6 +37,7 @@ async function initApp() {
         await renderAll();
         renderTabs();
         if (typeof lucide !== 'undefined') lucide.createIcons();
+        window.scrollTo({ top: 0, behavior: 'instant' });
         return;
     }
 
@@ -105,13 +111,16 @@ async function initApp() {
         if (typeof renderHasharsList === 'function') await renderHasharsList();
     }
 
-    // Карта и всё остальное
+        // Карта и всё остальное
     renderMap();
     await renderAll();
 
     if (typeof saveState === 'function') saveState();
     await showDashboard();
     if (typeof initHeaderSearch === 'function') initHeaderSearch();
+    if (typeof initBackToDashboardButton === 'function') initBackToDashboardButton();
+    // Возвращаемся в начало страницы после загрузки
+    window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 // ============================================
