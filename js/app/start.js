@@ -24,3 +24,22 @@ if (typeof lucide !== 'undefined') lucide.createIcons();
 
 // Запуск приложения
 initApp();
+
+// ============================================
+// ПУБЛИЧНАЯ ССЫЛКА НА ПРОФИЛЬ (?p=playerId)
+// ============================================
+(function checkPublicProfileLink() {
+    const urlParams = new URLSearchParams(location.search);
+    const publicPlayerId = urlParams.get('p');
+
+    if (!publicPlayerId) return;
+
+    // Небольшая задержка, чтобы initApp() успел отрисовать лендинг
+    setTimeout(() => {
+        if (typeof openPublicProfile === 'function') {
+            openPublicProfile(publicPlayerId);
+        } else {
+            console.warn('openPublicProfile не найдена — проверь js/ui/profile.js');
+        }
+    }, 300);
+})();

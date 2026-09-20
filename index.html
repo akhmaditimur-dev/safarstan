@@ -171,6 +171,12 @@
                                 <span class="dashboard-nav-label">Мои отзывы</span>
                                 <span class="dashboard-nav-arrow">→</span>
                             </button>
+                            <button class="dashboard-nav-item" id="navAccessRequestsBtn" style="display:none;">
+                                <span class="dashboard-nav-icon"><i data-lucide="user-check"></i></span>
+                                <span class="dashboard-nav-label">Запросы на профиль</span>
+                                <span class="dashboard-nav-count" id="dashAccessRequestsCount">0</span>
+                                <span class="dashboard-nav-arrow">→</span>
+                            </button>
                             <button class="dashboard-nav-item" id="navSettingsBtn">
                                 <span class="dashboard-nav-icon"><i data-lucide="settings"></i></span>
                                 <span class="dashboard-nav-label">Настройки</span>
@@ -593,9 +599,11 @@
             <div class="profile-section"><h3><i data-lucide="bar-chart-3"></i> Статистика</h3><div class="profile-stats" id="ppStats"></div></div>
             <div class="profile-section"><h3><i data-lucide="award"></i> Бейджи</h3><div class="profile-badges" id="ppBadges"></div></div>
             <div class="profile-section" id="ppActionsSection">
+                <button id="ppShareBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;"><i data-lucide="share-2"></i> Поделиться профилем</button>
                 <button id="ppAddFriendBtn" class="btn btn-primary btn-block" style="display:none;"><i data-lucide="user-plus"></i> Добавить в друзья</button>
                 <button id="ppRemoveFriendBtn" class="btn btn-secondary btn-block" style="display:none;"><i data-lucide="check"></i> Уже друзья</button>
                 <button id="ppPendingBtn" class="btn btn-secondary btn-block" style="display:none;" disabled><i data-lucide="clock"></i> Заявка отправлена</button>
+                <button id="ppBlockBtn" class="btn btn-danger btn-block" style="margin-top: 8px;"><i data-lucide="ban"></i> Заблокировать </button>
             </div>
         </div>
     </div>
@@ -615,6 +623,26 @@
             <h2>Мои отзывы</h2>
             <p class="modal-subtitle">Все твои отзывы о местах</p>
             <div id="myReviewsList" class="my-reviews-list"></div>
+        </div>
+    </div>
+
+    <!-- Модалка: заблокированные -->
+    <div id="blockedListModal" class="modal-overlay" style="display:none;">
+        <div class="modal modal--friends">
+            <button id="blockedListClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Заблокированные</h2>
+            <p class="modal-subtitle">Эти игроки не могут писать тебе и видеть твой профиль</p>
+            <div id="blockedList" class="friends-list"></div>
+        </div>
+    </div>
+
+    <!-- Модалка: все уведомления -->
+    <div id="notificationsModal" class="modal-overlay" style="display:none;">
+        <div class="modal modal--friends">
+            <button id="notificationsClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Уведомления</h2>
+            <p class="modal-subtitle">Все события, связанные с тобой</p>
+            <div id="notificationsModalList" class="friends-list"></div>
         </div>
     </div>
 
@@ -663,6 +691,23 @@
             <div class="modules-settings" id="modulesSettings"></div>
 
             <div class="settings-divider"></div>
+
+            <label class="modal-label">Приватность</label>
+            <div class="modules-settings" id="privacySettings"></div>
+
+                <label class="modal-label">Заблокированные</label>
+                <button id="settingsBlockedListBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;"><i data-lucide="ban"></i> Список заблокированных </button>
+
+            <div class="settings-divider"></div>
+                <label class="modal-label">Аккаунт</label>
+
+                <label class="modal-label">Данные</label>
+
+                <button id="settingsExportBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;">
+                    <i data-lucide="download"></i> Скачать мои данные
+                </button>
+
+                <div class="settings-divider"></div>
                 <label class="modal-label">Аккаунт</label>
 
                 <button id="settingsChangeEmailBtn" class="btn btn-secondary btn-block" style="margin-bottom: 8px;">
@@ -672,7 +717,8 @@
                     <i data-lucide="key"></i> Сменить пароль
                 </button>
                 <button id="settingsLogout" class="btn btn-secondary btn-block">Выйти из аккаунта</button>
-        </div>
+                <button id="settingsDeleteAccountBtn" class="btn btn-danger btn-block" style="margin-top: 8px;"><i data-lucide="trash-2"></i> Удалить аккаунт </button>
+            </div>
     </div>
 
     <div id="avatarModal" class="modal-overlay" style="display:none;">
@@ -756,6 +802,16 @@
                 <h3>Мои друзья (<span id="friendsCount">0</span>)</h3>
                 <div id="friendsList" class="friends-list"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Модалка: запросы на просмотр профиля -->
+    <div id="accessRequestsModal" class="modal-overlay" style="display:none;">
+        <div class="modal modal--friends">
+            <button id="accessRequestsClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Запросы на профиль</h2>
+            <p class="modal-subtitle">Эти игроки хотят увидеть твой полный профиль</p>
+            <div id="accessRequestsList" class="friends-list"></div>
         </div>
     </div>
 
@@ -899,6 +955,33 @@
         </div>
     </div>
 
+    <!-- Модалка: удалить аккаунт -->
+    <div id="deleteAccountModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="deleteAccountClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Удалить аккаунт?</h2>
+            <p class="modal-subtitle">Аккаунт будет скрыт, но данные сохранятся 30 дней. Если передумаешь — сможешь восстановить.</p>
+
+            <label class="modal-label">Введи слово <strong>УДАЛИТЬ</strong>, чтобы подтвердить</label>
+            <input type="text" id="deleteAccountConfirm" class="modal-input" placeholder="УДАЛИТЬ" autocomplete="off">
+
+            <button id="deleteAccountSubmit" class="modal-btn modal-btn--danger">Удалить аккаунт</button>
+            <p id="deleteAccountError" class="auth-error" style="display:none;"></p>
+        </div>
+    </div>
+
+    <!-- Модалка: восстановить аккаунт -->
+    <div id="restoreAccountModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <h2>Аккаунт удалён</h2>
+            <p class="modal-subtitle" id="restoreAccountSubtitle">Восстановить?</p>
+
+            <button id="restoreAccountSubmit" class="modal-btn">Восстановить аккаунт</button>
+            <button id="restoreAccountCancel" class="btn btn-ghost btn-block" style="margin-top: 8px;">Нет, выйти</button>
+            <p id="restoreAccountError" class="auth-error" style="display:none;"></p>
+        </div>
+    </div>
+
     <div id="mapSettingsModal" class="modal-overlay" style="display:none;">
         <div class="modal">
             <button id="mapSettingsClose" class="modal-close"><i data-lucide="x"></i></button>
@@ -938,6 +1021,7 @@
     <script defer src="js/api/photos.js"></script>
     <script defer src="js/api/gaps.js"></script>
     <script defer src="js/api/hashars.js"></script>
+    <script defer src="js/api/notifications.js"></script>
 
     <script defer src="js/game/helpers.js"></script>
     <script defer src="js/game/checkin.js"></script>
@@ -962,6 +1046,7 @@
     <script defer src="js/ui/modules.js"></script>
     <script defer src="js/ui/gaps.js"></script>
     <script defer src="js/ui/hashars.js"></script>
+    <script defer src="js/ui/notifications.js"></script>
 
     <script defer src="js/app/init.js"></script>
     <script defer src="js/app/events.js"></script>

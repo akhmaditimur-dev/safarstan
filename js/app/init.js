@@ -54,6 +54,7 @@ async function initApp() {
         todayDate: serverPlayer.today_date || null,
         avatarPath: serverPlayer.avatar_path || null,
         settings: serverPlayer.settings || {},
+        isPrivate: serverPlayer.is_private === true,
     };
 
     // Загрузка чек-инов
@@ -74,6 +75,12 @@ async function initApp() {
 
     // Профиль и навигация
     updatePlayerBadge();
+    if (typeof initNotificationsBell === 'function') {
+    initNotificationsBell();
+    }
+    if (typeof refreshAccessRequestsList === 'function' && PLAYER.isPrivate) {
+    refreshAccessRequestsList();
+    }
     if (typeof applyModuleVisibility === 'function') applyModuleVisibility();
 
     // Табы
@@ -145,6 +152,11 @@ function applyTheme(theme) {
     const btn = document.getElementById('themeBtn');
     if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
     localStorage.setItem('safarstan_theme', theme);
+
+    // Обновляем тайлы карты, если она уже создана
+    if (typeof updateMapTiles === 'function') {
+        updateMapTiles(theme);
+    }
 }
 
 function initTheme() {

@@ -61,12 +61,11 @@ function updatePlayerBadge() {
 }
 
 // ============================================
-// ПРОФИЛЬ — МОДАЛКА
+// ПРОФИЛЬ — МОДАЛКА (свой)
 // ============================================
 function renderProfile() {
     if (!PLAYER) return;
 
-    // Шапка профиля
     const avatarEl = document.getElementById('profileAvatar');
     const nameEl = document.getElementById('profileName');
     const levelEl = document.getElementById('profileLevel');
@@ -75,7 +74,6 @@ function renderProfile() {
     if (nameEl) nameEl.textContent = PLAYER.name;
     if (levelEl) levelEl.textContent = PLAYER.level;
 
-    // XP
     const xpInLevel = PLAYER.xp % 100;
     const xpToNext = 100 - xpInLevel;
 
@@ -137,7 +135,6 @@ function renderProfile() {
         }).join('');
     }
 
-    // Превращаем иконки
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
@@ -487,6 +484,7 @@ async function openPlayerProfile(playerId) {
     if (!playerId) return;
     if (!PLAYER) return;
 
+    // Свой профиль — открываем обычную модалку
     if (playerId === PLAYER.playerId) {
         renderProfile();
         document.getElementById('profileModal').style.display = 'flex';
@@ -496,6 +494,7 @@ async function openPlayerProfile(playerId) {
     const modal = document.getElementById('playerProfileModal');
     if (!modal) return;
 
+    // Сброс UI перед загрузкой
     document.getElementById('ppName').textContent = '⏳ Загрузка...';
     document.getElementById('ppAvatar').innerHTML = '⏳';
     document.getElementById('ppLevel').textContent = '—';
@@ -505,6 +504,9 @@ async function openPlayerProfile(playerId) {
     document.getElementById('ppAddFriendBtn').style.display = 'none';
     document.getElementById('ppRemoveFriendBtn').style.display = 'none';
     document.getElementById('ppPendingBtn').style.display = 'none';
+
+    // Восстанавливаем share-кнопку, если она была перезаписана публичным профилем
+    restorePpShareButton();
 
     modal.style.display = 'flex';
 
@@ -516,20 +518,48 @@ async function openPlayerProfile(playerId) {
 
     currentViewedPlayerId = playerId;
 
+    // Заполняем шапку профиля сразу (видна всегда, даже если приватный)
     renderAvatar(document.getElementById('ppAvatar'), player.avatar);
     document.getElementById('ppName').textContent = player.name;
     document.getElementById('ppLevel').textContent = player.level || 1;
 
+    // === ПРОВЕРКА ПРИВАТНОСТИ ===
+    const isPrivate = player.is_private === true;
+    let hasAccess = true;
+
+    if (isPrivate && playerId !== PLAYER.playerId) {
+        try {
+            hasAccess = await hasProfileAccess(PLAYER.playerId, playerId);
+        } catch (err) {
+            console.warn('Ошибка проверки доступа:', err);
+            hasAccess = false;
+        }
+    }
+
+    if (isPrivate && !hasAccess) {
+        renderPrivateProfile(player, playerId);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        return;
+    }
+
+    // === ПУБЛИЧНОЕ ОТОБРАЖЕНИЕ ПРОФИЛЯ ===
     const citiesEl = document.getElementById('ppCities');
     const homeCity = CITIES[player.home_city];
-    const currentCity = CITIES[player.current_city];
+
+    const otherPrivacy = player.settings?.privacy || {};
+    const showCity = otherPrivacy.showCity !== false;
 
     let citiesHtml = '';
     if (homeCity) {
         citiesHtml += `<span class="city-chip home"><i data-lucide="home"></i> ${homeCity.name}</span>`;
     }
-    if (currentCity && player.current_city !== player.home_city) {
-        citiesHtml += `<span class="city-chip current"><i data-lucide="map-pin"></i> ${currentCity.name}</span>`;
+    if (showCity && player.current_city && player.current_city !== player.home_city) {
+        const currentCity = CITIES[player.current_city];
+        if (currentCity) {
+            citiesHtml += `<span class="city-chip current"><i data-lucide="map-pin"></i> ${currentCity.name}</span>`;
+        }
+    } else if (!showCity) {
+        citiesHtml += `<span class="city-chip" style="opacity:0.6;">📍 Город скрыт</span>`;
     }
     citiesEl.innerHTML = citiesHtml || '<span class="city-chip">—</span>';
 
@@ -565,10 +595,36 @@ async function openPlayerProfile(playerId) {
         `;
     }).join('');
 
-    // Превращаем иконки в SVG
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
     updatePlayerProfileActions(playerId);
+    updateBlockButton(playerId);
+}
+
+    // Показывает/скрывает кнопку "Заблокировать" на чужом профиле
+    async function updateBlockButton(playerId) {
+        const btn = document.getElementById('ppBlockBtn');
+        if (!btn) return;
+
+        const alreadyBlocked = await isBlockedBy(PLAYER.playerId, playerId);
+        btn.style.display = alreadyBlocked ? 'none' : 'block';
+}
+
+// Восстанавливает кнопку "Поделиться профилем" в блоке действий
+function restorePpShareButton() {
+    const actions = document.getElementById('ppActionsSection');
+    if (!actions) return;
+
+    if (document.getElementById('ppShareBtn')) return; // уже на месте
+
+    const shareBtn = document.createElement('button');
+    shareBtn.id = 'ppShareBtn';
+    shareBtn.className = 'btn btn-secondary btn-block';
+    shareBtn.style.marginBottom = '8px';
+    shareBtn.innerHTML = '<i data-lucide="share-2"></i> Поделиться профилем';
+    actions.insertBefore(shareBtn, actions.firstChild);
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 async function updatePlayerProfileActions(playerId) {
@@ -577,6 +633,8 @@ async function updatePlayerProfileActions(playerId) {
     const addBtn = document.getElementById('ppAddFriendBtn');
     const removeBtn = document.getElementById('ppRemoveFriendBtn');
     const pendingBtn = document.getElementById('ppPendingBtn');
+
+    if (!addBtn || !removeBtn || !pendingBtn) return;
 
     addBtn.style.display = 'none';
     removeBtn.style.display = 'none';
@@ -610,3 +668,461 @@ function closePlayerProfile() {
     if (modal) modal.style.display = 'none';
     currentViewedPlayerId = null;
 }
+
+// ============================================
+// ПРИВАТНЫЙ ПРОФИЛЬ — плашка + кнопка запроса
+// ============================================
+async function renderPrivateProfile(player, playerId) {
+    // Скрываем все секции с данными
+    document.getElementById('ppCities').innerHTML = '';
+    document.getElementById('ppStats').innerHTML = '';
+    document.getElementById('ppBadges').innerHTML = '';
+
+    // Прячем заголовки секций
+    document.querySelectorAll('#playerProfileModal .profile-section h3').forEach(h => {
+        h.style.display = 'none';
+    });
+
+    const actionsSection = document.getElementById('ppActionsSection');
+    if (!actionsSection) return;
+
+    // Проверяем статус запроса
+    let status = null;
+    try {
+        status = await getProfileAccessStatus(PLAYER.playerId, playerId);
+    } catch (err) {
+        console.warn('Ошибка проверки статуса запроса:', err);
+    }
+
+    let btnHtml = '';
+    if (status === 'pending') {
+        btnHtml = `
+            <button class="btn btn-secondary btn-block" disabled>
+                <i data-lucide="clock"></i> Запрос отправлен
+            </button>
+        `;
+    } else if (status === 'declined') {
+        btnHtml = `
+            <button class="btn btn-secondary btn-block" disabled>
+                <i data-lucide="x"></i> Запрос отклонён
+            </button>
+        `;
+    } else {
+        btnHtml = `
+            <button id="ppRequestAccessBtn" class="btn btn-primary btn-block">
+                <i data-lucide="lock-open"></i> Запросить доступ
+            </button>
+        `;
+    }
+
+    actionsSection.innerHTML = `
+        <div class="profile-private-notice" style="text-align:center; padding: 24px 16px; background: var(--color-bg-alt, #f5f5f5); border-radius: 12px; margin-bottom: 16px;">
+            <div style="font-size: 48px; margin-bottom: 12px;">🔒</div>
+            <div style="font-weight: 600; margin-bottom: 6px;">Профиль приватный</div>
+            <div style="font-size: 14px; opacity: 0.7;">Игрок скрыл свои данные. Отправь запрос, чтобы увидеть больше.</div>
+        </div>
+        ${btnHtml}
+    `;
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    const reqBtn = document.getElementById('ppRequestAccessBtn');
+    if (reqBtn) {
+        reqBtn.addEventListener('click', async () => {
+            reqBtn.disabled = true;
+            reqBtn.innerHTML = '<i data-lucide="loader"></i> Отправка...';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            const result = await requestProfileAccess(PLAYER.playerId, playerId);
+
+            if (result.error) {
+                if (typeof showWarningToast === 'function') {
+                    showWarningToast('Не удалось отправить запрос');
+                }
+                reqBtn.disabled = false;
+                reqBtn.innerHTML = '<i data-lucide="lock-open"></i> Запросить доступ';
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                return;
+            }
+
+            if (typeof showWarningToast === 'function') {
+                showWarningToast('✅ Запрос отправлен');
+            }
+
+            reqBtn.innerHTML = '<i data-lucide="clock"></i> Запрос отправлен';
+            reqBtn.classList.remove('btn-primary');
+            reqBtn.classList.add('btn-secondary');
+            reqBtn.disabled = true;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    }
+}
+
+// ============================================
+// ПУБЛИЧНЫЙ ПРОФИЛЬ (по ссылке ?p=playerId)
+// ============================================
+async function openPublicProfile(playerId) {
+    if (!playerId) return;
+
+    const landing = document.getElementById('landing');
+    if (landing) landing.style.display = 'none';
+
+    const player = await loadPlayerById(playerId);
+
+    if (!player) {
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('Профиль не найден');
+        }
+        if (landing) landing.style.display = 'block';
+        return;
+    }
+
+    // Шапка
+    renderAvatar(document.getElementById('ppAvatar'), player.avatar);
+    document.getElementById('ppName').textContent = player.name || 'Игрок';
+    document.getElementById('ppLevel').textContent = player.level || 1;
+
+    // Города — переводим ключи в названия через CITIES
+    const citiesEl = document.getElementById('ppCities');
+    if (citiesEl) {
+        const cities = [];
+        const homeCity = CITIES[player.home_city];
+        if (homeCity) {
+            cities.push(`<span class="city-chip home"><i data-lucide="home"></i> ${homeCity.name}</span>`);
+        }
+        if (player.current_city && player.current_city !== player.home_city) {
+            const cur = CITIES[player.current_city];
+            if (cur) {
+                cities.push(`<span class="city-chip current"><i data-lucide="map-pin"></i> ${cur.name}</span>`);
+            }
+        }
+        citiesEl.innerHTML = cities.length
+            ? cities.join('')
+            : '<span class="city-chip">—</span>';
+    }
+
+    // Статистика
+    const statsEl = document.getElementById('ppStats');
+    if (statsEl) {
+        statsEl.innerHTML = `
+            <div class="profile-stat"><strong>${player.xp || 0}</strong><small>XP</small></div>
+            <div class="profile-stat"><strong>${player.level || 1}</strong><small>Уровень</small></div>
+        `;
+    }
+
+    // Бейджи — выводим через BADGES как в обычном профиле
+    const badgesEl = document.getElementById('ppBadges');
+    if (badgesEl) {
+        const earned = new Set(player.badges || []);
+        if (earned.size === 0) {
+            badgesEl.innerHTML = '<div class="dashboard-empty">Бейджей пока нет</div>';
+        } else {
+            badgesEl.innerHTML = BADGES
+                .filter(b => earned.has(b.id))
+                .map(b => `
+                    <div class="profile-badge earned">
+                        <div class="badge-icon"><i data-lucide="${b.icon}"></i></div>
+                        <div class="badge-name">${b.name}</div>
+                    </div>
+                `).join('');
+        }
+    }
+
+    // Кнопка «Войти»
+    const actionsSection = document.getElementById('ppActionsSection');
+    if (actionsSection) {
+        actionsSection.innerHTML = `
+            <button id="ppPublicLoginBtn" class="btn btn-primary btn-block">
+                <i data-lucide="rocket"></i> Войти в Safarstan
+            </button>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        document.getElementById('ppPublicLoginBtn').addEventListener('click', () => {
+            history.replaceState(null, '', location.pathname);
+            document.getElementById('playerProfileModal').style.display = 'none';
+            if (landing) landing.style.display = 'block';
+            if (typeof showAuthModal === 'function') showAuthModal('signup');
+        });
+    }
+
+    document.getElementById('playerProfileModal').style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// ============================================
+// ЗАПРОСЫ НА ПРОСМОТР ПРОФИЛЯ — модалка владельца
+// ============================================
+
+async function openAccessRequestsModal() {
+    if (!PLAYER || !PLAYER.playerId) return;
+
+    const modal = document.getElementById('accessRequestsModal');
+    if (!modal) return;
+
+    const list = document.getElementById('accessRequestsList');
+    list.innerHTML = '<div class="dashboard-empty">⏳ Загрузка...</div>';
+
+    modal.style.display = 'flex';
+
+    await refreshAccessRequestsList();
+}
+
+async function refreshAccessRequestsList() {
+    const list = document.getElementById('accessRequestsList');
+    if (!list) return;
+
+    const requests = await loadIncomingAccessRequests(PLAYER.playerId);
+
+    if (!requests || requests.length === 0) {
+        list.innerHTML = '<div class="dashboard-empty">Пока нет входящих запросов</div>';
+        updateAccessRequestsBadge(0);
+        return;
+    }
+
+    list.innerHTML = requests.map(req => {
+        const p = req.from_player || {};
+        const avatar = p.avatar || '🧑‍💼';
+        const name = p.name || 'Игрок';
+        const level = p.level || 1;
+        const date = req.created_at ? formatDate(req.created_at) : '';
+
+        const avatarHtml = avatar.startsWith('http')
+            ? `<img src="${avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+            : avatar;
+
+        return `
+            <div class="friend-item" data-request-id="${req.id}">
+                <div class="friend-item__avatar">${avatarHtml}</div>
+                <div class="friend-item__info">
+                    <div class="friend-item__name">${escapeHtml(name)}</div>
+                    <div class="friend-item__sub">Уровень ${level} · ${date}</div>
+                </div>
+                <div class="friend-item__actions" style="display:flex;gap:6px;">
+                    <button class="btn btn-primary btn-sm" data-accept-access="${req.id}">Принять</button>
+                    <button class="btn btn-secondary btn-sm" data-decline-access="${req.id}">Отклонить</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    updateAccessRequestsBadge(requests.length);
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function updateAccessRequestsBadge(count) {
+    const badge = document.getElementById('dashAccessRequestsCount');
+    if (badge) badge.textContent = count;
+
+    const btn = document.getElementById('navAccessRequestsBtn');
+    if (btn) {
+        // Кнопку показываем только если у владельца включён приватный профиль
+        const isPrivate = PLAYER?.isPrivate === true || PLAYER?.settings?.privacy?.isPrivate === true;
+        btn.style.display = isPrivate ? '' : 'none';
+    }
+}
+
+function closeAccessRequestsModal() {
+    const modal = document.getElementById('accessRequestsModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// Обработчики кликов внутри списка
+document.addEventListener('click', async (e) => {
+    // Закрыть модалку
+    if (e.target.closest('#accessRequestsClose')) {
+        closeAccessRequestsModal();
+        return;
+    }
+    if (e.target.id === 'accessRequestsModal') {
+        closeAccessRequestsModal();
+        return;
+    }
+
+    // Принять
+    const acceptBtn = e.target.closest('[data-accept-access]');
+    if (acceptBtn) {
+        const id = acceptBtn.dataset.acceptAccess;
+        acceptBtn.disabled = true;
+        acceptBtn.textContent = '⏳';
+
+        const result = await acceptProfileAccess(id);
+        if (result.error) {
+            if (typeof showWarningToast === 'function') {
+                showWarningToast('Не удалось принять запрос');
+            }
+            acceptBtn.disabled = false;
+            acceptBtn.textContent = 'Принять';
+            return;
+        }
+
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('✅ Доступ открыт');
+        }
+        await refreshAccessRequestsList();
+        return;
+    }
+
+    // Отклонить
+    const declineBtn = e.target.closest('[data-decline-access]');
+    if (declineBtn) {
+        const id = declineBtn.dataset.declineAccess;
+        declineBtn.disabled = true;
+        declineBtn.textContent = '⏳';
+
+        const result = await declineProfileAccess(id);
+        if (result.error) {
+            if (typeof showWarningToast === 'function') {
+                showWarningToast('Не удалось отклонить запрос');
+            }
+            declineBtn.disabled = false;
+            declineBtn.textContent = 'Отклонить';
+            return;
+        }
+
+        await refreshAccessRequestsList();
+        return;
+    }
+});
+
+// ============================================
+// БЛОКИРОВКА — модалка и обработчики
+// ============================================
+
+async function openBlockedListModal() {
+    if (!PLAYER || !PLAYER.playerId) return;
+
+    const modal = document.getElementById('blockedListModal');
+    if (!modal) return;
+
+    const list = document.getElementById('blockedList');
+    list.innerHTML = '<div class="dashboard-empty">⏳ Загрузка...</div>';
+
+    modal.style.display = 'flex';
+
+    await refreshBlockedList();
+}
+
+async function refreshBlockedList() {
+    const list = document.getElementById('blockedList');
+    if (!list) return;
+
+    const blocks = await loadMyBlocks(PLAYER.playerId);
+
+    if (!blocks || blocks.length === 0) {
+        list.innerHTML = '<div class="dashboard-empty">Ты никого не заблокировал</div>';
+        return;
+    }
+
+    list.innerHTML = blocks.map(b => {
+        const p = b.blocked || {};
+        const avatar = p.avatar || '🧑‍💼';
+        const name = p.name || 'Игрок';
+        const level = p.level || 1;
+
+        const avatarHtml = avatar.startsWith('http')
+            ? `<img src="${avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+            : avatar;
+
+        return `
+            <div class="friend-item">
+                <div class="friend-item__avatar">${avatarHtml}</div>
+                <div class="friend-item__info">
+                    <div class="friend-item__name">${escapeHtml(name)}</div>
+                    <div class="friend-item__sub">Уровень ${level}</div>
+                </div>
+                <div class="friend-item__actions">
+                    <button class="btn btn-secondary btn-sm" data-unblock="${p.id}">Разблокировать</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function closeBlockedListModal() {
+    const modal = document.getElementById('blockedListModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// Обработчики кликов
+document.addEventListener('click', async (e) => {
+    // Закрыть модалку
+    if (e.target.closest('#blockedListClose')) {
+        closeBlockedListModal();
+        return;
+    }
+    if (e.target.id === 'blockedListModal') {
+        closeBlockedListModal();
+        return;
+    }
+
+    // Открыть модалку из настроек
+    if (e.target.closest('#settingsBlockedListBtn')) {
+        // Закрываем настройки, открываем список
+        const settingsModal = document.getElementById('settingsModal');
+        if (settingsModal) settingsModal.style.display = 'none';
+        await openBlockedListModal();
+        return;
+    }
+
+    // Разблокировать
+    const unblockBtn = e.target.closest('[data-unblock]');
+    if (unblockBtn) {
+        const blockedId = unblockBtn.dataset.unblock;
+        unblockBtn.disabled = true;
+        unblockBtn.textContent = '⏳';
+
+        const result = await unblockPlayer(PLAYER.playerId, blockedId);
+        if (result.error) {
+            if (typeof showWarningToast === 'function') {
+                showWarningToast('Не удалось разблокировать');
+            }
+            unblockBtn.disabled = false;
+            unblockBtn.textContent = 'Разблокировать';
+            return;
+        }
+
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('✅ Разблокирован');
+        }
+        await refreshBlockedList();
+        return;
+    }
+
+    // Заблокировать с чужого профиля
+    const blockBtn = e.target.closest('#ppBlockBtn');
+    if (blockBtn) {
+        if (!currentViewedPlayerId) return;
+
+        const ok = await showConfirm('Заблокировать игрока?', {
+            okText: 'Заблокировать',
+            title: 'Блокировка',
+        });
+        if (!ok) return;
+
+        blockBtn.disabled = true;
+        blockBtn.innerHTML = '<i data-lucide="loader"></i> Блокируем...';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        const result = await blockPlayer(PLAYER.playerId, currentViewedPlayerId);
+
+        if (result.error) {
+            if (typeof showWarningToast === 'function') {
+                showWarningToast('Не удалось заблокировать');
+            }
+            blockBtn.disabled = false;
+            blockBtn.innerHTML = '<i data-lucide="ban"></i> Заблокировать';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            return;
+        }
+
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('🚫 Игрок заблокирован');
+        }
+        closePlayerProfile();
+        return;
+    }
+});

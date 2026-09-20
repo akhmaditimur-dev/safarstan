@@ -7,6 +7,7 @@ let hasharSource = null;
 let hasharLayer = null;
 let cityTooltipOverlay = null;
 let currentHoveredCity = null;
+let tileLayer = null;
 
 let _cityGapStatsCache = null;
 let _cityHasharStatsCache = null;
@@ -39,10 +40,16 @@ function renderMap() {
         zIndex: 15,
     });
 
+    // --- Слой тайлов (меняется в зависимости от темы) ---
+    const startTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    tileLayer = new ol.layer.Tile({
+        source: getTileSource(startTheme),
+    });
+
     safarstanMap = new ol.Map({
         target: 'safarstanMap',
         layers: [
-            new ol.layer.Tile({ source: new ol.source.OSM() }),
+            tileLayer,
             cityLayer,
             hasharLayer,
         ],
@@ -369,4 +376,32 @@ function hideCityTooltip() {
     if (tooltipEl) tooltipEl.style.display = 'none';
     if (cityTooltipOverlay) cityTooltipOverlay.setPosition(undefined);
     currentHoveredCity = null;
+}
+
+// ============================================
+// ТЕМА КАРТЫ
+// ============================================
+
+let _tileSource = null;
+
+function getTileSource(theme) {
+    // Всегда OSM — тёмный вид делаем через CSS
+    if (!_tileSource) {
+        _tileSource = new ol.source.OSM();
+    }
+    return _tileSource;
+}
+
+// Обновляем класс у контейнера карты при смене темы
+function updateMapTiles(theme) {
+    const el = document.getElementById('safarstanMap');
+    if (!el) return;
+
+    const isDark = (theme === 'dark' || theme === 'space');
+
+    if (isDark) {
+        el.classList.add('map--dark');
+    } else {
+        el.classList.remove('map--dark');
+    }
 }

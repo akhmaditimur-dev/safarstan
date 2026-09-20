@@ -203,3 +203,103 @@ function countQuestsForCity(cityKey) {
         return false;
     }).length;
 }
+
+// ============================================
+// ПРИВАТНОСТЬ
+// ============================================
+
+const PRIVACY_SETTINGS = [
+    { id: 'showCity',    icon: 'map-pin', label: 'Показывать мой город' },
+    { id: 'showEmail',   icon: 'mail',    label: 'Показывать email' },
+    { id: 'isPrivate',   icon: 'lock',    label: 'Приватный профиль (по запросу)' },
+];
+
+// Проверка: включена ли настройка приватности
+function isPrivacyEnabled(name) {
+    if (!PLAYER) return true;
+
+    // Приватный профиль — отдельная логика
+    if (name === 'isPrivate') {
+        // Сначала смотрим в локальный кэш
+        if (PLAYER.settings?.privacy?.isPrivate !== undefined) {
+            return PLAYER.settings.privacy.isPrivate === true;
+        }
+        // Фолбэк — из профиля
+        return PLAYER.isPrivate === true;
+    }
+
+    if (!PLAYER.settings || !PLAYER.settings.privacy) return true;
+    return PLAYER.settings.privacy[name] !== false;
+}
+
+// Рендер тумблеров приватности
+function renderPrivacySettings() {
+    const container = document.getElementById('privacySettings');
+    if (!container) return;
+
+    container.innerHTML = PRIVACY_SETTINGS.map(item => `
+        <div class="module-row">
+            <div class="module-label">
+                <span class="module-emoji"><i data-lucide="${item.icon}"></i></span>
+                <span>${item.label}</span>
+            </div>
+            <label class="toggle">
+                <input type="checkbox"
+                       data-privacy-toggle="${item.id}"
+                       ${isPrivacyEnabled(item.id) ? 'checked' : ''}>
+                <span class="toggle__slider"></span>
+            </label>
+        </div>
+    `).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// Сохранить настройку приватности
+async function savePrivacySetting(name, value) {
+    if (!PLAYER) return;
+
+    // Специальный случай: приватный профиль — отдельная колонка в players
+    if (name === 'isPrivate') {
+        const { error } = await _supabase
+            .from('players')
+            .update({ is_private: value })
+            .eq('id', PLAYER.playerId);
+
+        if (error) {
+            console.warn('Ошибка сохранения приватности профиля:', error);
+            if (typeof showWarningToast === 'function') {
+                showWarningToast('Не удалось сохранить');
+            }
+            return;
+        }
+
+        // Кэшируем локально, чтобы UI не перерисовывался до перезагрузки
+        if (!PLAYER.settings) PLAYER.settings = {};
+        if (!PLAYER.settings.privacy) PLAYER.settings.privacy = {};
+        PLAYER.settings.privacy.isPrivate = value;
+
+        if (typeof showWarningToast === 'function') {
+            showWarningToast(value ? '🔒 Профиль стал приватным' : '🔓 Профиль открыт');
+        }
+        return;
+    }
+
+    // Остальные тумблеры — как раньше, в settings.privacy
+    if (!PLAYER.settings) PLAYER.settings = {};
+    if (!PLAYER.settings.privacy) PLAYER.settings.privacy = {};
+
+    PLAYER.settings.privacy[name] = value;
+
+    const { error } = await _supabase
+        .from('players')
+        .update({ settings: PLAYER.settings })
+        .eq('id', PLAYER.playerId);
+
+    if (error) {
+        console.warn('Ошибка сохранения приватности:', error);
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('Не удалось сохранить');
+        }
+    }
+}

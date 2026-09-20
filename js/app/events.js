@@ -258,12 +258,21 @@ on('authSubmit', 'click', async () => {
             return;
         }
 
-        await new Promise(r => setTimeout(r, 500));
         const serverPlayer = await loadPlayerFromServer();
 
         if (!serverPlayer) {
-            errorEl.textContent = 'Профиль не создан. Проверь настройки Supabase.';
+            errorEl.textContent = 'Профиль не найден. Возможно, ты не завершил регистрацию.';
             errorEl.style.display = 'block';
+            return;
+        }
+
+        // Проверяем, не удалён ли аккаунт
+        if (serverPlayer.is_deleted === true) {
+            document.getElementById('authModal').style.display = 'none';
+
+            const expired = isRestorePeriodExpired(serverPlayer.deleted_at);
+
+            showRestoreModal(serverPlayer, expired);
             return;
         }
 
@@ -285,6 +294,13 @@ on('authSubmit', 'click', async () => {
         if (!serverPlayer) {
             errorEl.textContent = 'Профиль не найден. Возможно, ты не завершил регистрацию.';
             errorEl.style.display = 'block';
+            return;
+        }
+
+        if (serverPlayer.is_deleted === true) {
+            document.getElementById('authModal').style.display = 'none';
+            const expired = isRestorePeriodExpired(serverPlayer.deleted_at);
+            showRestoreModal(serverPlayer, expired);
             return;
         }
 
@@ -325,6 +341,7 @@ function setPlayerFromServer(serverPlayer) {
         todayDate: serverPlayer.today_date || null,
         avatarPath: serverPlayer.avatar_path || null,
         settings: serverPlayer.settings || {},
+        isPrivate: serverPlayer.is_private === true,
     };
 }
 
@@ -342,6 +359,10 @@ async function afterAuth() {
     if (authModal) authModal.style.display = 'none';
 
     updatePlayerBadge();
+
+    if (typeof refreshAccessRequestsList === 'function' && PLAYER.isPrivate) {
+        refreshAccessRequestsList();
+    }
 
     if (typeof applyModuleVisibility === 'function') applyModuleVisibility();
 
@@ -900,6 +921,12 @@ on('navSettingsBtn', 'click', () => {
         if (modal) modal.style.display = 'flex';
     }
     if (typeof renderModulesSettings === 'function') renderModulesSettings();
+    if (typeof renderPrivacySettings === 'function') renderPrivacySettings();
+});
+
+on('navAccessRequestsBtn', 'click', async () => {
+    if (!PLAYER) return;
+    await openAccessRequestsModal();
 });
 
 on('settingsClose', 'click', () => {
@@ -969,6 +996,15 @@ document.addEventListener('change', (e) => {
         }
         return;
     }
+
+    // Тумблеры приватности
+    const privToggle = e.target.closest('[data-privacy-toggle]');
+    if (privToggle) {
+        if (typeof savePrivacySetting === 'function') {
+            savePrivacySetting(privToggle.dataset.privacyToggle, privToggle.checked);
+        }
+        return;
+    }
 });
 
 // ============================================
@@ -1022,6 +1058,26 @@ document.addEventListener('click', (e) => {
 on('playerProfileClose', 'click', closePlayerProfile);
 on('playerProfileModal', 'click', (e) => {
     if (e.target.id === 'playerProfileModal') closePlayerProfile();
+});
+
+on('ppShareBtn', 'click', async () => {
+    if (!currentViewedPlayerId) return;
+
+    const url = `${location.origin}${location.pathname}?p=${currentViewedPlayerId}`;
+
+    try {
+        await navigator.clipboard.writeText(url);
+        showWarningToast('✅ Ссылка скопирована');
+    } catch (err) {
+        // Fallback для старых браузеров
+        const input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        showWarningToast('✅ Ссылка скопирована');
+    }
 });
 
 on('ppAddFriendBtn', 'click', async () => {
@@ -1277,4 +1333,226 @@ on('changePasswordSubmit', 'click', async () => {
     setTimeout(() => {
         document.getElementById('changePasswordModal').style.display = 'none';
     }, 1500);
+});
+
+// ============================================
+// ЭКСПОРТ ДАННЫХ
+// ============================================
+on('settingsExportBtn', 'click', async () => {
+    if (!PLAYER || !PLAYER.playerId) return;
+
+    const btn = document.getElementById('settingsExportBtn');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="loader"></i> Собираем...';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    try {
+        const data = await collectMyData();
+        downloadJSON(data, `safarstan-${PLAYER.name}-${new Date().toISOString().slice(0, 10)}.json`);
+        showWarningToast('✅ Данные скачаны');
+    } catch (err) {
+        console.error('Ошибка экспорта:', err);
+        showWarningToast('Не удалось собрать данные');
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+});
+
+// Собирает все данные игрока
+async function collectMyData() {
+    const playerId = PLAYER.playerId;
+
+    // --- Профиль ---
+    const profile = {
+        id: playerId,
+        name: PLAYER.name,
+        avatar: PLAYER.avatar,
+        homeCity: PLAYER.homeCity,
+        currentCity: PLAYER.currentCity,
+        xp: PLAYER.xp,
+        level: PLAYER.level,
+        badges: PLAYER.badges || [],
+        completedQuests: PLAYER.completedQuests || [],
+        settings: PLAYER.settings || {},
+        exportedAt: new Date().toISOString(),
+    };
+
+    // --- Чек-ины ---
+    let checkins = [];
+    try {
+        checkins = await loadCheckins(playerId);
+    } catch (e) { console.warn('checkins:', e); }
+
+    // --- Отзывы ---
+    let reviews = [];
+    try {
+        reviews = await loadMyReviews(playerId);
+    } catch (e) { console.warn('reviews:', e); }
+
+    // --- Фото ---
+    let photos = [];
+    try {
+        photos = await loadMyPhotos(playerId);
+    } catch (e) { console.warn('photos:', e); }
+
+    // --- Гапы ---
+    let gaps = [];
+    try {
+        gaps = await loadMyGaps();
+    } catch (e) { console.warn('gaps:', e); }
+
+    // --- Хашары ---
+    let hashars = [];
+    try {
+        hashars = await loadMyHashars();
+    } catch (e) { console.warn('hashars:', e); }
+
+    // --- Планы ---
+    let plans = [];
+    try {
+        plans = await loadPlans(playerId);
+    } catch (e) { console.warn('plans:', e); }
+
+    return {
+        profile,
+        checkins,
+        reviews,
+        photos,
+        gaps,
+        hashars,
+        plans,
+    };
+}
+
+// Скачивает объект как JSON-файл
+function downloadJSON(obj, filename) {
+    const json = JSON.stringify(obj, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// ============================================
+// УДАЛЕНИЕ АККАУНТА (мягкое)
+// ============================================
+on('settingsDeleteAccountBtn', 'click', () => {
+    const modal = document.getElementById('deleteAccountModal');
+    if (!modal) return;
+
+    document.getElementById('deleteAccountConfirm').value = '';
+    document.getElementById('deleteAccountError').style.display = 'none';
+
+    modal.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+});
+
+on('deleteAccountClose', 'click', () => {
+    const modal = document.getElementById('deleteAccountModal');
+    if (modal) modal.style.display = 'none';
+});
+
+on('deleteAccountModal', 'click', (e) => {
+    if (e.target.id === 'deleteAccountModal') e.target.style.display = 'none';
+});
+
+on('deleteAccountSubmit', 'click', async () => {
+    const confirm = document.getElementById('deleteAccountConfirm').value.trim();
+    const errorEl = document.getElementById('deleteAccountError');
+    const btn = document.getElementById('deleteAccountSubmit');
+
+    if (confirm !== 'УДАЛИТЬ') {
+        errorEl.textContent = 'Введи точно "УДАЛИТЬ"';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Удаляем...';
+
+    const result = await softDeletePlayer(PLAYER.playerId);
+
+    btn.disabled = false;
+    btn.textContent = 'Удалить аккаунт';
+
+    if (result.error) {
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('deleteAccountModal').style.display = 'none';
+    showWarningToast('Аккаунт удалён. Данные хранятся 30 дней.');
+
+    setTimeout(async () => {
+        await signOut();
+    }, 1500);
+});
+
+// ============================================
+// ВОССТАНОВЛЕНИЕ АККАУНТА
+// ============================================
+let _pendingRestorePlayer = null;
+
+function showRestoreModal(player, isExpired) {
+    _pendingRestorePlayer = player;
+
+    const modal = document.getElementById('restoreAccountModal');
+    const subtitle = document.getElementById('restoreAccountSubtitle');
+    const submitBtn = document.getElementById('restoreAccountSubmit');
+    if (!modal) return;
+
+    if (isExpired) {
+        subtitle.textContent = 'Срок хранения истёк (больше 30 дней). Данные будут удалены безвозвратно.';
+        submitBtn.style.display = 'none';
+    } else {
+        const deletedDate = new Date(player.deleted_at);
+        const daysLeft = 30 - Math.floor((new Date() - deletedDate) / (1000 * 60 * 60 * 24));
+        subtitle.textContent = `Твой аккаунт удалён. Осталось ${daysLeft} дн. до окончательного удаления. Восстановить?`;
+        submitBtn.style.display = 'block';
+    }
+
+    modal.style.display = 'flex';
+}
+
+on('restoreAccountSubmit', 'click', async () => {
+    if (!_pendingRestorePlayer) return;
+
+    const btn = document.getElementById('restoreAccountSubmit');
+    const errorEl = document.getElementById('restoreAccountError');
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Восстанавливаем...';
+
+    const result = await restorePlayer(_pendingRestorePlayer.id);
+
+    btn.disabled = false;
+    btn.textContent = 'Восстановить аккаунт';
+
+    if (result.error) {
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('restoreAccountModal').style.display = 'none';
+    showWarningToast('✅ Аккаунт восстановлен!');
+
+    // Перезагружаем приложение
+    setTimeout(() => location.reload(), 1000);
+});
+
+on('restoreAccountCancel', 'click', async () => {
+    document.getElementById('restoreAccountModal').style.display = 'none';
+    _pendingRestorePlayer = null;
+    await signOut();
 });

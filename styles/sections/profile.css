@@ -169,7 +169,9 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 4px;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: nowrap;
 }
 
 .profile-name-row h2 {
@@ -204,6 +206,10 @@
     gap: 8px;
     align-items: center;
     margin-bottom: 4px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .profile-name-input {
