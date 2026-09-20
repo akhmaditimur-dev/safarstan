@@ -342,6 +342,7 @@ function setPlayerFromServer(serverPlayer) {
         avatarPath: serverPlayer.avatar_path || null,
         settings: serverPlayer.settings || {},
         isPrivate: serverPlayer.is_private === true,
+        onboardingCompleted: serverPlayer.onboarding_completed === true,
     };
 }
 
@@ -359,6 +360,10 @@ async function afterAuth() {
     if (authModal) authModal.style.display = 'none';
 
     updatePlayerBadge();
+
+    if (typeof initNotificationsBell === 'function') {
+        initNotificationsBell();
+    }
 
     if (typeof refreshAccessRequestsList === 'function' && PLAYER.isPrivate) {
         refreshAccessRequestsList();
@@ -380,6 +385,10 @@ async function afterAuth() {
     }
 
     await showDashboard();
+
+    if (typeof maybeShowOnboarding === 'function') {
+        maybeShowOnboarding();
+    }
 }
 
 // ============================================

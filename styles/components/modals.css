@@ -301,3 +301,64 @@
     font-weight: var(--fw-medium);
     margin-top: 12px;
 }
+
+/* === Онбординг === */
+.modal--onboarding {
+    max-width: 440px;
+    text-align: center;
+    padding: 40px 28px 24px;
+}
+
+.onboarding-slide {
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.onboarding-emoji {
+    font-size: 72px;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+.modal--onboarding h2 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    font-family: var(--font-heading);
+    color: var(--color-text);
+}
+
+.modal--onboarding .modal-subtitle {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-text-soft);
+    margin-bottom: 0;
+}
+
+.onboarding-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 24px 0 20px;
+}
+
+.onboarding-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-border);
+    transition: all 0.2s;
+}
+
+.onboarding-dot.active {
+    background: var(--color-primary);
+    width: 24px;
+    border-radius: 4px;
+}
+
+#onboardingNextBtn {
+    width: 100%;
+    margin-bottom: 8px;
+}

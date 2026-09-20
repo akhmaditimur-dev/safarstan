@@ -55,6 +55,7 @@ async function initApp() {
         avatarPath: serverPlayer.avatar_path || null,
         settings: serverPlayer.settings || {},
         isPrivate: serverPlayer.is_private === true,
+        onboardingCompleted: serverPlayer.onboarding_completed === true,
     };
 
     // Загрузка чек-инов
@@ -77,6 +78,9 @@ async function initApp() {
     updatePlayerBadge();
     if (typeof initNotificationsBell === 'function') {
     initNotificationsBell();
+    }
+    if (typeof maybeShowOnboarding === 'function') {
+    maybeShowOnboarding();
     }
     if (typeof refreshAccessRequestsList === 'function' && PLAYER.isPrivate) {
     refreshAccessRequestsList();
