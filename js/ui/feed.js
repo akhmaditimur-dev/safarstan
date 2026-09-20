@@ -56,37 +56,41 @@ function renderFeedItem(item) {
     const avatar = player.avatar || '🧑‍💼';
     const data = item.event_data || {};
     const cityName = item.city_key && CITIES[item.city_key] ? CITIES[item.city_key].name : '';
+    const pid = item.player_id || '';
+
+    // Имя игрока — кликабельное
+    const nameHtml = `<strong class="feed-player-link" data-player-profile="${pid}" style="cursor:pointer;">${escapeHtml(name)}</strong>`;
 
     let text = '';
 
     switch (item.event_type) {
         case 'checkin':
-            text = `<strong>${escapeHtml(name)}</strong> был в <strong>${escapeHtml(data.place || 'месте')}</strong>${cityName ? ` (${escapeHtml(cityName)})` : ''}`;
+            text = `${nameHtml} был в <strong>${escapeHtml(data.place || 'месте')}</strong>${cityName ? ` (${escapeHtml(cityName)})` : ''}`;
             break;
         case 'ugc':
-            text = `<strong>${escapeHtml(name)}</strong> добавил место <strong>${escapeHtml(data.title || '')}</strong>${cityName ? ` в ${escapeHtml(cityName)}` : ''}`;
+            text = `${nameHtml} добавил место <strong>${escapeHtml(data.title || '')}</strong>${cityName ? ` в ${escapeHtml(cityName)}` : ''}`;
             break;
         case 'quest':
-            text = `<strong>${escapeHtml(name)}</strong> выполнил квест <strong>${escapeHtml(data.questName || '')}</strong>`;
+            text = `${nameHtml} выполнил квест <strong>${escapeHtml(data.questName || '')}</strong>`;
             break;
         case 'badge':
-            text = `<strong>${escapeHtml(name)}</strong> получил бейдж <strong>${escapeHtml(data.badgeName || '')}</strong>`;
+            text = `${nameHtml} получил бейдж <strong>${escapeHtml(data.badgeName || '')}</strong>`;
             break;
         case 'plan':
-            text = `<strong>${escapeHtml(name)}</strong> запланировал визит${cityName ? ` в <strong>${escapeHtml(cityName)}</strong>` : ''}`;
+            text = `${nameHtml} запланировал визит${cityName ? ` в <strong>${escapeHtml(cityName)}</strong>` : ''}`;
             break;
         case 'level':
-            text = `<strong>${escapeHtml(name)}</strong> достиг <strong>уровня ${data.level || ''}</strong>`;
+            text = `${nameHtml} достиг <strong>уровня ${data.level || ''}</strong>`;
             break;
         default:
-            text = `<strong>${escapeHtml(name)}</strong> что-то сделал`;
+            text = `${nameHtml} что-то сделал`;
     }
 
     const avatarHtml = renderAvatarHtml(avatar);
 
     return `
-        <div class="feed-item" data-player-id="${item.player_id || ''}">
-            <div class="feed-item__avatar" data-player-profile="${item.player_id || ''}" style="cursor:pointer;">${avatarHtml}</div>
+        <div class="feed-item" data-player-id="${pid}">
+            <div class="feed-item__avatar" data-player-profile="${pid}" style="cursor:pointer;">${avatarHtml}</div>
             <div class="feed-item__body">
                 <div class="feed-item__text">${text}</div>
                 <div class="feed-item__time">${timeAgo(item.created_at)}</div>
