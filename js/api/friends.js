@@ -103,6 +103,22 @@ async function declineFriendRequest(requestId) {
     if (error) console.error('Ошибка отклонения:', error);
 }
 
+// Отменить исходящую заявку (отозвать)
+async function cancelFriendRequest(fromId, toId) {
+    const { error } = await _supabase
+        .from('friend_requests')
+        .delete()
+        .eq('from_player_id', fromId)
+        .eq('to_player_id', toId)
+        .eq('status', 'pending');
+
+    if (error) {
+        console.error('Ошибка отмены заявки:', error);
+        return { error: error.message };
+    }
+    return { ok: true };
+}
+
 // Загрузить список друзей
 async function loadFriends(playerId) {
     const { data, error } = await _supabase

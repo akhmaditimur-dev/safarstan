@@ -630,6 +630,9 @@ async function updatePlayerProfileActions(playerId) {
     addBtn.style.display = 'none';
     removeBtn.style.display = 'none';
     pendingBtn.style.display = 'none';
+    pendingBtn.disabled = false;
+    pendingBtn.style.cursor = 'default';
+    pendingBtn.title = '';
 
     const friends = (typeof FRIENDS !== 'undefined' ? FRIENDS : []);
     const isFriend = friends.some(f => f.id === playerId);
@@ -645,6 +648,9 @@ async function updatePlayerProfileActions(playerId) {
 
         if (isPending) {
             pendingBtn.style.display = 'block';
+            pendingBtn.disabled = false;
+            pendingBtn.style.cursor = 'pointer';
+            pendingBtn.title = 'Нажми, чтобы отменить заявку';
             return;
         }
     } catch (err) {
@@ -1101,6 +1107,40 @@ document.addEventListener('click', async (e) => {
         await refreshBlockedList();
         return;
     }
+
+    // Отменить заявку в друзья
+    const pendingBtn = e.target.closest('#ppPendingBtn');
+    if (pendingBtn && currentViewedPlayerId && !pendingBtn.disabled) {
+        const ok = await showConfirm('Отменить заявку в друзья?', {
+            okText: 'Отменить',
+            title: 'Отмена заявки',
+        });
+        if (!ok) return;
+
+        pendingBtn.disabled = true;
+        pendingBtn.innerHTML = '<i data-lucide="loader"></i> Отменяем...';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        const result = await cancelFriendRequest(PLAYER.playerId, currentViewedPlayerId);
+
+        if (result.error) {
+            if (typeof showWarningToast === 'function') {
+                showWarningToast('Не удалось отменить заявку');
+            }
+            pendingBtn.disabled = false;
+            pendingBtn.innerHTML = '<i data-lucide="clock"></i> Заявка отправлена';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            return;
+        }
+
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('✅ Заявка отменена');
+        }
+
+        await updatePlayerProfileActions(currentViewedPlayerId);
+        return;
+    }
+
 
     const blockBtn = e.target.closest('#ppBlockBtn');
     if (blockBtn) {
