@@ -154,9 +154,30 @@ async function inviteToGap(gapId, toPlayerId) {
             status: 'pending',
         }, { onConflict: 'gap_id,to_player' });
 
-    if (error) {
+        if (error) {
         console.warn('Ошибка приглашения:', error);
         return { error: error.message };
+    }
+
+    // Уведомление приглашённому
+    if (typeof createNotification === 'function') {
+        // Загрузим название гапа для текста уведомления
+        let gapTitle = null;
+        try {
+            const { data: gap } = await _supabase
+                .from('gaps')
+                .select('name')
+                .eq('id', gapId)
+                .single();
+            gapTitle = gap?.name || null;
+        } catch (e) { /* ничего */ }
+
+        await createNotification(
+            toPlayerId,
+            'gap_invite',
+            { gap_title: gapTitle, gap_id: gapId },
+            playerId
+        );
     }
 
     return { ok: true };

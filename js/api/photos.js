@@ -56,6 +56,11 @@ async function uploadPlacePhoto(file, playerId, placeKey, cityKey) {
         return { error: 'Не удалось сохранить фото' };
     }
 
+    // === Уведомление владельцу места ===
+    if (typeof notifyPlaceOwner === 'function') {
+        await notifyPlaceOwner(placeKey, playerId, 'photo_on_place');
+    }
+
     return { data: dbData };
 }
 

@@ -29,7 +29,6 @@ function updatePlayerBadge() {
     const xpInLevel = PLAYER.xp % 100;
     const xpToNext = 100 - xpInLevel;
 
-    // === ДАШБОРД ===
     const dashAvatar = document.getElementById('dashAvatar');
     const dashName = document.getElementById('dashName');
     const dashLevel = document.getElementById('dashLevel');
@@ -44,7 +43,6 @@ function updatePlayerBadge() {
     if (dashXPNext) dashXPNext.textContent = `до уровня ${PLAYER.level + 1}: ${xpToNext} XP`;
     if (dashXPBar) dashXPBar.style.width = `${xpInLevel}%`;
 
-    // === МОДАЛКА ПРОФИЛЯ ===
     const profileAvatar = document.getElementById('profileAvatar');
     const profileName = document.getElementById('profileName');
     const profileLevel = document.getElementById('profileLevel');
@@ -85,7 +83,6 @@ function renderProfile() {
     if (xpNextEl) xpNextEl.textContent = `до уровня ${PLAYER.level + 1}: ${xpToNext} XP`;
     if (xpBarEl) xpBarEl.style.width = `${xpInLevel}%`;
 
-    // Города
     const citiesEl = document.getElementById('profileCities');
     if (citiesEl) {
         const visited = PLAYER.visitedCities || {};
@@ -104,7 +101,6 @@ function renderProfile() {
         }).join('');
     }
 
-    // Статистика
     const statsEl = document.getElementById('profileStats');
     if (statsEl) {
         const visited = PLAYER.visitedCities || {};
@@ -119,7 +115,6 @@ function renderProfile() {
         `;
     }
 
-    // Бейджи
     const badgesEl = document.getElementById('profileBadges');
     if (badgesEl) {
         const earned = new Set(PLAYER.badges || []);
@@ -484,7 +479,6 @@ async function openPlayerProfile(playerId) {
     if (!playerId) return;
     if (!PLAYER) return;
 
-    // Свой профиль — открываем обычную модалку
     if (playerId === PLAYER.playerId) {
         renderProfile();
         document.getElementById('profileModal').style.display = 'flex';
@@ -494,7 +488,6 @@ async function openPlayerProfile(playerId) {
     const modal = document.getElementById('playerProfileModal');
     if (!modal) return;
 
-    // Сброс UI перед загрузкой
     document.getElementById('ppName').textContent = '⏳ Загрузка...';
     document.getElementById('ppAvatar').innerHTML = '⏳';
     document.getElementById('ppLevel').textContent = '—';
@@ -505,7 +498,6 @@ async function openPlayerProfile(playerId) {
     document.getElementById('ppRemoveFriendBtn').style.display = 'none';
     document.getElementById('ppPendingBtn').style.display = 'none';
 
-    // Восстанавливаем share-кнопку, если она была перезаписана публичным профилем
     restorePpShareButton();
 
     modal.style.display = 'flex';
@@ -518,7 +510,6 @@ async function openPlayerProfile(playerId) {
 
     currentViewedPlayerId = playerId;
 
-    // Заполняем шапку профиля сразу (видна всегда, даже если приватный)
     renderAvatar(document.getElementById('ppAvatar'), player.avatar);
     document.getElementById('ppName').textContent = player.name;
     document.getElementById('ppLevel').textContent = player.level || 1;
@@ -601,13 +592,13 @@ async function openPlayerProfile(playerId) {
     updateBlockButton(playerId);
 }
 
-    // Показывает/скрывает кнопку "Заблокировать" на чужом профиле
-    async function updateBlockButton(playerId) {
-        const btn = document.getElementById('ppBlockBtn');
-        if (!btn) return;
+// Показывает/скрывает кнопку "Заблокировать" на чужом профиле
+async function updateBlockButton(playerId) {
+    const btn = document.getElementById('ppBlockBtn');
+    if (!btn) return;
 
-        const alreadyBlocked = await isBlockedBy(PLAYER.playerId, playerId);
-        btn.style.display = alreadyBlocked ? 'none' : 'block';
+    const alreadyBlocked = await isBlockedBy(PLAYER.playerId, playerId);
+    btn.style.display = alreadyBlocked ? 'none' : 'block';
 }
 
 // Восстанавливает кнопку "Поделиться профилем" в блоке действий
@@ -615,7 +606,7 @@ function restorePpShareButton() {
     const actions = document.getElementById('ppActionsSection');
     if (!actions) return;
 
-    if (document.getElementById('ppShareBtn')) return; // уже на месте
+    if (document.getElementById('ppShareBtn')) return;
 
     const shareBtn = document.createElement('button');
     shareBtn.id = 'ppShareBtn';
@@ -673,12 +664,10 @@ function closePlayerProfile() {
 // ПРИВАТНЫЙ ПРОФИЛЬ — плашка + кнопка запроса
 // ============================================
 async function renderPrivateProfile(player, playerId) {
-    // Скрываем все секции с данными
     document.getElementById('ppCities').innerHTML = '';
     document.getElementById('ppStats').innerHTML = '';
     document.getElementById('ppBadges').innerHTML = '';
 
-    // Прячем заголовки секций
     document.querySelectorAll('#playerProfileModal .profile-section h3').forEach(h => {
         h.style.display = 'none';
     });
@@ -686,7 +675,6 @@ async function renderPrivateProfile(player, playerId) {
     const actionsSection = document.getElementById('ppActionsSection');
     if (!actionsSection) return;
 
-    // Проверяем статус запроса
     let status = null;
     try {
         status = await getProfileAccessStatus(PLAYER.playerId, playerId);
@@ -745,6 +733,16 @@ async function renderPrivateProfile(player, playerId) {
                 return;
             }
 
+            // ✅ Уведомление создаём ПОСЛЕ успешного запроса
+            if (typeof createNotification === 'function') {
+                await createNotification(
+                    playerId,
+                    'profile_access_request',
+                    {},
+                    PLAYER.playerId
+                );
+            }
+
             if (typeof showWarningToast === 'function') {
                 showWarningToast('✅ Запрос отправлен');
             }
@@ -777,12 +775,10 @@ async function openPublicProfile(playerId) {
         return;
     }
 
-    // Шапка
     renderAvatar(document.getElementById('ppAvatar'), player.avatar);
     document.getElementById('ppName').textContent = player.name || 'Игрок';
     document.getElementById('ppLevel').textContent = player.level || 1;
 
-    // Города — переводим ключи в названия через CITIES
     const citiesEl = document.getElementById('ppCities');
     if (citiesEl) {
         const cities = [];
@@ -801,7 +797,6 @@ async function openPublicProfile(playerId) {
             : '<span class="city-chip">—</span>';
     }
 
-    // Статистика
     const statsEl = document.getElementById('ppStats');
     if (statsEl) {
         statsEl.innerHTML = `
@@ -810,7 +805,6 @@ async function openPublicProfile(playerId) {
         `;
     }
 
-    // Бейджи — выводим через BADGES как в обычном профиле
     const badgesEl = document.getElementById('ppBadges');
     if (badgesEl) {
         const earned = new Set(player.badges || []);
@@ -828,7 +822,6 @@ async function openPublicProfile(playerId) {
         }
     }
 
-    // Кнопка «Войти»
     const actionsSection = document.getElementById('ppActionsSection');
     if (actionsSection) {
         actionsSection.innerHTML = `
@@ -899,8 +892,8 @@ async function refreshAccessRequestsList() {
                     <div class="friend-item__sub">Уровень ${level} · ${date}</div>
                 </div>
                 <div class="friend-item__actions" style="display:flex;gap:6px;">
-                    <button class="btn btn-primary btn-sm" data-accept-access="${req.id}">Принять</button>
-                    <button class="btn btn-secondary btn-sm" data-decline-access="${req.id}">Отклонить</button>
+                    <button class="btn btn-primary btn-sm" data-accept-access="${req.id}" data-from-player="${p.id || ''}">Принять</button>
+                    <button class="btn btn-secondary btn-sm" data-decline-access="${req.id}" data-from-player="${p.id || ''}">Отклонить</button>
                 </div>
             </div>
         `;
@@ -917,7 +910,6 @@ function updateAccessRequestsBadge(count) {
 
     const btn = document.getElementById('navAccessRequestsBtn');
     if (btn) {
-        // Кнопку показываем только если у владельца включён приватный профиль
         const isPrivate = PLAYER?.isPrivate === true || PLAYER?.settings?.privacy?.isPrivate === true;
         btn.style.display = isPrivate ? '' : 'none';
     }
@@ -930,7 +922,6 @@ function closeAccessRequestsModal() {
 
 // Обработчики кликов внутри списка
 document.addEventListener('click', async (e) => {
-    // Закрыть модалку
     if (e.target.closest('#accessRequestsClose')) {
         closeAccessRequestsModal();
         return;
@@ -944,6 +935,8 @@ document.addEventListener('click', async (e) => {
     const acceptBtn = e.target.closest('[data-accept-access]');
     if (acceptBtn) {
         const id = acceptBtn.dataset.acceptAccess;
+        const fromPlayerId = acceptBtn.dataset.fromPlayer;
+
         acceptBtn.disabled = true;
         acceptBtn.textContent = '⏳';
 
@@ -957,6 +950,16 @@ document.addEventListener('click', async (e) => {
             return;
         }
 
+        // ✅ Уведомление автору запроса
+        if (fromPlayerId && typeof createNotification === 'function') {
+            await createNotification(
+                fromPlayerId,
+                'profile_access_accepted',
+                {},
+                PLAYER.playerId
+            );
+        }
+
         if (typeof showWarningToast === 'function') {
             showWarningToast('✅ Доступ открыт');
         }
@@ -968,6 +971,8 @@ document.addEventListener('click', async (e) => {
     const declineBtn = e.target.closest('[data-decline-access]');
     if (declineBtn) {
         const id = declineBtn.dataset.declineAccess;
+        const fromPlayerId = declineBtn.dataset.fromPlayer;
+
         declineBtn.disabled = true;
         declineBtn.textContent = '⏳';
 
@@ -979,6 +984,16 @@ document.addEventListener('click', async (e) => {
             declineBtn.disabled = false;
             declineBtn.textContent = 'Отклонить';
             return;
+        }
+
+        // ✅ Уведомление автору запроса
+        if (fromPlayerId && typeof createNotification === 'function') {
+            await createNotification(
+                fromPlayerId,
+                'profile_access_declined',
+                {},
+                PLAYER.playerId
+            );
         }
 
         await refreshAccessRequestsList();
@@ -1047,9 +1062,7 @@ function closeBlockedListModal() {
     if (modal) modal.style.display = 'none';
 }
 
-// Обработчики кликов
 document.addEventListener('click', async (e) => {
-    // Закрыть модалку
     if (e.target.closest('#blockedListClose')) {
         closeBlockedListModal();
         return;
@@ -1059,16 +1072,13 @@ document.addEventListener('click', async (e) => {
         return;
     }
 
-    // Открыть модалку из настроек
     if (e.target.closest('#settingsBlockedListBtn')) {
-        // Закрываем настройки, открываем список
         const settingsModal = document.getElementById('settingsModal');
         if (settingsModal) settingsModal.style.display = 'none';
         await openBlockedListModal();
         return;
     }
 
-    // Разблокировать
     const unblockBtn = e.target.closest('[data-unblock]');
     if (unblockBtn) {
         const blockedId = unblockBtn.dataset.unblock;
@@ -1092,7 +1102,6 @@ document.addEventListener('click', async (e) => {
         return;
     }
 
-    // Заблокировать с чужого профиля
     const blockBtn = e.target.closest('#ppBlockBtn');
     if (blockBtn) {
         if (!currentViewedPlayerId) return;

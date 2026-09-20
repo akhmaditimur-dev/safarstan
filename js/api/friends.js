@@ -29,6 +29,10 @@ async function sendFriendRequest(fromId, toId) {
         console.error('Ошибка отправки заявки:', error);
         return false;
     }
+    if (typeof createNotification === 'function') {
+        await createNotification(toId, 'friend_request', {}, fromId);
+    }
+    return true;
     return true;
 }
 
@@ -82,6 +86,10 @@ async function acceptFriendRequest(requestId, fromId, toId) {
         .eq('id', requestId);
 
     if (err2) console.error('Ошибка обновления заявки:', err2);
+    if (typeof createNotification === 'function') {
+        await createNotification(fromId, 'friend_accepted', {}, toId);
+    }
+    return true;
     return true;
 }
 

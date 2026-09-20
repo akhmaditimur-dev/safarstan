@@ -18,7 +18,47 @@ async function saveReview(playerId, placeKey, cityKey, rating, text) {
         console.error('Ошибка сохранения отзыва:', error);
         return { error: error.message };
     }
+
+    // === Уведомление владельцу места (если это UGC-место) ===
+    await notifyPlaceOwner(placeKey, playerId, 'review_on_place', text);
+
     return { data };
+}
+
+// Хелпер: уведомить владельца UGC-места
+async function notifyPlaceOwner(placeKey, fromPlayerId, type, previewText = '') {
+    if (typeof createNotification !== 'function') return;
+
+    // place_key = "tashkent|service|Кафе у Азиза"
+    const parts = placeKey.split('|');
+    if (parts.length < 3) return;
+
+    const [cityKey, category, title] = parts;
+
+    try {
+        const { data: place } = await _supabase
+            .from('user_places')
+            .select('player_id')
+            .eq('city_key', cityKey)
+            .eq('category', category)
+            .eq('title', title)
+            .maybeSingle();
+
+        if (!place || !place.player_id) return;
+        if (place.player_id === fromPlayerId) return; // сам себе не шлём
+
+        const payload = { place_title: title };
+        if (previewText) payload.preview = previewText.slice(0, 80);
+
+        await createNotification(
+            place.player_id,
+            type,
+            payload,
+            fromPlayerId
+        );
+    } catch (err) {
+        console.warn('Не удалось уведомить владельца места:', err);
+    }
 }
 
 // Загрузить отзывы для одного места
