@@ -129,14 +129,29 @@ async function updateBlockButton(playerId) {
 function restorePpShareButton() {
     const actions = document.getElementById('ppActionsSection');
     if (!actions) return;
-    if (document.getElementById('ppShareBtn')) return;
 
-    const shareBtn = document.createElement('button');
-    shareBtn.id = 'ppShareBtn';
-    shareBtn.className = 'btn btn-secondary btn-block';
-    shareBtn.style.marginBottom = '8px';
-    shareBtn.innerHTML = '<i data-lucide="share-2"></i> Поделиться профилем';
-    actions.insertBefore(shareBtn, actions.firstChild);
+    // Если кнопок нет — восстанавливаем обе
+    if (!document.getElementById('ppShareBtn')) {
+        const shareBtn = document.createElement('button');
+        shareBtn.id = 'ppShareBtn';
+        shareBtn.className = 'btn btn-secondary btn-block';
+        shareBtn.innerHTML = '<i data-lucide="share-2"></i> Поделиться профилем';
+        actions.insertBefore(shareBtn, actions.firstChild);
+    }
+
+    if (!document.getElementById('ppShowQrBtn')) {
+        const qrBtn = document.createElement('button');
+        qrBtn.id = 'ppShowQrBtn';
+        qrBtn.className = 'btn btn-secondary btn-block';
+        qrBtn.innerHTML = '<i data-lucide="qr-code"></i> Показать QR';
+
+        const shareBtn = document.getElementById('ppShareBtn');
+        if (shareBtn && shareBtn.nextSibling) {
+            actions.insertBefore(qrBtn, shareBtn.nextSibling);
+        } else {
+            actions.insertBefore(qrBtn, actions.firstChild);
+        }
+    }
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }

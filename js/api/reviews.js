@@ -75,6 +75,7 @@ async function loadReviews(placeKey) {
             players:player_id (name, avatar)
         `)
         .eq('place_key', placeKey)
+        .eq('is_deleted', false)
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -91,7 +92,8 @@ async function loadReviewsForPlaces(placeKeys) {
     const { data, error } = await _supabase
         .from('reviews')
         .select('place_key, rating')
-        .in('place_key', placeKeys);
+        .in('place_key', placeKeys)
+        .eq('is_deleted', false);
 
     if (error) {
         console.error('Ошибка загрузки рейтингов:', error);
@@ -123,7 +125,7 @@ async function loadReviewsForPlaces(placeKeys) {
 async function deleteReview(reviewId) {
     const { error } = await _supabase
         .from('reviews')
-        .delete()
+        .update({ is_deleted: true })
         .eq('id', reviewId);
 
     if (error) console.error('Ошибка удаления отзыва:', error);
@@ -136,6 +138,7 @@ async function loadMyReviews(playerId) {
         .from('reviews')
         .select('*')
         .eq('player_id', playerId)
+        .eq('is_deleted', false)
         .order('created_at', { ascending: false });
 
     if (error) {

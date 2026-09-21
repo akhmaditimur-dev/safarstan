@@ -20,7 +20,8 @@ async function loadCheckins(playerId) {
     const { data, error } = await _supabase
         .from('checkins')
         .select('*')
-        .eq('player_id', playerId);
+        .eq('player_id', playerId)
+        .eq('is_deleted', false);
 
     if (error) {
         console.error('Ошибка загрузки чек-инов:', error);
@@ -44,7 +45,8 @@ async function loadCityAnalytics(cityKey) {
     const { data: checkins, error: err1 } = await _supabase
         .from('checkins')
         .select('player_id, category, place_title')
-        .eq('city_key', cityKey);
+        .eq('city_key', cityKey)
+        .eq('is_deleted', false);
 
     if (err1) {
         console.error('Ошибка загрузки чек-инов города:', err1);

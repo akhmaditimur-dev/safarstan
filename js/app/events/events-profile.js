@@ -144,10 +144,20 @@ document.addEventListener('click', (e) => {
 document.addEventListener('click', (e) => {
     const btn = e.target.closest('#settingsModal [data-theme]');
     if (!btn) return;
-    if (typeof applyTheme === 'function') applyTheme(btn.dataset.theme);
+
+    const newTheme = btn.dataset.theme;
+    if (typeof applyTheme === 'function') applyTheme(newTheme);
+
     document.querySelectorAll('#settingsModal [data-theme]').forEach(b => {
         b.classList.toggle('active', b === btn);
     });
+
+    // Автостиль карты — если не выбран спутник
+    if (typeof getMapStyle === 'function' && getMapStyle() !== 'satellite') {
+        const mapStyle = (newTheme === 'dark' || newTheme === 'space') ? 'dark' : 'light';
+        if (typeof updateMapStyle === 'function') updateMapStyle(mapStyle);
+        if (PLAYER?.settings?.map) PLAYER.settings.map.style = mapStyle;
+    }
 });
 
 // === Смена email ===
@@ -419,3 +429,184 @@ document.addEventListener('click', (e) => {
     section.style.display = isHidden ? 'flex' : 'none';
     toggle.classList.toggle('active', isHidden);
 });
+
+// ============================================
+// СБРОС ПРОГРЕССА (soft delete)
+// ============================================
+
+on('settingsResetProgressBtn', 'click', () => {
+    const modal = document.getElementById('resetProgressModal');
+    if (!modal) return;
+
+    document.getElementById('resetConfirmInput').value = '';
+    document.getElementById('resetProgressError').style.display = 'none';
+
+    modal.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+});
+
+on('resetProgressClose', 'click', () => {
+    const modal = document.getElementById('resetProgressModal');
+    if (modal) modal.style.display = 'none';
+});
+
+on('resetProgressModal', 'click', (e) => {
+    if (e.target.id === 'resetProgressModal') e.target.style.display = 'none';
+});
+
+on('resetProgressSubmit', 'click', async () => {
+    const confirm = document.getElementById('resetConfirmInput').value.trim();
+    const errorEl = document.getElementById('resetProgressError');
+    const btn = document.getElementById('resetProgressSubmit');
+
+    if (confirm !== 'СБРОСИТЬ') {
+        errorEl.textContent = 'Введи точно "СБРОСИТЬ"';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    const options = {};
+    document.querySelectorAll('[data-reset-option]').forEach(el => {
+        options[el.dataset.resetOption] = el.checked;
+    });
+
+    const anySelected = Object.values(options).some(v => v === true);
+    if (!anySelected) {
+        errorEl.textContent = 'Выбери хотя бы одну опцию';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="loader"></i> Сбрасываем...';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    const result = await resetProgress(options);
+
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="rotate-ccw"></i> Сбросить выбранное';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    if (result.error) {
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('resetProgressModal').style.display = 'none';
+    showWarningToast('✅ Прогресс сброшен');
+
+    setTimeout(() => location.reload(), 1500);
+});
+
+// ============================================
+// ЛОГИКА СБРОСА (soft delete)
+// ============================================
+async function resetProgress(options) {
+    if (!PLAYER || !PLAYER.playerId) {
+        return { error: 'Не авторизован' };
+    }
+
+    const playerId = PLAYER.playerId;
+    const errors = [];
+
+    try {
+        // === 1. XP, уровень, достижения, квесты — в players ===
+        if (options.xp || options.badges || options.quests) {
+            const update = {};
+
+            if (options.xp) {
+                update.xp = 0;
+                update.level = 1;
+            }
+            if (options.badges) {
+                update.badges = [];
+            }
+            if (options.quests) {
+                update.completed_quests = [];
+                update.quests_claimed = [];
+            }
+
+            const { error } = await _supabase
+                .from('players')
+                .update(update)
+                .eq('id', playerId);
+
+            if (error) errors.push('players: ' + error.message);
+        }
+
+        // === 2. Чек-ины — soft delete ===
+        if (options.checkins) {
+            const { error } = await _supabase
+                .from('checkins')
+                .update({ is_deleted: true })
+                .eq('player_id', playerId);
+            if (error) errors.push('checkins: ' + error.message);
+        }
+
+        // === 3. Мои места — soft delete ===
+        if (options.places) {
+            const { error } = await _supabase
+                .from('user_places')
+                .update({ is_deleted: true })
+                .eq('player_id', playerId);
+            if (error) errors.push('user_places: ' + error.message);
+        }
+
+        // === 4. Отзывы — soft delete ===
+        if (options.reviews) {
+            const { error } = await _supabase
+                .from('reviews')
+                .update({ is_deleted: true })
+                .eq('player_id', playerId);
+            if (error) errors.push('reviews: ' + error.message);
+        }
+
+        // === 5. Фото — soft delete (из Storage НЕ удаляем — на всякий случай) ===
+        if (options.photos) {
+            const { error } = await _supabase
+                .from('place_photos')
+                .update({ is_deleted: true })
+                .eq('player_id', playerId);
+            if (error) errors.push('place_photos: ' + error.message);
+        }
+
+        // === 6. Планы — soft delete ===
+        if (options.plans) {
+            const { error } = await _supabase
+                .from('plans')
+                .update({ is_deleted: true })
+                .eq('player_id', playerId);
+            if (error) errors.push('plans: ' + error.message);
+        }
+
+        // === 7. Выйти из гапов (status = left) ===
+        if (options.gaps) {
+            const { error } = await _supabase
+                .from('gap_members')
+                .update({ status: 'left' })
+                .eq('player_id', playerId);
+            if (error) errors.push('gap_members: ' + error.message);
+        }
+
+        // === 8. Выйти из хашаров (status = left) ===
+        if (options.hashars) {
+            const { error } = await _supabase
+                .from('hashar_members')
+                .update({ status: 'left' })
+                .eq('player_id', playerId);
+            if (error) errors.push('hashar_members: ' + error.message);
+        }
+
+        if (errors.length > 0) {
+            console.warn('Ошибки при сбросе:', errors);
+            return { error: 'Часть данных не сброшена: ' + errors[0] };
+        }
+
+        return { ok: true };
+
+    } catch (err) {
+        console.error('Ошибка сброса прогресса:', err);
+        return { error: err.message || 'Не удалось сбросить прогресс' };
+    }
+}

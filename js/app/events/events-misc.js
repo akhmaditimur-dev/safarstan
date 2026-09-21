@@ -27,7 +27,11 @@ document.addEventListener('change', (e) => {
     }
 });
 
-// === Настройки карты (модалка) ===
+// ============================================
+// НАСТРОЙКИ КАРТЫ
+// ============================================
+
+// Открытие модалки настроек карты
 on('mapSettingsBtn', 'click', () => {
     if (typeof renderMapSettings === 'function') renderMapSettings();
     const modal = document.getElementById('mapSettingsModal');
@@ -43,14 +47,46 @@ on('mapSettingsModal', 'click', (e) => {
     if (e.target.id === 'mapSettingsModal') e.target.style.display = 'none';
 });
 
-// === Скролл к секциям ===
+// Выбор стиля карты в модалке
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-map-style-option]');
+    if (!btn) return;
+
+    const style = btn.dataset.mapStyleOption;
+    await setMapStyle(style);
+    renderMapStyleSelection();
+});
+
+// Дропдаун стиля на самой карте
 document.addEventListener('click', (e) => {
-    const item = e.target.closest('[data-scroll]');
-    if (!item) return;
-    const targetId = item.dataset.scroll;
-    const target = document.getElementById(targetId);
-    if (!target) return;
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Открыть / закрыть список
+    if (e.target.closest('#mapStyleBtn')) {
+        e.stopPropagation();
+        const list = document.getElementById('mapStyleList');
+        if (!list) return;
+        const isHidden = list.style.display === 'none';
+        list.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) updateMapStyleDropdown();
+        return;
+    }
+
+    // Клик по стилю в списке
+    const styleItem = e.target.closest('[data-map-style]');
+    if (styleItem) {
+        const style = styleItem.dataset.mapStyle;
+        setMapStyle(style);
+        const list = document.getElementById('mapStyleList');
+        if (list) list.style.display = 'none';
+        return;
+    }
+
+    // Клик вне — закрыть
+    const list = document.getElementById('mapStyleList');
+    if (list && list.style.display === 'block') {
+        if (!e.target.closest('#mapStyleSelect')) {
+            list.style.display = 'none';
+        }
+    }
 });
 
 // === Профиль другого игрока ===

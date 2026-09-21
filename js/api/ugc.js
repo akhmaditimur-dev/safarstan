@@ -22,6 +22,7 @@ async function loadUserPlaces() {
     const { data, error } = await _supabase
         .from('user_places')
         .select('*')
+        .eq('is_deleted', false)
         .order('created_at', { ascending: true });
 
     if (error) {

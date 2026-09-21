@@ -75,6 +75,7 @@ async function loadPhotosForPlaces(placeKeys) {
             players:player_id (name, avatar)
         `)
         .in('place_key', placeKeys)
+        .eq('is_deleted', false)
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -162,6 +163,7 @@ async function loadMyPhotos(playerId) {
         .from('place_photos')
         .select('*')
         .eq('player_id', playerId)
+        .eq('is_deleted', false)
         .order('created_at', { ascending: false });
 
     if (error) {

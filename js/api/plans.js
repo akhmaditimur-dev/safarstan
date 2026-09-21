@@ -28,6 +28,7 @@ async function loadPlans(playerId) {
         .select('*')
         .eq('player_id', playerId)
         .eq('completed', false)
+        .eq('is_deleted', false)
         .order('visit_date', { ascending: true });
 
     if (error) {
@@ -41,7 +42,7 @@ async function loadPlans(playerId) {
 async function deletePlan(planId) {
     const { error } = await _supabase
         .from('plans')
-        .delete()
+        .update({ is_deleted: true })
         .eq('id', planId);
 
     if (error) console.error('Ошибка удаления плана:', error);

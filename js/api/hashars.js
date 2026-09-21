@@ -47,7 +47,8 @@ async function loadHasharById(hasharId) {
     const { data: members, error: err2 } = await _supabase
         .from('hashar_members')
         .select('id, player_id, role, status, joined_at')
-        .eq('hashar_id', hasharId);
+        .eq('hashar_id', hasharId)
+        .eq('status', 'joined');
 
     if (err2) {
         console.warn('Ошибка загрузки участников хашара:', err2);
@@ -140,14 +141,14 @@ async function joinHashar(hasharId) {
     return { ok: true };
 }
 
-// --- Покинуть хашар ---
+// --- Покинуть хашар (soft delete — статус left) ---
 async function leaveHashar(hasharId) {
     const playerId = await getMyPlayerId();
     if (!playerId) return { error: 'Не авторизован' };
 
     const { error } = await _supabase
         .from('hashar_members')
-        .delete()
+        .update({ status: 'left' })
         .eq('hashar_id', hasharId)
         .eq('player_id', playerId);
 
@@ -165,13 +166,14 @@ async function amIInHashar(hasharId) {
         .select('id')
         .eq('hashar_id', hasharId)
         .eq('player_id', playerId)
+        .eq('status', 'joined')
         .maybeSingle();
 
     if (error) return false;
     return !!data;
 }
 
-// --- Мои хашары (где я участник) ---
+// --- Мои хашары (где я участник, status = joined) ---
 async function loadMyHashars() {
     const playerId = await getMyPlayerId();
     if (!playerId) return [];
@@ -179,7 +181,8 @@ async function loadMyHashars() {
     const { data: memberships, error: err1 } = await _supabase
         .from('hashar_members')
         .select('hashar_id, role, status')
-        .eq('player_id', playerId);
+        .eq('player_id', playerId)
+        .eq('status', 'joined');
 
     if (err1 || !memberships || memberships.length === 0) return [];
 

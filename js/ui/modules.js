@@ -25,11 +25,23 @@ const AVAILABLE_MODULES = [
     { id: 'faq',            icon: 'help-circle',   label: 'FAQ',                sidebarId: 'navFaqBtn',            dashId: null,                 sectionId: null },
 ];
 
+// Слои, показываемые в ТУЛТИПЕ при наведении на город
 const MAP_LAYERS = [
     { id: 'friends', icon: 'users',      label: 'Друзья' },
     { id: 'quests',  icon: 'target',     label: 'Квесты' },
     { id: 'gaps',    icon: 'coffee',     label: 'Гапы' },
     { id: 'hashars', icon: 'hand-heart', label: 'Хашары' },
+];
+
+// МЕТКИ на самой карте (поверх городов)
+const MAP_MARKERS = [
+    { id: 'markersFriends', icon: 'users',         label: 'Друзья в городах' },
+    { id: 'markersPlans',   icon: 'calendar-plus', label: 'Мои планы' },
+];
+
+// ПОВЕДЕНИЕ карты
+const MAP_BEHAVIOR = [
+    { id: 'autoCenter', icon: 'crosshair', label: 'Центрировать на моём городе' },
 ];
 
 // ============================================
@@ -77,25 +89,76 @@ function renderModulesSettings() {
 // РЕНДЕР: НАСТРОЙКИ КАРТЫ
 // ============================================
 function renderMapSettings() {
+    // 1. Слои тултипа
     const container = document.getElementById('mapModulesSettings');
-    if (!container) return;
-
-    container.innerHTML = MAP_LAYERS.map(layer => `
-        <div class="module-row">
-            <div class="module-label">
-                <span class="module-emoji"><i data-lucide="${layer.icon}"></i></span>
-                <span>${layer.label}</span>
+    if (container) {
+        container.innerHTML = MAP_LAYERS.map(layer => `
+            <div class="module-row">
+                <div class="module-label">
+                    <span class="module-emoji"><i data-lucide="${layer.icon}"></i></span>
+                    <span>${layer.label}</span>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox"
+                           data-map-toggle="${layer.id}"
+                           ${isMapLayerEnabled(layer.id) ? 'checked' : ''}>
+                    <span class="toggle__slider"></span>
+                </label>
             </div>
-            <label class="toggle">
-                <input type="checkbox"
-                       data-map-toggle="${layer.id}"
-                       ${isMapLayerEnabled(layer.id) ? 'checked' : ''}>
-                <span class="toggle__slider"></span>
-            </label>
-        </div>
-    `).join('');
+        `).join('');
+    }
+
+    // 2. Метки на карте
+    const markersContainer = document.getElementById('mapMarkersSettings');
+    if (markersContainer) {
+        markersContainer.innerHTML = MAP_MARKERS.map(marker => `
+            <div class="module-row">
+                <div class="module-label">
+                    <span class="module-emoji"><i data-lucide="${marker.icon}"></i></span>
+                    <span>${marker.label}</span>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox"
+                           data-map-toggle="${marker.id}"
+                           ${isMapLayerEnabled(marker.id) ? 'checked' : ''}>
+                    <span class="toggle__slider"></span>
+                </label>
+            </div>
+        `).join('');
+    }
+
+    // 3. Поведение
+    const behaviorContainer = document.getElementById('mapBehaviorSettings');
+    if (behaviorContainer) {
+        behaviorContainer.innerHTML = MAP_BEHAVIOR.map(item => `
+            <div class="module-row">
+                <div class="module-label">
+                    <span class="module-emoji"><i data-lucide="${item.icon}"></i></span>
+                    <span>${item.label}</span>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox"
+                           data-map-toggle="${item.id}"
+                           ${isMapLayerEnabled(item.id) ? 'checked' : ''}>
+                    <span class="toggle__slider"></span>
+                </label>
+            </div>
+        `).join('');
+    }
+
+    // 4. Стиль карты — подсветить текущий
+    renderMapStyleSelection();
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// Подсветка активного стиля карты в модалке
+function renderMapStyleSelection() {
+    const current = getMapStyle();
+
+    document.querySelectorAll('[data-map-style-option]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mapStyleOption === current);
+    });
 }
 
 // ============================================
@@ -322,4 +385,48 @@ async function savePrivacySetting(name, value) {
             showWarningToast('Не удалось сохранить');
         }
     }
+}
+
+// ============================================
+// СТИЛЬ КАРТЫ
+// ============================================
+
+// Получить текущий стиль карты (из settings.map.style)
+function getMapStyle() {
+    if (!PLAYER || !PLAYER.settings || !PLAYER.settings.map) {
+        // Fallback: по теме сайта
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        return (theme === 'dark' || theme === 'space') ? 'dark' : 'light';
+    }
+    return PLAYER.settings.map.style || 'light';
+}
+
+// Установить стиль карты
+async function setMapStyle(style) {
+    if (!PLAYER) return;
+
+    if (!PLAYER.settings) PLAYER.settings = {};
+    if (!PLAYER.settings.map) PLAYER.settings.map = {};
+
+    PLAYER.settings.map.style = style;
+
+    const { error } = await _supabase
+        .from('players')
+        .update({ settings: PLAYER.settings })
+        .eq('id', PLAYER.playerId);
+
+    if (error) {
+        console.warn('Ошибка сохранения стиля карты:', error);
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('Не удалось сохранить стиль');
+        }
+        return;
+    }
+
+    // Применяем к карте
+    if (typeof updateMapStyle === 'function') updateMapStyle(style);
+
+    // Обновляем UI (модалку + дропдаун на карте)
+    if (typeof renderMapStyleSelection === 'function') renderMapStyleSelection();
+    if (typeof updateMapStyleDropdown === 'function') updateMapStyleDropdown();
 }
