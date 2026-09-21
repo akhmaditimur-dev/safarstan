@@ -29,6 +29,7 @@ function setPlayerFromServer(serverPlayer) {
         settings: serverPlayer.settings || {},
         isPrivate: serverPlayer.is_private === true,
         onboardingCompleted: serverPlayer.onboarding_completed === true,
+        username: serverPlayer.username || null,
     };
 }
 

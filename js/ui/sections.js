@@ -238,25 +238,29 @@ function renderTabs() {
     const tabs = document.querySelectorAll('#transportTabs .tab');
     if (!tabs.length) return;
 
-    const dict = (I18N && I18N[currentLang]) || (I18N && I18N.ru) || {};
     tabs.forEach(tab => {
         tab.classList.toggle('active', tab.dataset.type === currentTransportType);
-        const label = dict[tab.dataset.type];
-        if (label) tab.textContent = label;
+        const key = 'transport.' + tab.dataset.type;
+        const label = t(key);
+        if (label && label !== `[${key}]`) tab.textContent = label;
     });
 }
 
 // ============ ЯЗЫК ============
 function applyLang() {
-    const dict = (I18N && I18N[currentLang]) || (I18N && I18N.ru) || {};
+    // Hero
+    setText('.hero h1', t('hero.title'));
+    setText('.hero__subtitle', t('hero.subtitle'));
 
-    setText('.hero h1', dict.heroTitle || '');
-    setText('.hero__subtitle', dict.heroSubtitle || '');
-    setText('#transport h2', dict.transport || '');
-    setText('#hotels h2', dict.hotels || '');
-    setText('#services h2', dict.services || '');
-    setText('langBtn', currentLang === 'ru' ? 'EN' : 'RU');
+    // Заголовки секций
+    setText('#map h2', t('sections.map'));
+    setText('#ratings h2', t('sections.ratings'));
+    setText('#quests h2', t('sections.quests'));
+    setText('#transport h2', t('sections.transport'));
+    setText('#hotels h2', t('sections.hotels'));
+    setText('#services h2', t('sections.services'));
 
+    // Табы транспорта
     renderTabs();
 }
 

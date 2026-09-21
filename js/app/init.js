@@ -62,7 +62,19 @@ async function initApp() {
         settings: serverPlayer.settings || {},
         isPrivate: serverPlayer.is_private === true,
         onboardingCompleted: serverPlayer.onboarding_completed === true,
+        username: serverPlayer.username || null,
     };
+
+    // === Автогенерация ника (если нет) ===
+    if (!serverPlayer.username) {
+        const generated = await generateUsernameForPlayer(serverPlayer.id, serverPlayer.name);
+        if (generated) {
+            PLAYER.username = generated;
+            console.log('✅ Ник сгенерирован:', generated);
+        }
+    } else {
+        PLAYER.username = serverPlayer.username;
+    }
 
     // Загрузка чек-инов
     const checkins = await loadCheckins(serverPlayer.id);

@@ -632,3 +632,28 @@
     gap: 0;
     margin: 16px 0 8px;
 }
+
+/* === Выключенные языки (скоро) === */
+.lang-select__item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lang-select__item.disabled:hover {
+    background: transparent;
+}
+
+.lang-select__label {
+    flex: 1;
+}
+
+.lang-select__soon {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    background: var(--color-bg-soft);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.03em;
+}

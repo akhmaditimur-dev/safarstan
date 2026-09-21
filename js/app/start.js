@@ -26,20 +26,46 @@ if (typeof lucide !== 'undefined') lucide.createIcons();
 initApp();
 
 // ============================================
-// ПУБЛИЧНАЯ ССЫЛКА НА ПРОФИЛЬ (?p=playerId)
+// ПУБЛИЧНЫЕ ССЫЛКИ НА ПРОФИЛЬ
 // ============================================
-(function checkPublicProfileLink() {
+
+(function checkPublicProfileLinks() {
     const urlParams = new URLSearchParams(location.search);
-    const publicPlayerId = urlParams.get('p');
+    const publicPlayerId = urlParams.get('p');   // ?p=playerId
 
-    if (!publicPlayerId) return;
+    // === 1. Проверяем ?p= (старый формат) ===
+    if (publicPlayerId) {
+        setTimeout(() => {
+            if (typeof openPublicProfile === 'function') {
+                openPublicProfile(publicPlayerId);
+            }
+        }, 300);
+        return;
+    }
 
-    // Небольшая задержка, чтобы initApp() успел отрисовать лендинг
-    setTimeout(() => {
-        if (typeof openPublicProfile === 'function') {
-            openPublicProfile(publicPlayerId);
-        } else {
-            console.warn('openPublicProfile не найдена — проверь js/ui/profile.js');
-        }
-    }, 300);
+    // === 2. Проверяем #u/ник (новый формат) ===
+    const hash = location.hash;
+    if (hash && hash.startsWith('#u/')) {
+        const username = hash.substring(3).trim();
+        if (!username) return;
+
+        setTimeout(() => {
+            if (typeof openPublicProfileByUsername === 'function') {
+                openPublicProfileByUsername(username);
+            } else {
+                console.warn('openPublicProfileByUsername не найдена');
+            }
+        }, 300);
+    }
 })();
+
+// === Обработка изменения хэша (если пользователь перешёл по ссылке вручную) ===
+window.addEventListener('hashchange', () => {
+    const hash = location.hash;
+    if (hash && hash.startsWith('#u/')) {
+        const username = hash.substring(3).trim();
+        if (username && typeof openPublicProfileByUsername === 'function') {
+            openPublicProfileByUsername(username);
+        }
+    }
+});

@@ -1,18 +1,5 @@
 // ============ UI: ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА (сворачиваемый) ============
 
-// Список доступных языков. При добавлении нового — автоматически
-// попадёт в список. translations должны быть в I18N (data.js)
-const AVAILABLE_LANGS = [
-    { code: 'ru', label: 'Русский',    flag: '🇷🇺' },
-    { code: 'en', label: 'English',    flag: '🇬🇧' },
-    // Добавим позже:
-    // { code: 'uz', label: "O'zbek",     flag: '🇺🇿' },
-    // { code: 'kz', label: 'Қазақша',    flag: '🇰🇿' },
-    // { code: 'tj', label: 'Тоҷикӣ',     flag: '🇹🇯' },
-    // { code: 'kg', label: 'Кыргызча',   flag: '🇰🇬' },
-    // { code: 'tm', label: 'Türkmençe',  flag: '🇹🇲' },
-];
-
 function renderLangSelect() {
     const listEl = document.getElementById('langList');
     const currentEl = document.getElementById('langCurrentLabel');
@@ -23,14 +10,20 @@ function renderLangSelect() {
     if (currentEl) currentEl.textContent = current.label;
 
     // Список
-    listEl.innerHTML = AVAILABLE_LANGS.map(lang => `
-        <button class="lang-select__item ${lang.code === currentLang ? 'active' : ''}"
-                data-lang-select="${lang.code}">
-            <span class="lang-select__flag">${lang.flag}</span>
-            <span>${lang.label}</span>
-            ${lang.code === currentLang ? '<i data-lucide="check"></i>' : ''}
-        </button>
-    `).join('');
+    listEl.innerHTML = AVAILABLE_LANGS.map(lang => {
+        const isActive = lang.code === currentLang;
+        const isEnabled = lang.enabled === true;
+
+        return `
+            <button class="lang-select__item ${isActive ? 'active' : ''} ${!isEnabled ? 'disabled' : ''}"
+                    ${isEnabled ? `data-lang-select="${lang.code}"` : 'disabled'}>
+                <span class="lang-select__flag">${lang.flag}</span>
+                <span class="lang-select__label">${lang.label}</span>
+                ${!isEnabled ? '<span class="lang-select__soon">скоро</span>' : ''}
+                ${isActive && isEnabled ? '<i data-lucide="check"></i>' : ''}
+            </button>
+        `;
+    }).join('');
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
@@ -49,8 +42,17 @@ document.addEventListener('click', (e) => {
 
     // Клик по языку
     const langBtn = e.target.closest('[data-lang-select]');
-    if (langBtn) {
+    if (langBtn && !langBtn.disabled) {
         const code = langBtn.dataset.langSelect;
+
+        // Проверка: включён ли язык
+        if (typeof isLangEnabled === 'function' && !isLangEnabled(code)) {
+            if (typeof showWarningToast === 'function') {
+                showWarningToast('Перевод скоро появится');
+            }
+            return;
+        }
+
         currentLang = code;
         if (typeof applyLang === 'function') applyLang();
         if (typeof saveState === 'function') saveState();

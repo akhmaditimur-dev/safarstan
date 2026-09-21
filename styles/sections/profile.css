@@ -193,6 +193,13 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+/* Кнопка редактирования имени — сдвинуть вниз, чтобы не пересекалась с X */
+#editNameBtnProfile {
+    margin-right: 40px; /* ← отступ справа — освобождаем место под X */
 }
 
 .profile-edit-btn:hover {
@@ -534,4 +541,62 @@
     gap: 6px;
     margin-top: 6px;
     width: 100%;
+}
+
+/* === Ник в профиле === */
+.profile-username-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.profile-username-label {
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+    font-family: monospace;
+}
+
+.profile-edit-btn--small {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
+}
+
+.profile-edit-btn--small svg {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+/* Форма редактирования ника */
+.profile-username-edit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.profile-username-at {
+    font-size: var(--fs-base);
+    color: var(--color-text-muted);
+    font-family: monospace;
+}
+
+.profile-username-input {
+    flex: 1;
+    min-width: 100px;
+    padding: 6px 10px;
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    font-family: monospace;
+    background: var(--color-surface);
+    color: var(--color-text);
+    outline: none;
+}
+
+.profile-username-input:focus {
+    box-shadow: 0 0 0 3px var(--color-primary-light);
 }

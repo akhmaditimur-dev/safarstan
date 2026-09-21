@@ -508,6 +508,12 @@
                     <button class="profile-edit-btn" id="editNameBtnProfile" title="Редактировать имя"><i data-lucide="pencil"></i></button>
                 </div>
                 <div class="profile-level"><i data-lucide="star"></i> Уровень <span id="profileLevel">1</span></div>
+                <div class="profile-username-row">
+                    <span class="profile-username-label">@<span id="profileUsername">—</span></span>
+                    <button class="profile-edit-btn profile-edit-btn--small" id="editUsernameBtn" title="Сменить ник">
+                        <i data-lucide="pencil"></i>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="profile-xp-block">
@@ -536,7 +542,10 @@
                 <div class="profile-avatar" id="ppAvatar">🧑‍💼</div>
                 <div style="flex:1;min-width:0;">
                     <div class="profile-name-row"><h2 id="ppName">—</h2></div>
-                    <div class="profile-level"><i data-lucide="star"></i> Уровень <span id="ppLevel">1</span></div>
+                        <div class="profile-level"><i data-lucide="star"></i> Уровень <span id="ppLevel">1</span></div>
+                        <div class="profile-username-row">
+                            <span class="profile-username-label" id="ppUsername" style="display:none;">@—</span>
+                        </div>
                 </div>
             </div>
             <div class="profile-section"><h3><i data-lucide="building-2"></i> Города</h3><div class="profile-cities" id="ppCities"></div></div>
@@ -1177,6 +1186,7 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
     <script defer src="config.js"></script>
+    <script defer src="js/i18n.js"></script>
     <script defer src="data.js"></script>
     <script defer src="supabase.js"></script>
     <script defer src="storage.js"></script>

@@ -821,30 +821,6 @@ const CITIES = {
     }
 };
 
-// ============ ПЕРЕВОДЫ ============
-const I18N = {
-    ru: {
-        heroTitle: 'Куда отправимся?',
-        heroSubtitle: 'Safarstan — исследуй города Центральной Азии, зарабатывай очки, открывай новое',
-        transport: 'Транспорт',
-        hotels: 'Где остановиться',
-        services: 'Сервисы',
-        train: 'Поезда',
-        bus: 'Автобусы',
-        taxi: 'Такси'
-    },
-    en: {
-        heroTitle: 'Where to next?',
-        heroSubtitle: 'Safarstan — explore Central Asian cities, earn points, discover new places',
-        transport: 'Transport',
-        hotels: 'Where to stay',
-        services: 'Services',
-        train: 'Trains',
-        bus: 'Buses',
-        taxi: 'Taxi'
-    },
-};
-
 // ============ БЕЙДЖИ ============
 const BADGES = [
     { id: 'novice',         icon: 'sprout',      name: 'Новичок',         desc: 'Первый чек-ин' },

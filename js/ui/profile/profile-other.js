@@ -40,6 +40,17 @@ async function openPlayerProfile(playerId) {
     document.getElementById('ppName').textContent = player.name;
     document.getElementById('ppLevel').textContent = player.level || 1;
 
+    // Ник (если есть)
+    const ppUsername = document.getElementById('ppUsername');
+    if (ppUsername) {
+        if (player.username) {
+            ppUsername.textContent = '@' + player.username;
+            ppUsername.style.display = 'inline';
+        } else {
+            ppUsername.style.display = 'none';
+        }
+    }
+
     // Проверка приватности
     const isPrivate = player.is_private === true;
     let hasAccess = true;

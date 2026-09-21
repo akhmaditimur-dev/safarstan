@@ -328,3 +328,116 @@ async function loadMyBlocks(playerId) {
     }
     return data || [];
 }
+
+// ============================================
+// USERNAME (НИК ИГРОКА)
+// ============================================
+
+// Валидация ника
+function validateUsername(username) {
+    if (!username) return 'Ник не может быть пустым';
+    if (username.length < 3) return 'Минимум 3 символа';
+    if (username.length > 20) return 'Максимум 20 символов';
+    if (!/^[a-z0-9_]+$/.test(username)) {
+        return 'Только латиница, цифры и подчёркивание';
+    }
+    const reserved = ['admin', 'support', 'api', 'www', 'u', 'p', 'root', 'help', 'faq'];
+    if (reserved.includes(username)) return 'Этот ник зарезервирован';
+    return null;
+}
+
+// Проверить, свободен ли ник
+async function isUsernameAvailable(username, excludePlayerId = null) {
+    let query = _supabase
+        .from('players')
+        .select('id')
+        .ilike('username', username);
+
+    if (excludePlayerId) {
+        query = query.neq('id', excludePlayerId);
+    }
+
+    const { data, error } = await query.maybeSingle();
+
+    if (error) {
+        console.warn('Ошибка проверки ника:', error);
+        return false;
+    }
+    return !data;
+}
+
+// Сохранить ник игрока
+async function saveUsername(playerId, username) {
+    const clean = username.toLowerCase().trim();
+
+    const validationError = validateUsername(clean);
+    if (validationError) return { error: validationError };
+
+    const available = await isUsernameAvailable(clean, playerId);
+    if (!available) return { error: 'Этот ник уже занят' };
+
+    const { error } = await _supabase
+        .from('players')
+        .update({ username: clean })
+        .eq('id', playerId);
+
+    if (error) {
+        console.warn('Ошибка сохранения ника:', error);
+        return { error: error.message };
+    }
+    return { ok: true, username: clean };
+}
+
+// Сгенерировать ник для существующих игроков без ника
+async function generateUsernameForPlayer(playerId, baseName) {
+    // Из имени: только a-z, цифры, _
+    let base = (baseName || 'player')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '')
+        .substring(0, 15);
+
+    if (base.length < 3) base = 'player';
+
+    // Проверяем занятость
+    let candidate = base;
+    let attempt = 0;
+
+    while (!(await isUsernameAvailable(candidate, playerId))) {
+        attempt++;
+        candidate = `${base}${attempt}`;
+        if (attempt > 100) {
+            // Фолбэк: случайное число
+            candidate = `player${Math.floor(Math.random() * 99999)}`;
+            break;
+        }
+    }
+
+    // Сохраняем
+    const { error } = await _supabase
+        .from('players')
+        .update({ username: candidate })
+        .eq('id', playerId);
+
+    if (error) {
+        console.warn('Ошибка автогенерации ника:', error);
+        return null;
+    }
+
+    return candidate;
+}
+
+// Загрузить игрока по нику
+async function loadPlayerByUsername(username) {
+    if (!username) return null;
+
+    const clean = username.toLowerCase().trim();
+
+    const { data, error } = await _supabase
+        .from('players')
+        .select('*')
+        .ilike('username', clean)
+        .maybeSingle();
+
+    if (error || !data) return null;
+    return data;
+}

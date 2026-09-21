@@ -610,3 +610,8 @@ async function resetProgress(options) {
         return { error: err.message || 'Не удалось сбросить прогресс' };
     }
 }
+
+// Редактирование ника
+on('editUsernameBtn', 'click', () => {
+    if (typeof enableUsernameEdit === 'function') enableUsernameEdit();
+});

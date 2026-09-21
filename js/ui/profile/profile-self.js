@@ -53,6 +53,12 @@ function renderProfile() {
     if (nameEl) nameEl.textContent = PLAYER.name;
     if (levelEl) levelEl.textContent = PLAYER.level;
 
+    // Ник
+    const usernameEl = document.getElementById('profileUsername');
+    if (usernameEl) {
+        usernameEl.textContent = PLAYER.username || '—';
+    }
+
     const xpInLevel = PLAYER.xp % 100;
     const xpToNext = 100 - xpInLevel;
 
@@ -461,4 +467,114 @@ function openSettingsModal() {
 function closeSettingsModal() {
     const modal = document.getElementById('settingsModal');
     if (modal) modal.style.display = 'none';
+}
+
+// ============================================
+// РЕДАКТИРОВАНИЕ НИКА
+// ============================================
+
+function enableUsernameEdit() {
+    if (!PLAYER) return;
+
+    const row = document.querySelector('.profile-username-row');
+    const usernameSpan = document.getElementById('profileUsername');
+    const editBtn = document.getElementById('editUsernameBtn');
+    if (!row || !usernameSpan || !editBtn) return;
+
+    // Скрываем текущие
+    usernameSpan.parentElement.style.display = 'none';
+    editBtn.style.display = 'none';
+
+    // Форма
+    const form = document.createElement('div');
+    form.className = 'profile-username-edit';
+    form.id = 'usernameEditForm';
+    form.innerHTML = `
+        <span class="profile-username-at">@</span>
+        <input type="text" id="usernameEditInput" class="profile-username-input"
+               value="${PLAYER.username || ''}"
+               placeholder="твой_ник"
+               maxlength="20"
+               autocomplete="off"
+               spellcheck="false">
+        <button class="profile-name-save" id="usernameEditSave">✓</button>
+        <button class="profile-name-cancel" id="usernameEditCancel">✕</button>
+        <p id="usernameEditError" class="auth-error" style="display:none;width:100%;"></p>
+    `;
+
+    row.parentNode.insertBefore(form, row.nextSibling);
+
+    const input = document.getElementById('usernameEditInput');
+    input.focus();
+    input.select();
+
+    input.addEventListener('input', () => {
+        // Приводим к lowercase
+        const pos = input.selectionStart;
+        input.value = input.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+        input.setSelectionRange(pos, pos);
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') saveUsernameEdit();
+        if (e.key === 'Escape') cancelUsernameEdit();
+    });
+
+    document.getElementById('usernameEditSave').addEventListener('click', saveUsernameEdit);
+    document.getElementById('usernameEditCancel').addEventListener('click', cancelUsernameEdit);
+}
+
+async function saveUsernameEdit() {
+    const input = document.getElementById('usernameEditInput');
+    const errorEl = document.getElementById('usernameEditError');
+    if (!input) return;
+
+    const newUsername = input.value.trim().toLowerCase();
+
+    if (newUsername === PLAYER.username) {
+        cancelUsernameEdit();
+        return;
+    }
+
+    const validationError = validateUsername(newUsername);
+    if (validationError) {
+        errorEl.textContent = validationError;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    errorEl.style.display = 'none';
+
+    const result = await saveUsername(PLAYER.playerId, newUsername);
+
+    if (result.error) {
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    PLAYER.username = result.username;
+    cancelUsernameEdit();
+
+    // Обновляем текст ника сразу
+    const usernameEl = document.getElementById('profileUsername');
+    if (usernameEl) usernameEl.textContent = PLAYER.username;
+
+    showWarningToast('✅ Ник изменён: @' + PLAYER.username);
+
+    setTimeout(() => {
+        if (typeof renderProfile === 'function') renderProfile();
+    }, 50);
+}
+
+function cancelUsernameEdit() {
+    const form = document.getElementById('usernameEditForm');
+    const row = document.querySelector('.profile-username-row');
+    const label = document.querySelector('.profile-username-label');
+    const editBtn = document.getElementById('editUsernameBtn');
+
+    if (form) form.remove();
+    if (row) row.style.display = '';
+    if (label) label.style.display = '';   // ← ВОССТАНАВЛИВАЕМ
+    if (editBtn) editBtn.style.display = '';
 }
