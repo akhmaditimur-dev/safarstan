@@ -185,7 +185,7 @@
                         <div class="dashboard-quests" id="dashQuests"></div>
                     </div>
 
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" id="dashPlansCard">
                         <div class="dashboard-card__header">
                             <h3>Мои планы</h3>
                             <button class="btn btn-ghost btn-sm" id="dashAddPlanBtn"><i data-lucide="plus"></i> Добавить</button>
@@ -610,13 +610,16 @@
             <h2>Настройки</h2>
             <p class="modal-subtitle">Язык, тема, аккаунт</p>
             <label class="modal-label">Язык</label>
-            <div class="settings-row">
-                <button class="settings-btn active" data-lang="ru">Русский</button>
-                <button class="settings-btn" data-lang="en">English</button>
+            <div class="lang-select" id="langSelect">
+                <button class="lang-select__current" data-lang-toggle="1">
+                    <span id="langCurrentLabel">Русский</span>
+                    <i data-lucide="chevron-down"></i>
+                </button>
+                <div class="lang-select__list" id="langList" style="display:none;"></div>
             </div>
 
             <label class="modal-label">Тема</label>
-            <div class="theme-grid">
+            <div class="theme-grid theme-grid--compact">
                 <button class="theme-option active" data-theme="light">
                     <span class="theme-option__preview theme-option__preview--light"></span>
                     <span class="theme-option__label">Светлая</span>
@@ -645,7 +648,7 @@
 
             <div class="settings-divider"></div>
 
-            <label class="modal-label">Что показывать в дашборде</label>
+            <label class="modal-label">Показать в дашборде и меню</label>
             <div class="modules-settings" id="modulesSettings"></div>
 
             <div class="settings-divider"></div>
@@ -1008,6 +1011,7 @@
     <script defer src="js/ui/reviews.js"></script>
     <script defer src="js/ui/all.js"></script>
     <script defer src="js/ui/sidebar.js"></script>
+    <script defer src="js/ui/lang-select.js"></script>
     <script defer src="js/ui/modules.js"></script>
     <script defer src="js/ui/gaps.js"></script>
     <script defer src="js/ui/hashars.js"></script>

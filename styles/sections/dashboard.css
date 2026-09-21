@@ -430,11 +430,6 @@
     transition: transform var(--transition-fast), color var(--transition-fast);
 }
 
-.dashboard-nav-item:hover .dashboard-nav-arrow {
-    transform: translateX(4px);
-    color: var(--color-primary);
-}
-
 .dashboard-nav-divider {
     height: 1px;
     background: var(--color-border-soft);
@@ -705,4 +700,42 @@
     .back-to-dashboard {
         bottom: 90px;
     }
+}
+
+/* === Сворачиваемый заголовок группы в сайдбаре === */
+.dashboard-nav-title--toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 8px 12px 4px;
+    font-family: var(--font-heading);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    text-align: left;
+}
+
+.dashboard-nav-title--toggle:hover {
+    color: var(--color-primary);
+}
+
+.dashboard-nav-title__arrow {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.5;
+    flex-shrink: 0;
+    transition: transform var(--transition-fast);
+}
+
+.dashboard-nav-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }

@@ -1,11 +1,28 @@
 // ============ UI: НАСТРОЙКИ МОДУЛЕЙ ============
 
-// Список модулей (общие настройки в профиле)
+// ============================================
+// КОНФИГ: Что показывать в дашборде и меню
+// ============================================
+// Модуль управляет видимостью карточек в дашборде, пунктов в сайдбаре,
+// а также секций на странице. Отключил — пропадает везде.
+//
+// id       — ключ модуля (совпадает с settings.modules[moduleName])
+// icon     — иконка Lucide
+// label    — текст для тумблера
+// sidebarId— id пункта в сайдбаре (или null, если пункта нет)
+// dashId   — id карточки в дашборде (или null)
+// sectionId— id секции на странице (или null)
+
 const AVAILABLE_MODULES = [
-    { id: 'friends', icon: 'users',      label: 'Друзья' },
-    { id: 'quests',  icon: 'target',     label: 'Квесты' },
-    { id: 'gaps',    icon: 'coffee',     label: 'Гапы' },
-    { id: 'hashars', icon: 'hand-heart', label: 'Хашары' },
+    { id: 'accessRequests', icon: 'user-check',   label: 'Запросы на профиль', sidebarId: 'navAccessRequestsBtn', dashId: null,                sectionId: null },
+    { id: 'plans',          icon: 'calendar-plus', label: 'Мои планы',          sidebarId: 'navPlansBtn',          dashId: 'dashPlansCard',      sectionId: null },
+    { id: 'gallery',        icon: 'image',         label: 'Моя галерея',        sidebarId: 'navGalleryBtn',        dashId: null,                 sectionId: null },
+    { id: 'reviews',        icon: 'message-circle',label: 'Мои отзывы',         sidebarId: 'navReviewsBtn',        dashId: null,                 sectionId: null },
+    { id: 'notifications',  icon: 'bell',          label: 'Уведомления',        sidebarId: 'navNotificationsBtn',  dashId: null,                 sectionId: null },
+    { id: 'quests',         icon: 'target',        label: 'Активные квесты',    sidebarId: 'navQuestsBtn',         dashId: 'dashQuestsCard',     sectionId: 'quests' },
+    { id: 'gaps',           icon: 'coffee',        label: 'Гапы',               sidebarId: 'navGapsBtn',           dashId: 'dashGapsCard',       sectionId: null },
+    { id: 'hashars',        icon: 'hand-heart',    label: 'Хашары',             sidebarId: 'navHasharsBtn',        dashId: 'dashHasharsCard',    sectionId: null },
+    { id: 'faq',            icon: 'help-circle',   label: 'FAQ',                sidebarId: 'navFaqBtn',            dashId: null,                 sectionId: null },
 ];
 
 const MAP_LAYERS = [
@@ -53,6 +70,7 @@ function renderModulesSettings() {
     `).join('');
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
+    renderLangSelect();
 }
 
 // ============================================
@@ -135,24 +153,31 @@ async function saveMapSetting(layerName, value) {
 // ВИДИМОСТЬ МОДУЛЕЙ ВО ВСЁМ ИНТЕРФЕЙСЕ
 // ============================================
 function applyModuleVisibility() {
-    // Карточки и секции, зависящие от модулей
-    const sections = {
-        gaps:    ['dashGapsCard', 'gapInvitesBlock'],
-        hashars: ['dashHasharsCard'],
-        quests:  ['dashQuestsCard', 'quests'],
-        friends: [],
-    };
+    // Проходим по всем модулям и скрываем/показываем
+    // соответствующие элементы в дашборде, сайдбаре и секциях
+    AVAILABLE_MODULES.forEach(mod => {
+        const enabled = isModuleEnabled(mod.id);
 
-    Object.entries(sections).forEach(([mod, ids]) => {
-        const enabled = isModuleEnabled(mod);
-        ids.forEach(id => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.style.display = enabled ? '' : 'none';
-        });
+        // Пункт в сайдбаре
+        if (mod.sidebarId) {
+            const el = document.getElementById(mod.sidebarId);
+            if (el) el.style.display = enabled ? '' : 'none';
+        }
+
+        // Карточка в дашборде
+        if (mod.dashId) {
+            const el = document.getElementById(mod.dashId);
+            if (el) el.style.display = enabled ? '' : 'none';
+        }
+
+        // Секция на странице
+        if (mod.sectionId) {
+            const el = document.getElementById(mod.sectionId);
+            if (el) el.style.display = enabled ? '' : 'none';
+        }
     });
 
-    // Перерисовываем сайдбар — пункты зависят от модулей
+    // Перерисовываем сайдбар (там своя логика видимости)
     if (typeof renderSidebar === 'function') {
         renderSidebar();
     }
@@ -212,24 +237,19 @@ function countQuestsForCity(cityKey) {
 // ============================================
 // ПРИВАТНОСТЬ
 // ============================================
-
 const PRIVACY_SETTINGS = [
     { id: 'showCity',    icon: 'map-pin', label: 'Показывать мой город' },
     { id: 'showEmail',   icon: 'mail',    label: 'Показывать email' },
     { id: 'isPrivate',   icon: 'lock',    label: 'Приватный профиль (по запросу)' },
 ];
 
-// Проверка: включена ли настройка приватности
 function isPrivacyEnabled(name) {
     if (!PLAYER) return true;
 
-    // Приватный профиль — отдельная логика
     if (name === 'isPrivate') {
-        // Сначала смотрим в локальный кэш
         if (PLAYER.settings?.privacy?.isPrivate !== undefined) {
             return PLAYER.settings.privacy.isPrivate === true;
         }
-        // Фолбэк — из профиля
         return PLAYER.isPrivate === true;
     }
 
@@ -237,7 +257,6 @@ function isPrivacyEnabled(name) {
     return PLAYER.settings.privacy[name] !== false;
 }
 
-// Рендер тумблеров приватности
 function renderPrivacySettings() {
     const container = document.getElementById('privacySettings');
     if (!container) return;
@@ -260,11 +279,9 @@ function renderPrivacySettings() {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// Сохранить настройку приватности
 async function savePrivacySetting(name, value) {
     if (!PLAYER) return;
 
-    // Специальный случай: приватный профиль — отдельная колонка в players
     if (name === 'isPrivate') {
         const { error } = await _supabase
             .from('players')
@@ -279,7 +296,6 @@ async function savePrivacySetting(name, value) {
             return;
         }
 
-        // Кэшируем локально, чтобы UI не перерисовывался до перезагрузки
         if (!PLAYER.settings) PLAYER.settings = {};
         if (!PLAYER.settings.privacy) PLAYER.settings.privacy = {};
         PLAYER.settings.privacy.isPrivate = value;
@@ -290,7 +306,6 @@ async function savePrivacySetting(name, value) {
         return;
     }
 
-    // Остальные тумблеры — как раньше, в settings.privacy
     if (!PLAYER.settings) PLAYER.settings = {};
     if (!PLAYER.settings.privacy) PLAYER.settings.privacy = {};
 

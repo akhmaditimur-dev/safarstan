@@ -405,3 +405,17 @@ on('deleteAccountSubmit', 'click', async () => {
         await signOut();
     }, 1500);
 });
+
+// Раскрытие городов в профиле
+document.addEventListener('click', (e) => {
+    const toggle = e.target.closest('[data-toggle-cities]');
+    if (!toggle) return;
+
+    const type = toggle.dataset.toggleCities;
+    const section = document.getElementById(`cityExtra${type === 'visited' ? 'Visited' : 'Unvisited'}`);
+    if (!section) return;
+
+    const isHidden = section.style.display === 'none';
+    section.style.display = isHidden ? 'flex' : 'none';
+    toggle.classList.toggle('active', isHidden);
+});
