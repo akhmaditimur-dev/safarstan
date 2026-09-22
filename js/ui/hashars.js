@@ -323,10 +323,22 @@ document.addEventListener('click', async (e) => {
     // Отправить создание хашара
     if (e.target.id === 'hasharCreateSubmit') {
         const title = document.getElementById('hasharTitleInput').value.trim();
+        const desc = document.getElementById('hasharDescInput').value.trim();
         const startsAt = document.getElementById('hasharStartInput').value;
         const cityKey = document.getElementById('hasharCityInput').value;
 
         if (!title) { showWarningToast('Введи название'); return; }
+
+        // Проверка названия
+        const titleError = validateUserText(title, { minLength: 3, maxLength: 100, fieldName: 'Название' });
+        if (titleError) { showWarningToast(titleError); return; }
+
+        // Проверка описания
+        if (desc) {
+            const descError = validateUserText(desc, { minLength: 2, maxLength: 500, fieldName: 'Описание' });
+            if (descError) { showWarningToast(descError); return; }
+        }
+
         if (!startsAt) { showWarningToast('Выбери дату'); return; }
 
         const catBtn = document.querySelector('#hasharCatPicker .hashar-cat-option.active');
@@ -336,7 +348,7 @@ document.addEventListener('click', async (e) => {
 
         const result = await createHashar({
             title,
-            description: document.getElementById('hasharDescInput').value.trim(),
+            description: desc || null,
             category,
             cityKey,
             address: document.getElementById('hasharAddressInput').value.trim(),

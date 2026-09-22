@@ -65,8 +65,8 @@ async function loadPlayerById(playerId) {
     if (!playerId) return null;
 
     const { data, error } = await _supabase
-        .from('players')
-        .select('id, name, avatar, level, xp, home_city, current_city, badges')
+        .from('public_players')
+        .select('id, name, avatar, level, xp, home_city, current_city, badges, username, is_private')
         .eq('id', playerId)
         .single();
 
@@ -212,7 +212,7 @@ async function loadIncomingAccessRequests(playerId) {
         .from('profile_access_requests')
         .select(`
             id, status, created_at,
-            from_player:players!profile_access_requests_from_player_id_fkey (
+            from_player:public_players!profile_access_requests_from_player_id_fkey (
                 id, name, avatar, level
             )
         `)
@@ -349,7 +349,7 @@ function validateUsername(username) {
 // Проверить, свободен ли ник
 async function isUsernameAvailable(username, excludePlayerId = null) {
     let query = _supabase
-        .from('players')
+        .from('public_players')
         .select('id')
         .ilike('username', username);
 
@@ -433,8 +433,8 @@ async function loadPlayerByUsername(username) {
     const clean = username.toLowerCase().trim();
 
     const { data, error } = await _supabase
-        .from('players')
-        .select('*')
+        .from('public_players')
+        .select('id, name, avatar, avatar_path, level, xp, home_city, current_city, badges, username, is_private, settings')
         .ilike('username', clean)
         .maybeSingle();
 

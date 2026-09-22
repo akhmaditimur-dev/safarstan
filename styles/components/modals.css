@@ -657,3 +657,13 @@
     border-radius: var(--radius-sm);
     letter-spacing: 0.03em;
 }
+
+/* Модалки, которые должны быть ПОВЕРХ других модалок (профиль поверх друзей) */
+#playerProfileModal {
+    z-index: 1100 !important;
+}
+
+/* QR-модалка — поверх всего */
+#qrModal {
+    z-index: 1200 !important;
+}

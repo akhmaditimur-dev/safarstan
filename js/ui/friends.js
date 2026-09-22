@@ -15,7 +15,7 @@ async function renderFriends() {
     const dashCountEl = document.getElementById('dashFriendsCount');
     if (dashCountEl) dashCountEl.textContent = FRIENDS.length;
 
-    // Входящие заявки
+    // === Входящие заявки ===
     const incomingSection = document.getElementById('friendsIncomingSection');
     const incomingEl = document.getElementById('friendsIncoming');
 
@@ -26,12 +26,17 @@ async function renderFriends() {
             incomingSection.style.display = 'block';
             incomingEl.innerHTML = INCOMING_REQUESTS.map(req => {
                 const p = req.from_player || {};
+                const pid = p.id || '';
+                const cityName = p.current_city && CITIES[p.current_city]
+                    ? CITIES[p.current_city].name
+                    : '';
+
                 return `
                     <div class="friend-item">
-                        <div class="friend-item__avatar">${renderAvatarHtml(p.avatar)}</div>
+                        <div class="friend-item__avatar" data-player-profile="${pid}">${renderAvatarHtml(p.avatar)}</div>
                         <div class="friend-item__info">
-                            <div class="friend-item__name">${escapeHtml(p.name || 'Игрок')}</div>
-                            <div class="friend-item__sub">Уровень ${p.level || 1}</div>
+                            <div class="friend-item__name" data-player-profile="${pid}">${escapeHtml(p.name || 'Игрок')}</div>
+                            <div class="friend-item__sub">Уровень ${p.level || 1}${cityName ? ` · ${cityName}` : ''}</div>
                         </div>
                         <div class="friend-item__actions">
                             <button class="friend-action-btn" data-accept="${req.id}" data-from="${req.from_player_id}">
@@ -47,33 +52,40 @@ async function renderFriends() {
         }
     }
 
-    // Список друзей
+    // === Список друзей ===
     const listEl = document.getElementById('friendsList');
 
     if (listEl) {
         if (FRIENDS.length === 0) {
             listEl.innerHTML = '<div class="friends-empty">Пока нет друзей. Найди кого-нибудь!</div>';
         } else {
-            listEl.innerHTML = FRIENDS.map(f => `
-                <div class="friend-item">
-                    <div class="friend-item__avatar">${renderAvatarHtml(f.avatar)}</div>
-                    <div class="friend-item__info">
-                        <div class="friend-item__name">${escapeHtml(f.name)}</div>
-                        <div class="friend-item__sub">Уровень ${f.level} · ${CITIES[f.current_city]?.name || ''}</div>
+            listEl.innerHTML = FRIENDS.map(f => {
+                const cityName = f.current_city && CITIES[f.current_city]
+                    ? CITIES[f.current_city].name
+                    : '';
+
+                return `
+                    <div class="friend-item">
+                        <div class="friend-item__avatar" data-player-profile="${f.id}">${renderAvatarHtml(f.avatar)}</div>
+                        <div class="friend-item__info">
+                            <div class="friend-item__name" data-player-profile="${f.id}">${escapeHtml(f.name)}</div>
+                            <div class="friend-item__sub">Уровень ${f.level}${cityName ? ` · ${cityName}` : ''}</div>
+                        </div>
+                        <div class="friend-item__actions">
+                            <button class="friend-action-btn friend-action-btn--secondary" data-remove-friend="${f.friendsRowId}">
+                                Удалить
+                            </button>
+                        </div>
                     </div>
-                    <div class="friend-item__actions">
-                        <button class="friend-action-btn friend-action-btn--secondary" data-remove-friend="${f.friendsRowId}">
-                            Удалить
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
     }
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+// === Поиск игроков ===
 async function searchPlayersAndRender(query) {
     if (!PLAYER || !PLAYER.playerId) return;
 
@@ -98,6 +110,9 @@ async function searchPlayersAndRender(query) {
     resultsEl.innerHTML = results.map(p => {
         const isFriend = friendIds.has(p.id);
         const isPending = outgoingIds.has(p.id);
+        const cityName = p.current_city && CITIES[p.current_city]
+            ? CITIES[p.current_city].name
+            : '';
 
         let action = '';
         if (isFriend) {
@@ -110,10 +125,10 @@ async function searchPlayersAndRender(query) {
 
         return `
             <div class="friend-item">
-                <div class="friend-item__avatar">${renderAvatarHtml(p.avatar)}</div>
+                <div class="friend-item__avatar" data-player-profile="${p.id}">${renderAvatarHtml(p.avatar)}</div>
                 <div class="friend-item__info">
-                    <div class="friend-item__name">${escapeHtml(p.name)}</div>
-                    <div class="friend-item__sub">Уровень ${p.level} · ${CITIES[p.current_city]?.name || ''}</div>
+                    <div class="friend-item__name" data-player-profile="${p.id}">${escapeHtml(p.name)}</div>
+                    <div class="friend-item__sub">Уровень ${p.level}${cityName ? ` · ${cityName}` : ''}</div>
                 </div>
                 <div class="friend-item__actions">${action}</div>
             </div>

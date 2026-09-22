@@ -325,19 +325,34 @@ document.addEventListener('click', async (e) => {
     }
 
     // Создать гап — submit
+    // Создать гап — submit
     if (e.target.id === 'gapCreateSubmit') {
         const name = document.getElementById('gapNameInput').value.trim();
-        if (!name) {
-            showWarningToast('Введи название гапа');
+        const description = document.getElementById('gapDescInput').value.trim();
+
+        // Проверка названия
+        const nameError = validateUserText(name, { minLength: 3, maxLength: 80, fieldName: 'Название' });
+        if (nameError) {
+            showWarningToast(nameError);
             return;
         }
+
+        // Проверка описания (если есть)
+        if (description) {
+            const descError = validateUserText(description, { minLength: 2, maxLength: 500, fieldName: 'Описание' });
+            if (descError) {
+                showWarningToast(descError);
+                return;
+            }
+        }
+
         const emojiBtn = document.querySelector('#gapEmojiPicker .gap-emoji-option.active');
         const emoji = emojiBtn ? emojiBtn.dataset.emoji : '☕';
         const scheduleType = document.getElementById('gapScheduleInput').value;
 
         const result = await createGap({
             name,
-            description: document.getElementById('gapDescInput').value.trim(),
+            description: description || null,
             cityKey: document.getElementById('gapCityInput').value,
             meetPoint: document.getElementById('gapMeetInput').value.trim(),
             avatarEmoji: emoji,

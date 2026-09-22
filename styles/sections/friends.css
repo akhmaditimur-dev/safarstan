@@ -1,0 +1,226 @@
+/* ============ ДРУЗЬЯ (модалка) ============ */
+
+/* === Секции внутри модалки === */
+.friends-section {
+    margin-top: 20px;
+}
+
+.friends-section:first-of-type {
+    margin-top: 8px;
+}
+
+.friends-section h3 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border-soft);
+}
+
+/* === Список друзей / результатов / заявок === */
+.friends-list,
+.friends-search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.friends-search-results {
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+/* === Одна строка игрока === */
+.friend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+}
+
+.friend-item:hover {
+    background: var(--color-primary-light);
+}
+
+/* === Аватар === */
+.friend-item__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+}
+
+.friend-item__avatar:hover {
+    transform: scale(1.08);
+}
+
+.friend-item__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+/* === Информация === */
+.friend-item__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.friend-item__name {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.friend-item__name:hover {
+    color: var(--color-primary);
+}
+
+.friend-item__sub {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    margin-top: 2px;
+}
+
+.friend-item__sub--status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-primary);
+    font-weight: var(--fw-semibold);
+}
+
+.friend-item__sub--status svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* === Кнопки действий === */
+.friend-item__actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.friend-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 14px;
+    background: var(--gradient-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.friend-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-primary);
+}
+
+.friend-action-btn:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.friend-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Вторичная кнопка (Удалить / Отклонить) */
+.friend-action-btn--secondary {
+    background: var(--color-surface);
+    color: var(--color-text-soft);
+    border: 1px solid var(--color-border);
+}
+
+.friend-action-btn--secondary:hover {
+    background: var(--color-bg-soft);
+    color: var(--color-text);
+    border-color: var(--color-text-soft);
+    box-shadow: none;
+    transform: translateY(-1px);
+}
+
+.friend-action-btn--danger {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+    border: 1px solid transparent;
+}
+
+.friend-action-btn--danger:hover {
+    background: var(--color-danger);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.25);
+}
+
+/* === Иконки внутри кнопок === */
+.friend-action-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.5;
+}
+
+/* === Пустое состояние === */
+.friends-empty {
+    padding: 24px 16px;
+    text-align: center;
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+}
+
+/* === Мобильная адаптация === */
+@media (max-width: 600px) {
+    .friend-item {
+        padding: 8px 10px;
+        gap: 10px;
+    }
+
+    .friend-item__avatar {
+        width: 38px;
+        height: 38px;
+        font-size: 20px;
+    }
+
+    .friend-item__name {
+        font-size: var(--fs-xs);
+    }
+
+    .friend-action-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+}

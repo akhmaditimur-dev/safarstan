@@ -31,3 +31,23 @@ function validateReviewText(text) {
     }
     return null;
 }
+
+// Универсальная проверка текста (для гапов, UGC, хашаров)
+function validateUserText(text, options = {}) {
+    const {
+        minLength = 2,
+        maxLength = 200,
+        fieldName = 'Текст',
+    } = options;
+
+    if (!text || text.trim().length < minLength) {
+        return `${fieldName} слишком короткий (минимум ${minLength} символа)`;
+    }
+    if (text.length > maxLength) {
+        return `${fieldName} слишком длинный (максимум ${maxLength} символов)`;
+    }
+    if (hasBadWords(text)) {
+        return 'Пожалуйста, без грубых слов 🙏';
+    }
+    return null;
+}

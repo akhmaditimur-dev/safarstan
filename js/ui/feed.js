@@ -171,7 +171,7 @@ function renderRecommendations() {
     allPlaces.slice(0, 3).forEach(({ city, place }) => {
         recommendations.push({
             icon: 'building-2',
-            text: `Новое место в <strong>${CITIES[city].name}</strong>: <strong>${place.title}</strong>`,
+            text: `Новое место в <strong>${escapeHtml(CITIES[city].name)}</strong>: <strong>${escapeHtml(place.title)}</strong>`,
         });
     });
 
@@ -181,7 +181,7 @@ function renderRecommendations() {
         const cityName = CITIES[next.city_key] ? CITIES[next.city_key].name : '';
         recommendations.push({
             icon: 'calendar-plus',
-            text: `Не забудь: <strong>${cityName}</strong> ${next.place_title ? `— ${next.place_title}` : ''} (${formatDate(next.visit_date)})`,
+            text: `Не забудь: <strong>${escapeHtml(cityName)}</strong> ${next.place_title ? `— ${escapeHtml(next.place_title)}` : ''} (${formatDate(next.visit_date)})`,
         });
     }
 
@@ -204,7 +204,7 @@ function renderRecommendations() {
     nearQuests.forEach(({ q, r }) => {
         recommendations.push({
             icon: q.icon || 'target',
-            text: `Квест <strong>${q.name}</strong> почти готов: ${r.progress[0]} / ${r.progress[1]}`,
+            text: `Квест <strong>${escapeHtml(q.name)}</strong> почти готов: ${r.progress[0]} / ${r.progress[1]}`,
         });
     });
 

@@ -15,9 +15,11 @@ async function saveFeedEvent(playerId, eventType, eventData = {}, cityKey = null
 }
 
 // Загрузить ленту (свои + друзья + рекомендованные из моих городов)
+// Загрузить ленту (свои + друзья + рекомендованные из моих городов)
 async function loadFeed(limit = 10) {
+    // === Проверка PLAYER ===
     if (!PLAYER || !PLAYER.playerId) {
-        // Если PLAYER ещё не загружен — просто общая лента
+        // Fallback: общая лента
         const { data, error } = await _supabase
             .from('feed')
             .select(`
@@ -35,15 +37,21 @@ async function loadFeed(limit = 10) {
     }
 
     const myId = PLAYER.playerId;
-    const friendIds = (typeof FRIENDS !== 'undefined' ? FRIENDS : []).map(f => f.id);
+    if (!myId) return [];
 
-    // Города, которые я отметил (visited + home + current)
+    // === Фильтруем friendIds от undefined/null ===
+    const friendIds = (typeof FRIENDS !== 'undefined' ? FRIENDS : [])
+        .map(f => f && f.id)
+        .filter(id => typeof id === 'string' && id.length > 0);
+
+    // Города, которые я отметил
     const visitedCities = Object.keys(PLAYER.visitedCities || {});
     const myCities = [PLAYER.homeCity, PLAYER.currentCity, ...visitedCities]
         .filter((v, i, a) => v && a.indexOf(v) === i);
 
     // === ЧАСТЬ 1: Свои + друзья ===
-    const idsForFeed = [myId, ...friendIds];
+    const idsForFeed = [myId, ...friendIds]
+        .filter(id => typeof id === 'string' && id.length > 0);
 
     const { data: personalFeed, error: err1 } = await _supabase
         .from('feed')
@@ -62,19 +70,25 @@ async function loadFeed(limit = 10) {
     // === ЧАСТЬ 2: События от чужих в моих городах ===
     let cityFeed = [];
     if (myCities.length > 0) {
-        const excludeIds = [myId, ...friendIds];
-        const excludeList = excludeIds.map(id => `"${id}"`).join(',');
+        const excludeIds = [myId, ...friendIds]
+            .filter(id => typeof id === 'string' && id.length > 0);
 
-        const { data: otherFeed, error: err2 } = await _supabase
+        let query = _supabase
             .from('feed')
             .select(`
                 id, event_type, event_data, city_key, created_at, player_id,
                 players:player_id (name, avatar, home_city, current_city)
             `)
             .in('city_key', myCities)
-            .not('player_id', 'in', `(${excludeList})`)
             .order('created_at', { ascending: false })
             .limit(Math.floor(limit / 2));
+
+        // Если есть кого исключать — применяем .not
+        if (excludeIds.length > 0) {
+            query = query.not('player_id', 'in', `(${excludeIds.join(',')})`);
+        }
+
+        const { data: otherFeed, error: err2 } = await query;
 
         if (err2) {
             console.warn('Ошибка ленты городов:', err2);
@@ -85,7 +99,6 @@ async function loadFeed(limit = 10) {
     // === ОБЪЕДИНЯЕМ ===
     const all = [...(personalFeed || []), ...cityFeed];
 
-    // Сортируем по created_at, убираем дубли по id
     const seen = new Set();
     const unique = all.filter(item => {
         if (seen.has(item.id)) return false;

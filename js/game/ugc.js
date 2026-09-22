@@ -29,6 +29,15 @@ async function submitUserPlace() {
 
     if (!name) { showWarningToast('Введи название 🙏'); return; }
     if (!desc) { showWarningToast('Добавь описание 🙏'); return; }
+
+    // Проверка названия
+    const nameError = validateUserText(name, { minLength: 2, maxLength: 100, fieldName: 'Название' });
+    if (nameError) { showWarningToast(nameError); return; }
+
+    // Проверка описания
+    const descError = validateUserText(desc, { minLength: 2, maxLength: 500, fieldName: 'Описание' });
+    if (descError) { showWarningToast(descError); return; }
+
     if (todayAddedCount >= DAILY_LIMIT) {
         showWarningToast('Лимит на сегодня исчерпан');
         return;
