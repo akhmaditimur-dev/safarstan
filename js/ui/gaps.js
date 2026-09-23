@@ -319,10 +319,10 @@ document.addEventListener('click', async (e) => {
     }
 
     // Кнопка "Создать гап"
-    if (e.target.id === 'gapCreateBtn') {
+    if (e.target.closest('#gapCreateBtn')) {
         openGapModal();
         return;
-    }
+    }   
 
     // Создать гап — submit
     // Создать гап — submit

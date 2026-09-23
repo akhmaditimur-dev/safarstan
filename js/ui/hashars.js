@@ -306,7 +306,7 @@ document.addEventListener('click', async (e) => {
     }
 
     // Создать хашар — открыть модалку
-    if (e.target.id === 'hasharCreateBtn' || e.target.id === 'dashHasharCreateBtn') {
+    if (e.target.closest('#hasharCreateBtn') || e.target.closest('#dashHasharCreateBtn')) {
         openHasharCreateModal();
         return;
     }

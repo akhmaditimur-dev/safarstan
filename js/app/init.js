@@ -166,6 +166,10 @@ function updateAuthUI() {
     const errEl = document.getElementById('authError');
     if (errEl) errEl.style.display = 'none';
 
+    // Сброс галочки согласия при переключении режимов
+    const agreement = document.getElementById('regAgreement');
+    if (agreement) agreement.checked = false;
+
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 

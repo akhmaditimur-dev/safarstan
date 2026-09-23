@@ -169,6 +169,10 @@ async function renderWeather(city) {
     const forecastEl = $id('weatherForecast');
     if (!container || !city || !city.coords) return;
 
+    // Сразу показываем placeholder, чтобы не было пустоты
+    container.textContent = '—';
+    if (forecastEl) forecastEl.innerHTML = '';
+
     try {
         const url = `https://api.open-meteo.com/v1/forecast`
             + `?latitude=${city.coords.lat}`
@@ -178,10 +182,27 @@ async function renderWeather(city) {
             + `&forecast_days=3`
             + `&timezone=auto`;
 
-        const response = await fetch(url);
+        // Таймаут 8 секунд через AbortController
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+        let response;
+        try {
+            response = await fetch(url, { signal: controller.signal });
+        } finally {
+            clearTimeout(timeoutId);
+        }
+
+        if (!response.ok) {
+            // Тихо выходим без ошибки в консоль
+            return;
+        }
+
         const data = await response.json();
 
-        if (!data.current) throw new Error('Нет данных');
+        if (!data || !data.current) {
+            return;
+        }
 
         const temp = Math.round(data.current.temperature_2m);
         const code = data.current.weather_code;
@@ -215,7 +236,8 @@ async function renderWeather(city) {
         }
 
     } catch (err) {
-        console.warn('Ошибка загрузки погоды:', err);
+        // Тихо игнорируем — погода не критична для работы сайта
+        // Не пишем в консоль, чтобы не засорять
         container.textContent = '—';
         if (forecastEl) forecastEl.innerHTML = '';
     }

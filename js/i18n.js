@@ -135,7 +135,8 @@ const AVAILABLE_LANGS = [
 // ДОСТУП К ПЕРЕВОДАМ
 // ============================================
 
-// Получить перевод по ключу (например, 'sidebar.profile')
+// Получить перевод по ключу
+// (например, 'sidebar.profile')
 function t(key, lang = null) {
     if (!key) return '';
 

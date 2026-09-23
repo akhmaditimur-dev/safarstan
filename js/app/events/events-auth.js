@@ -20,6 +20,16 @@ on('authSubmit', 'click', async () => {
         return;
     }
 
+    // Проверка согласия — только для регистрации
+    if (authMode === 'signup') {
+        const agreement = document.getElementById('regAgreement');
+        if (!agreement || !agreement.checked) {
+            errorEl.textContent = 'Подтверди согласие с политикой и условиями';
+            errorEl.style.display = 'block';
+            return;
+        }
+    }
+
     if (password.length < 6) {
         errorEl.textContent = 'Пароль минимум 6 символов';
         errorEl.style.display = 'block';
