@@ -147,3 +147,21 @@ async function loadMyReviews(playerId) {
     }
     return data || [];
 }
+
+// Обновить существующий отзыв
+async function updateReview(reviewId, rating, text) {
+    const { error } = await _supabase
+        .from('reviews')
+        .update({
+            rating: rating || null,
+            text: text,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', reviewId);
+
+    if (error) {
+        console.error('Ошибка обновления отзыва:', error);
+        return { error: error.message };
+    }
+    return { ok: true };
+}

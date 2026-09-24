@@ -4,8 +4,10 @@
 const ratingPicker = document.getElementById('ratingPicker');
 if (ratingPicker) {
     ratingPicker.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('rating-star')) return;
-        const rating = parseInt(e.target.dataset.rating);
+        const star = e.target.closest('.rating-star');
+        if (!star) return;
+
+        const rating = parseInt(star.dataset.rating);
         currentReviewRating = rating;
 
         document.querySelectorAll('.rating-star').forEach(s => {
@@ -32,6 +34,7 @@ on('reviewModal', 'click', (e) => {
 
 on('reviewSubmit', 'click', async () => {
     const text = document.getElementById('reviewText').value.trim();
+    const reviewId = document.getElementById('reviewId').value;
     const errorEl = document.getElementById('reviewError');
 
     const validationError = validateReviewText(text);
@@ -44,47 +47,78 @@ on('reviewSubmit', 'click', async () => {
     errorEl.style.display = 'none';
 
     const cityKey = currentReviewPlaceKey.split('|')[0];
+    let result;
 
-    const result = await saveReview(
-        PLAYER.playerId,
-        currentReviewPlaceKey,
-        cityKey,
-        currentReviewRating || null,
-        text
-    );
+    if (reviewId) {
+        // === Обновление ===
+        result = await updateReview(reviewId, currentReviewRating || null, text);
+        if (result.error) {
+            errorEl.textContent = result.error;
+            errorEl.style.display = 'block';
+            return;
+        }
 
-    if (result.error) {
-        errorEl.textContent = result.error.includes('duplicate')
-            ? 'Ты уже оставил отзыв об этом месте'
-            : result.error;
-        errorEl.style.display = 'block';
-        return;
-    }
+        PLAYER.xp += 5;
+        const oldLevel = PLAYER.level;
+        PLAYER.level = getLevelFromXP(PLAYER.xp);
+        await savePlayerToServer(PLAYER);
+        updatePlayerBadge();
+        showXPToast(5, 'Отзыв обновлён');
 
-    PLAYER.xp += 10;
-    const oldLevel = PLAYER.level;
-    PLAYER.level = getLevelFromXP(PLAYER.xp);
-    await savePlayerToServer(PLAYER);
-    updatePlayerBadge();
-    showXPToast(10, 'Отзыв');
+        if (PLAYER.level > oldLevel) {
+            setTimeout(() => showLevelUp(PLAYER.level), 400);
+        }
+    } else {
+        // === Создание ===
+        result = await saveReview(
+            PLAYER.playerId,
+            currentReviewPlaceKey,
+            cityKey,
+            currentReviewRating || null,
+            text
+        );
 
-    if (PLAYER.level > oldLevel) {
-        setTimeout(() => showLevelUp(PLAYER.level), 400);
+        if (result.error) {
+            errorEl.textContent = result.error.includes('duplicate')
+                ? 'Ты уже оставил отзыв об этом месте'
+                : result.error;
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        PLAYER.xp += 10;
+        const oldLevel = PLAYER.level;
+        PLAYER.level = getLevelFromXP(PLAYER.xp);
+        await savePlayerToServer(PLAYER);
+        updatePlayerBadge();
+        showXPToast(10, 'Отзыв');
+
+        if (PLAYER.level > oldLevel) {
+            setTimeout(() => showLevelUp(PLAYER.level), 400);
+        }
     }
 
     document.getElementById('reviewModal').style.display = 'none';
 
-    await loadVisibleReviews();
-    renderDashboard();
+    // renderAll сам вызовет loadVisibleReviews через renderCards
+    if (typeof renderAll === 'function') {
+        await renderAll();
+    } else {
+        await loadVisibleReviews();
+    }
+    if (typeof renderDashboard === 'function') renderDashboard();
 });
 
 document.addEventListener('click', async (e) => {
-    if (!e.target.dataset.deleteReview) return;
+    const btn = e.target.closest('[data-delete-review]');
+    if (!btn) return;
+
     const ok = await showConfirm('Удалить отзыв?', { okText: 'Удалить' });
     if (!ok) return;
 
-    await deleteReview(e.target.dataset.deleteReview);
+    await deleteReview(btn.dataset.deleteReview);
     await loadVisibleReviews();
+    if (typeof renderAll === 'function') await renderAll();
 });
 
 document.addEventListener('click', async (e) => {
@@ -135,10 +169,13 @@ on('myReviewsModal', 'click', (e) => {
 });
 
 document.addEventListener('click', async (e) => {
-    if (!e.target.dataset.deleteMyReview) return;
+    const btn = e.target.closest('[data-delete-my-review]');
+    if (!btn) return;
+
     const ok = await showConfirm('Удалить отзыв?', { okText: 'Удалить' });
     if (!ok) return;
-    await deleteReview(e.target.dataset.deleteMyReview);
+
+    await deleteReview(btn.dataset.deleteMyReview);
     openMyReviewsModal();
 });
 
@@ -363,3 +400,49 @@ document.addEventListener('touchend', (e) => {
     if (dx < 0) lightboxNextPhoto();
     else lightboxPrevPhoto();
 }, { passive: true });
+
+// === Редактирование отзыва ===
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-edit-review]');
+    if (!btn) return;
+
+    // Находим отзыв в DOM, чтобы взять текст и оценку
+    const reviewItem = btn.closest('.review-item');
+    if (!reviewItem) return;
+
+    // Текст
+    const textEl = reviewItem.querySelector('.review-item__text');
+    const text = textEl ? textEl.textContent.trim() : '';
+
+    // Оценка — по количеству закрашенных звёзд
+    const filledStars = reviewItem.querySelectorAll('.star-filled').length;
+
+    // Определяем placeKey (из ближайшего .reviews-block)
+    const reviewsBlock = reviewItem.closest('.reviews-block[data-reviews-for]');
+    if (!reviewsBlock) return;
+    const placeKey = reviewsBlock.dataset.reviewsFor;
+
+    // Имя места — из title карточки
+    const card = reviewItem.closest('.card');
+    const placeName = card ? card.querySelector('h3')?.textContent.trim() : 'Место';
+
+    // Открываем модалку с предзаполнением
+    await openReviewModal(placeKey, placeName);
+});
+
+// === Редактирование отзыва — клик по карандашу ===
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-edit-review]');
+    if (!btn) return;
+
+    if (!PLAYER) return;
+
+    const reviewsBlock = btn.closest('.reviews-block[data-reviews-for]');
+    if (!reviewsBlock) return;
+    const placeKey = reviewsBlock.dataset.reviewsFor;
+
+    const card = btn.closest('.card');
+    const placeName = card ? card.querySelector('h3')?.textContent.trim() : 'Место';
+
+    await openReviewModal(placeKey, placeName);
+});

@@ -6,10 +6,15 @@ let currentFeedFilter = 'all';
 async function renderFeed() {
     if (!PLAYER) return;
 
-    FEED = await loadFeed(10);
-
     const container = document.getElementById('dashFeed');
     if (!container) return;
+
+    // Показываем skeleton только для пустой ленты
+    if (currentFeedFilter === 'all' && typeof renderFeedSkeleton === 'function') {
+        renderFeedSkeleton('dashFeed', 4);
+    }
+
+    FEED = await loadFeed(10);
 
     let items = FEED;
 

@@ -101,9 +101,20 @@
 }
 
 .review-item__rating {
-    color: var(--color-warm);
     font-size: var(--fs-xs);
-    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.review-item__rating .star-filled {
+    color: var(--color-warm);
+    display: inline-flex;
+}
+
+.review-item__rating .star-empty {
+    color: var(--color-border);
+    display: inline-flex;
 }
 
 .review-item__text {
@@ -170,4 +181,61 @@
 
 .rating-star.active {
     color: var(--color-warm);
+}
+
+.review-item__report {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.review-item__report:hover {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.review-item__report svg {
+    width: 14px;
+    height: 14px;
+}
+
+.review-item__edit {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.review-item__edit:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.review-item__edit svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Кликабельная плашка рейтинга */
+.reviews-block__rating--clickable {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.reviews-block__rating--clickable:hover {
+    opacity: 0.75;
 }

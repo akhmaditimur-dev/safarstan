@@ -2,13 +2,13 @@
 
 /* === Контейнер табов — пилюля === */
 .tabs {
-    display: inline-flex;
-    gap: 4px;
-    padding: 5px;
-    background: var(--color-bg-soft);
-    border-radius: var(--radius-full);
-    margin-bottom: 24px;
+    display: flex;
+    gap: 8px;
     flex-wrap: wrap;
+    background: var(--color-bg-soft);
+    padding: 4px;
+    border-radius: var(--radius-full);
+    width: fit-content;
     max-width: 100%;
 }
 
@@ -29,6 +29,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    flex-shrink: 0;
 }
 
 .tab:hover {
@@ -42,19 +43,26 @@
     box-shadow: var(--shadow-sm);
 }
 
-/* === Адаптация === */
+/* === Мобильные табы — скролл вбок === */
 @media (max-width: 600px) {
     .tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
         width: 100%;
-        justify-content: center;
-        padding: 4px;
+        border-radius: var(--radius-md);
+        padding: 4px 6px;
+        scrollbar-width: none;
+        justify-content: flex-start;
     }
-    
+
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
     .tab {
         padding: 8px 14px;
         font-size: var(--fs-xs);
-        flex: 1;
-        justify-content: center;
-        min-width: 0;
+        flex-shrink: 0;
     }
 }

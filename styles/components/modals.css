@@ -754,3 +754,45 @@
     color: var(--color-text-muted);
     font-size: var(--fs-xs);
 }
+
+/* === Жалобы === */
+.report-reasons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.report-reason {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px;
+    background: var(--color-bg-soft);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-soft);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+}
+
+.report-reason:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
+
+.report-reason.active {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+}
+
+.report-reason svg {
+    width: 20px;
+    height: 20px;
+}

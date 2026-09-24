@@ -322,7 +322,7 @@ document.addEventListener('click', async (e) => {
     if (e.target.closest('#gapCreateBtn')) {
         openGapModal();
         return;
-    }   
+    }
 
     // Создать гап — submit
     // Создать гап — submit

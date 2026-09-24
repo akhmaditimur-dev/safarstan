@@ -51,6 +51,7 @@
     <link rel="stylesheet" href="styles/components/modals.css">
     <link rel="stylesheet" href="styles/components/forms.css">
     <link rel="stylesheet" href="styles/components/toast.css">
+    <link rel="stylesheet" href="styles/components/skeleton.css">
     <link rel="stylesheet" href="styles/components/navigation.css">
     <link rel="stylesheet" href="styles/sections/hero.css">
     <link rel="stylesheet" href="styles/sections/city.css">
@@ -632,6 +633,47 @@
         </div>
     </div>
 
+    <!-- Модалка: жалоба -->
+    <div id="reportModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="reportClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Пожаловаться</h2>
+            <p class="modal-subtitle" id="reportTargetLabel">—</p>
+
+            <label class="modal-label">Причина</label>
+            <div class="report-reasons" id="reportReasons">
+                <button type="button" class="report-reason" data-reason="spam">
+                    <i data-lucide="mail"></i> Спам / реклама
+                </button>
+                <button type="button" class="report-reason" data-reason="abuse">
+                    <i data-lucide="alert-triangle"></i> Оскорбления / мат
+                </button>
+                <button type="button" class="report-reason" data-reason="fake">
+                    <i data-lucide="x-circle"></i> Фейк / обман
+                </button>
+                <button type="button" class="report-reason" data-reason="other">
+                    <i data-lucide="help-circle"></i> Другое
+                </button>
+            </div>
+
+            <label class="modal-label">Комментарий (опционально)</label>
+            <textarea id="reportComment" class="modal-input" rows="3" placeholder="Опиши проблему..." maxlength="300"></textarea>
+
+            <button id="reportSubmit" class="modal-btn modal-btn--danger" disabled>Отправить жалобу</button>
+            <p id="reportError" class="auth-error" style="display:none;"></p>
+        </div>
+    </div>
+
+    <!-- Модалка: жалобы (для админа) -->
+    <div id="adminReportsModal" class="modal-overlay" style="display:none;">
+        <div class="modal modal--friends">
+            <button id="adminReportsClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Жалобы</h2>
+            <p class="modal-subtitle">Модерация контента</p>
+            <div id="adminReportsList" class="friends-list"></div>
+        </div>
+    </div>
+
     <!-- Модалка: FAQ -->
     <div id="faqModal" class="modal-overlay" style="display:none;">
         <div class="modal modal--faq">
@@ -1003,7 +1045,7 @@
                 <button type="button" class="rating-star" data-rating="5"><i data-lucide="star"></i></button>
             </div>
             <label class="modal-label">Отзыв</label>
-            <textarea id="reviewText" class="modal-input" rows="4" placeholder="Что понравилось? Что нет?"></textarea>
+            <textarea id="reviewText" class="modal-input" rows="4" placeholder="Что понравилось? Что нет?"></textarea><input type="hidden" id="reviewId" value="">
             <button id="reviewSubmit" class="modal-btn">Отправить отзыв</button>
             <p id="reviewError" class="auth-error" style="display:none;"></p>
         </div>
@@ -1360,6 +1402,7 @@
     <script defer src="js/game/ugc.js"></script>
 
     <script defer src="js/ui/toast.js"></script>
+    <script defer src="js/ui/skeleton.js"></script>
     <script defer src="js/ui/cards.js"></script>
     <script defer src="js/ui/sections.js"></script>
     <script defer src="js/ui/city-selector.js"></script>
@@ -1396,6 +1439,7 @@
     <script defer src="js/app/events/events-content.js"></script>
     <script defer src="js/app/events/events-gaps.js"></script>
     <script defer src="js/app/events/events-misc.js"></script>
+    <script defer src="js/app/events/events-reports.js"></script>
     <script defer src="js/app/events/events-legal.js"></script>
     <script defer src="js/app/events/events-sidebar.js"></script>
     <script defer src="js/app/start.js"></script>

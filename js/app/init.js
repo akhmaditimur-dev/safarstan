@@ -223,7 +223,7 @@ function openPlanModal(cityKey) {
 let currentReviewPlaceKey = null;
 let currentReviewRating = 0;
 
-function openReviewModal(placeKey, placeName) {
+async function openReviewModal(placeKey, placeName) {
     if (!PLAYER) {
         if (typeof showWarningToast === 'function') {
             showWarningToast('Сначала войди в аккаунт');
@@ -236,11 +236,43 @@ function openReviewModal(placeKey, placeName) {
 
     document.getElementById('reviewPlaceName').textContent = placeName;
     document.getElementById('reviewText').value = '';
+    document.getElementById('reviewId').value = '';
 
     const errEl = document.getElementById('reviewError');
     if (errEl) errEl.style.display = 'none';
 
     document.querySelectorAll('.rating-star').forEach(s => s.classList.remove('active'));
+
+    // === Проверяем, есть ли уже мой отзыв ===
+    let existing = null;
+    try {
+        const reviews = await loadReviews(placeKey);
+        existing = reviews.find(r => r.player_id === PLAYER.playerId);
+    } catch (e) {
+        console.warn('Ошибка проверки отзыва:', e);
+    }
+
+    const submitBtn = document.getElementById('reviewSubmit');
+
+    if (existing) {
+        // === Режим редактирования ===
+        document.getElementById('reviewText').value = existing.text || '';
+        document.getElementById('reviewId').value = existing.id;
+
+        // Предзаполняем звёзды
+        if (existing.rating) {
+            currentReviewRating = existing.rating;
+            document.querySelectorAll('.rating-star').forEach(s => {
+                const r = parseInt(s.dataset.rating);
+                s.classList.toggle('active', r <= existing.rating);
+            });
+        }
+
+        if (submitBtn) submitBtn.textContent = 'Сохранить';
+    } else {
+        // === Режим создания ===
+        if (submitBtn) submitBtn.textContent = 'Отправить отзыв';
+    }
 
     document.getElementById('reviewModal').style.display = 'flex';
 }

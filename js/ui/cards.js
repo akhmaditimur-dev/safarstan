@@ -4,6 +4,11 @@ async function renderCards(containerId, items, category) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // Показываем skeleton пока грузятся данные
+    if (typeof renderCardsSkeleton === 'function') {
+        renderCardsSkeleton(containerId, 3);
+    }
+
     const officialKeys = items.map(item => `${currentCity}|${category}|${item.title}`);
     const userPlaces = (USER_PLACES[currentCity] && USER_PLACES[currentCity][category]) || [];
     const userKeys = userPlaces.map(item => `${currentCity}|${category}|${item.title}`);
@@ -47,10 +52,12 @@ async function renderCards(containerId, items, category) {
 
     container.innerHTML = officialHtml + userHtml;
 
-    // Превращаем <i data-lucide> в SVG
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    // Иконки карточек
+    if (typeof lucide !== 'undefined') {
+        requestAnimationFrame(() => lucide.createIcons());
+    }
 
-    setTimeout(() => loadVisibleReviews(), 100);
+    await loadVisibleReviews();
 }
 
 // ============================================
@@ -67,12 +74,14 @@ function buildCardHtml(item, category, options) {
     const coverPhoto = placePhotos[0];
     const isMine = isUserPlace && PLAYER && item.playerId === PLAYER.playerId;
 
-    // Плашка рейтинга
-    const ratingBlock = rating ? `
-        <div class="reviews-block__rating">
+    // Плашка рейтинга (кликабельная — открывает отзывы)
+    const ratingBlock = (rating && rating.avg !== null && rating.count > 0) ? `
+        <button class="reviews-block__rating reviews-block__rating--clickable"
+                data-toggle-reviews="${checkinKey}"
+                title="Показать отзывы">
             <strong><i data-lucide="star"></i> ${rating.avg}</strong>
             <span>· ${rating.count} отзыв${rating.count === 1 ? '' : rating.count < 5 ? 'а' : 'ов'}</span>
-        </div>
+        </button>
     ` : '';
 
     // Фото-обложка
@@ -116,15 +125,12 @@ function buildCardHtml(item, category, options) {
     const reviewsBlock = `
         <div class="reviews-block" data-reviews-for="${checkinKey}" style="display:none;">
             <div class="reviews-block__header">
-                <div class="reviews-block__rating">
+                <button class="reviews-block__rating reviews-block__rating--clickable"
+                        data-toggle-reviews="${checkinKey}"
+                        title="Показать отзывы">
                     ${rating
                         ? `<strong><i data-lucide="star"></i> ${rating.avg}</strong><span>· ${rating.count}</span>`
                         : `<span>Нет отзывов</span>`}
-                </div>
-                <button class="reviews-block__btn"
-                        data-add-review="${checkinKey}"
-                        data-place-name="${item.title}">
-                    <i data-lucide="message-circle"></i> Написать отзыв
                 </button>
             </div>
             <div class="reviews-list" data-reviews-list="${checkinKey}"></div>
@@ -151,9 +157,10 @@ function buildCardHtml(item, category, options) {
                     <i data-lucide="camera"></i>${placePhotos.length > 0 ? `<span class="btn-badge">${placePhotos.length}</span>` : ''}
                 </button>
                 <button class="reviews-toggle-btn"
-                        data-toggle-reviews="${checkinKey}"
-                        title="Отзывы">
-                    <i data-lucide="message-circle"></i>${rating && rating.count > 0 ? `<span class="btn-badge">${rating.count}</span>` : ''}
+                        data-add-review="${checkinKey}"
+                        data-place-name="${item.title}"
+                        title="Написать отзыв">
+                    <i data-lucide="message-circle"></i>
                 </button>
             </div>
             ${reviewsBlock}

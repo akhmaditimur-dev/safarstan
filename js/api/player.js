@@ -441,3 +441,71 @@ async function loadPlayerByUsername(username) {
     if (error || !data) return null;
     return data;
 }
+
+// ============================================
+// ЖАЛОБЫ / МОДЕРАЦИЯ
+// ============================================
+
+async function createReport(reporterId, targetType, targetId, reason, comment = null) {
+    const { error } = await _supabase
+        .from('reports')
+        .insert({
+            reporter_id: reporterId,
+            target_type: targetType,
+            target_id: String(targetId),
+            reason,
+            comment: comment || null,
+        });
+
+    if (error) {
+        console.warn('Ошибка отправки жалобы:', error);
+        return { error: error.message };
+    }
+    return { ok: true };
+}
+
+// Проверить, не жаловался ли уже
+async function hasReported(reporterId, targetType, targetId) {
+    const { data, error } = await _supabase
+        .from('reports')
+        .select('id')
+        .eq('reporter_id', reporterId)
+        .eq('target_type', targetType)
+        .eq('target_id', String(targetId))
+        .maybeSingle();
+
+    if (error || !data) return false;
+    return true;
+}
+
+// Загрузить все жалобы (для админа)
+async function loadAllReports(status = 'pending') {
+    const { data, error } = await _supabase
+        .from('reports')
+        .select(`
+            id, target_type, target_id, reason, comment, status, created_at,
+            reporter:players!reports_reporter_id_fkey (id, name, avatar)
+        `)
+        .eq('status', status)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.warn('Ошибка загрузки жалоб:', error);
+        return [];
+    }
+    return data || [];
+}
+
+async function resolveReport(reportId, adminId, status = 'resolved') {
+    const { error } = await _supabase
+        .from('reports')
+        .update({
+            status,
+            resolved_by: adminId,
+            resolved_at: new Date().toISOString(),
+        })
+        .eq('id', reportId);
+
+    if (error) return { error: error.message };
+    return { ok: true };
+}

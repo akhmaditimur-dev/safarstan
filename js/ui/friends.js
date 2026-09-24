@@ -6,6 +6,12 @@ let INCOMING_REQUESTS = [];
 async function renderFriends() {
     if (!PLAYER || !PLAYER.playerId) return;
 
+    // Показываем skeleton
+    if (typeof renderFriendsSkeleton === 'function') {
+        renderFriendsSkeleton('friendsList', 3);
+        renderFriendsSkeleton('friendsIncoming', 2);
+    }
+
     FRIENDS = await loadFriends(PLAYER.playerId);
     INCOMING_REQUESTS = await loadIncomingRequests(PLAYER.playerId);
 
