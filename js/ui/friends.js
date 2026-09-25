@@ -63,7 +63,12 @@ async function renderFriends() {
 
     if (listEl) {
         if (FRIENDS.length === 0) {
-            listEl.innerHTML = '<div class="friends-empty">Пока нет друзей. Найди кого-нибудь!</div>';
+            listEl.innerHTML = `
+                <div class="friends-empty">
+                    <p style="margin-bottom: 12px;">Пока нет друзей</p>
+                    <p style="font-size: 12px; opacity: 0.7; margin-bottom: 14px;">Найди игроков через поиск выше</p>
+                </div>
+            `;
         } else {
             listEl.innerHTML = FRIENDS.map(f => {
                 const cityName = f.current_city && CITIES[f.current_city]

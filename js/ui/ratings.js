@@ -6,6 +6,11 @@
 let _ratingsCache = {};
 
 async function renderRatings() {
+    // Skeleton перед загрузкой
+    if (typeof renderRatingsSkeleton === 'function') {
+        renderRatingsSkeleton('ratingList', 5);
+    }
+    // ...дальше идёт текущий код
     const container = document.getElementById('ratingList');
     if (!container) return;
 

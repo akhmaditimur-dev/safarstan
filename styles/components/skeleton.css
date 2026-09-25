@@ -143,3 +143,127 @@
     height: 10px;
     width: 30%;
 }
+
+/* === Skeleton рейтинга === */
+.skeleton-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+}
+
+.skeleton-rating-row__rank {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.skeleton-rating-row__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.skeleton-rating-row__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.skeleton-rating-row__name {
+    height: 14px;
+    width: 40%;
+}
+
+.skeleton-rating-row__sub {
+    height: 10px;
+    width: 25%;
+}
+
+.skeleton-rating-row__value {
+    width: 50px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* === Skeleton квестов === */
+.skeleton-quest-card {
+    display: flex;
+    gap: 14px;
+    padding: 16px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    margin-bottom: 10px;
+}
+
+.skeleton-quest-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+.skeleton-quest-card__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skeleton-quest-card__title {
+    height: 16px;
+    width: 50%;
+}
+
+.skeleton-quest-card__line {
+    height: 12px;
+    width: 100%;
+}
+
+.skeleton-quest-card__line--short {
+    width: 70%;
+}
+
+/* === Skeleton профиля === */
+.skeleton-chip {
+    width: 90px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    display: inline-block;
+    margin-right: 6px;
+    margin-bottom: 6px;
+}
+
+.skeleton-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    padding: 12px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+}
+
+.skeleton-stat__value {
+    width: 50px;
+    height: 24px;
+}
+
+.skeleton-stat__label {
+    width: 60px;
+    height: 10px;
+}
+
+.skeleton-badge {
+    width: 100%;
+    height: 70px;
+    border-radius: var(--radius-md);
+}

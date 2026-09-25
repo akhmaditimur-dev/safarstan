@@ -672,8 +672,9 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: var(--gradient-primary);
-    color: #fff;
+    background: var(--color-bg-soft);
+    color: var(--color-text);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border: none;
     box-shadow: var(--shadow-primary);
     cursor: pointer;
@@ -738,4 +739,15 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+}
+
+/* Кликабельные чипы городов */
+.city-chip--clickable {
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.city-chip--clickable:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-xs);
 }

@@ -18,6 +18,10 @@ async function openPlayerProfile(playerId) {
     document.getElementById('ppName').textContent = '⏳ Загрузка...';
     document.getElementById('ppAvatar').innerHTML = '⏳';
     document.getElementById('ppLevel').textContent = '—';
+
+    // Сброс статуса
+    const ppStatusEl = document.getElementById('ppStatus');
+    if (ppStatusEl) { ppStatusEl.style.display = 'none'; ppStatusEl.innerHTML = ''; }
     document.getElementById('ppCities').innerHTML = '';
     document.getElementById('ppStats').innerHTML = '';
     document.getElementById('ppBadges').innerHTML = '';
@@ -39,6 +43,14 @@ async function openPlayerProfile(playerId) {
     renderAvatar(document.getElementById('ppAvatar'), player.avatar);
     document.getElementById('ppName').textContent = player.name;
     document.getElementById('ppLevel').textContent = player.level || 1;
+
+    // Онлайн-статус
+    const statusEl = document.getElementById('ppStatus');
+    if (statusEl && typeof getOnlineStatus === 'function') {
+        const { label, dot } = getOnlineStatus(player.last_seen_at);
+        statusEl.innerHTML = `<span class="online-dot online-dot--${dot}"></span>${label}`;
+        statusEl.style.display = 'inline-flex';
+    }
 
     // Ник (если есть)
     const ppUsername = document.getElementById('ppUsername');

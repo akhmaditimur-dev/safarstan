@@ -796,3 +796,39 @@
     width: 20px;
     height: 20px;
 }
+
+/* === Кнопка «Наверх» внутри модалки === */
+.modal-scroll-top {
+    position: sticky;
+    bottom: 12px;
+    float: right;
+    margin-right: 8px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-bg-soft);
+    color: var(--color-text);
+    border: none;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s, opacity 0.15s, background 0.15s;
+    z-index: 10;
+}
+
+.modal-scroll-top.visible {
+    display: flex;
+}
+
+.modal-scroll-top:hover {
+    transform: translateY(-2px);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.modal-scroll-top svg {
+    width: 20px;
+    height: 20px;
+}

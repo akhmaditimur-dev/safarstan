@@ -242,6 +242,29 @@
         </div>
     </section>
 
+    <!-- РЕЙТИНГ -->
+    <section class="section" id="ratings">
+    <div class="container">
+        <h2>Рейтинг городов</h2>
+
+        <div class="tabs tabs--scroll" id="ratingTabs">
+            <button class="tab active" data-rating="residents"><i data-lucide="home"></i> Жители</button>
+            <button class="tab" data-rating="home"><i data-lucide="house"></i> Родной дом</button>
+            <button class="tab" data-rating="hospitality"><i data-lucide="hand-heart"></i> Гостеприимство</button>
+            <button class="tab" data-rating="tourists"><i data-lucide="luggage"></i> Туристы</button>
+            <button class="tab" data-rating="content"><i data-lucide="camera"></i> Контент</button>
+        </div>
+
+        <div class="rating-periods" id="ratingPeriods">
+            <button class="rating-period" data-period="all">Всё время</button>
+            <button class="rating-period" data-period="month">Месяц</button>
+            <button class="rating-period active" data-period="week">Неделя</button>
+        </div>
+
+        <div id="ratingList" class="rating-list"></div>
+    </div>
+    </section>
+
     <!-- КАРТА -->
     <section class="section section--alt" id="map">
     <div class="container">
@@ -279,29 +302,6 @@
             <div id="safarstanMap" class="map-container"></div>
             <div id="cityTooltip" class="city-tooltip" style="display:none;"></div>
         </div>
-    </div>
-    </section>
-
-    <!-- РЕЙТИНГ -->
-    <section class="section" id="ratings">
-    <div class="container">
-        <h2>Рейтинг городов</h2>
-
-        <div class="tabs tabs--scroll" id="ratingTabs">
-            <button class="tab active" data-rating="residents"><i data-lucide="home"></i> Жители</button>
-            <button class="tab" data-rating="home"><i data-lucide="house"></i> Родной дом</button>
-            <button class="tab" data-rating="hospitality"><i data-lucide="hand-heart"></i> Гостеприимство</button>
-            <button class="tab" data-rating="tourists"><i data-lucide="luggage"></i> Туристы</button>
-            <button class="tab" data-rating="content"><i data-lucide="camera"></i> Контент</button>
-        </div>
-
-        <div class="rating-periods" id="ratingPeriods">
-            <button class="rating-period" data-period="all">Всё время</button>
-            <button class="rating-period" data-period="month">Месяц</button>
-            <button class="rating-period active" data-period="week">Неделя</button>
-        </div>
-
-        <div id="ratingList" class="rating-list"></div>
     </div>
     </section>
 
@@ -556,6 +556,7 @@
                 <div style="flex:1;min-width:0;">
                     <div class="profile-name-row"><h2 id="ppName">—</h2></div>
                         <div class="profile-level"><i data-lucide="star"></i> Уровень <span id="ppLevel">1</span></div>
+                        <div class="profile-status" id="ppStatus" style="display:none;"></div>
                         <div class="profile-username-row">
                             <span class="profile-username-label" id="ppUsername" style="display:none;">@—</span>
                         </div>
@@ -1394,6 +1395,7 @@
     <script defer src="js/api/gaps.js"></script>
     <script defer src="js/api/hashars.js"></script>
     <script defer src="js/api/notifications.js"></script>
+    <script defer src="js/api/presence.js"></script>
 
     <script defer src="js/game/helpers.js"></script>
     <script defer src="js/game/checkin.js"></script>
@@ -1425,6 +1427,7 @@
     <script defer src="js/ui/sidebar.js"></script>
     <script defer src="js/ui/lang-select.js"></script>
     <script defer src="js/ui/modules.js"></script>
+    <script defer src="js/ui/modal-scroll-top.js"></script>
     <script defer src="js/ui/gaps.js"></script>
     <script defer src="js/ui/hashars.js"></script>
     <script defer src="js/ui/notifications.js"></script>

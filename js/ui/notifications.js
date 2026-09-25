@@ -72,6 +72,13 @@ async function renderNotificationsList(containerId, limit = 50) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // Skeleton
+    if (typeof renderNotificationsSkeleton === 'function') {
+        renderNotificationsSkeleton(containerId, 5);
+    }
+
+    // ...дальше идёт текущий код
+
     container.innerHTML = '<div class="notif-empty">⏳ Загрузка...</div>';
 
     const items = await loadMyNotifications(PLAYER.playerId, limit);

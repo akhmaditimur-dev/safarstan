@@ -66,7 +66,7 @@ async function loadPlayerById(playerId) {
 
     const { data, error } = await _supabase
         .from('public_players')
-        .select('id, name, avatar, level, xp, home_city, current_city, badges, username, is_private')
+        .select('id, name, avatar, level, xp, home_city, current_city, badges, username, is_private, last_seen_at')
         .eq('id', playerId)
         .single();
 

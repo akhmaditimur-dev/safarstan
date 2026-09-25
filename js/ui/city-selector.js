@@ -264,10 +264,10 @@ function selectCity(cityKey) {
 
     if (typeof renderCitySelector === 'function') renderCitySelector();
 
-    // Скролл к секции «О городе»
-    const infoSection = document.getElementById('info');
-    if (infoSection) {
-        infoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Скролл к карте
+    const mapSection = document.getElementById('map');
+    if (mapSection) {
+        mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // Обновляем иконки

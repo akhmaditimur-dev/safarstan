@@ -172,3 +172,30 @@ window.addEventListener('scroll', () => {
         scrollTicking = false;
     });
 });
+
+// === Клик по чипу города — переход к городу ===
+document.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-goto-city]');
+    if (!chip) return;
+
+    const cityKey = chip.dataset.gotoCity;
+    if (!cityKey) return;
+
+    // Закрываем модалки, если открыты
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        if (m.style.display === 'flex') m.style.display = 'none';
+    });
+
+    // Выбираем город
+    if (typeof selectCity === 'function') {
+        selectCity(cityKey);
+    }
+
+    // Скроллим к секции «О городе»
+    setTimeout(() => {
+        const infoSection = document.getElementById('info');
+        if (infoSection) {
+            infoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 100);
+});

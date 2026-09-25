@@ -6,10 +6,10 @@ async function searchPlayers(query, currentPlayerId) {
 
     const q = query.trim().toLowerCase();
     const { data, error } = await _supabase
-        .from('players')
-        .select('id, name, avatar, home_city, current_city, level, email')
+        .from('public_players')
+        .select('id, name, avatar, home_city, current_city, level, username, last_seen_at')
         .neq('id', currentPlayerId)
-        .or(`name.ilike.%${q}%,email.ilike.%${q}%`)
+        .or(`name.ilike.%${q}%,username.ilike.%${q}%`)
         .limit(10);
 
     if (error) {
@@ -121,27 +121,51 @@ async function cancelFriendRequest(fromId, toId) {
 
 // Загрузить список друзей
 async function loadFriends(playerId) {
-    const { data, error } = await _supabase
+    // Сначала получаем строки дружбы
+    const { data: rows, error: rowsError } = await _supabase
         .from('friends')
-        .select(`
-            id,
-            player_a,
-            player_b,
-            a_player:player_a (id, name, avatar, home_city, current_city, level),
-            b_player:player_b (id, name, avatar, home_city, current_city, level)
-        `)
+        .select('id, player_a, player_b')
         .or(`player_a.eq.${playerId},player_b.eq.${playerId}`);
 
-    if (error) {
-        console.error('Ошибка загрузки друзей:', error);
+    if (rowsError) {
+        console.error('Ошибка загрузки друзей:', rowsError);
         return [];
     }
 
-    return (data || []).map(row => {
-        const friend = row.player_a === playerId ? row.b_player : row.a_player;
+    if (!rows || rows.length === 0) return [];
+
+    // Собираем id всех друзей
+    const friendIds = rows.map(r =>
+        r.player_a === playerId ? r.player_b : r.player_a
+    );
+
+    // Тянем их из public_players (RLS открыт)
+    const { data: players, error: playersError } = await _supabase
+        .from('public_players')
+        .select('id, name, avatar, home_city, current_city, level, last_seen_at, username')
+        .in('id', friendIds);
+
+    if (playersError) {
+        console.error('Ошибка загрузки профилей друзей:', playersError);
+        return [];
+    }
+
+    const byId = {};
+    (players || []).forEach(p => { byId[p.id] = p; });
+
+    return rows.map(r => {
+        const fid = r.player_a === playerId ? r.player_b : r.player_a;
+        const p = byId[fid] || {};
         return {
-            friendsRowId: row.id,
-            ...friend,
+            friendsRowId: r.id,
+            id: fid,
+            name: p.name || 'Игрок',
+            avatar: p.avatar || '🧑‍💼',
+            home_city: p.home_city || null,
+            current_city: p.current_city || null,
+            level: p.level || 1,
+            username: p.username || null,
+            last_seen_at: p.last_seen_at || null,
         };
     });
 }

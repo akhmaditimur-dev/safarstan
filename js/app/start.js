@@ -23,7 +23,13 @@ initTheme();
 if (typeof lucide !== 'undefined') lucide.createIcons();
 
 // Запуск приложения
-initApp();
+initApp().then(() => {
+    if (typeof PLAYER !== 'undefined' && PLAYER && PLAYER.playerId) {
+        if (typeof startHeartbeat === 'function') {
+            startHeartbeat(PLAYER.playerId);
+        }
+    }
+});
 
 // ============================================
 // ПУБЛИЧНЫЕ ССЫЛКИ НА ПРОФИЛЬ

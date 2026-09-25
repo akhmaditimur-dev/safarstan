@@ -110,12 +110,13 @@ function renderDashboard() {
                 let cls = 'city-chip';
                 let icon = '';
 
-                if (isHome)         { cls += ' home';    icon = '<i data-lucide="home"></i>'; }
-                else if (isCurrent) { cls += ' current'; icon = '<i data-lucide="map-pin"></i>'; }
-                else if (isVisited) { cls += ' visited'; icon = '<i data-lucide="check"></i>'; }
-                else return '';
+            if (isHome)         { cls += ' home';    icon = '<i data-lucide="home"></i>'; }
+            else if (isCurrent) { cls += ' current'; icon = '<i data-lucide="map-pin"></i>'; }
+            else if (isVisited) { cls += ' visited'; icon = '<i data-lucide="check"></i>'; }
+            else return '';
 
-                return `<span class="${cls}">${icon}${city.name}</span>`;
+            cls += ' city-chip--clickable';
+            return `<button class="${cls}" data-city-key="${key}">${icon}${city.name}</button>`;
             }).join('');
         }
     }
@@ -208,9 +209,19 @@ async function renderPlans() {
     if (PLANS.length === 0) {
         container.innerHTML = `
             <div class="dashboard-empty">
-                Пока нет планов. Куда собираешься?
+                <p style="margin-bottom: 12px;">Пока нет планов. Куда собираешься?</p>
+                <button class="btn btn-primary btn-sm" id="dashEmptyAddPlanBtn">
+                    <i data-lucide="plus"></i> Добавить план
+                </button>
             </div>
         `;
+        const btn = document.getElementById('dashEmptyAddPlanBtn');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                if (typeof openPlanModal === 'function') openPlanModal(PLAYER?.currentCity);
+            });
+        }
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 

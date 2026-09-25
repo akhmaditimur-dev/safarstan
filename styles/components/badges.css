@@ -63,3 +63,25 @@
     align-items: center;
     gap: 4px;
 }
+
+/* === Онлайн-статус === */
+.online-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+    flex-shrink: 0;
+    border: 2px solid var(--color-surface);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.online-dot--green {
+    background: #22c55e;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 0 0 4px rgba(34, 197, 94, 0.15);
+}
+
+.online-dot--gray {
+    background: #9ca3af;
+}

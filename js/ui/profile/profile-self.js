@@ -45,6 +45,12 @@ function updatePlayerBadge() {
 function renderProfile() {
     if (!PLAYER) return;
 
+    // Skeleton пока грузим
+    if (typeof renderProfileSkeleton === 'function') {
+        renderProfileSkeleton();
+    }
+    // ...дальше идёт текущий код
+
     const avatarEl = document.getElementById('profileAvatar');
     const nameEl = document.getElementById('profileName');
     const levelEl = document.getElementById('profileLevel');
@@ -91,10 +97,12 @@ function renderProfile() {
         });
 
         const renderChip = (key, city) => {
-            if (key === homeKey)         return `<span class="city-chip home"><i data-lucide="home"></i>${city.name}</span>`;
-            if (key === currentKey)      return `<span class="city-chip current"><i data-lucide="map-pin"></i>${city.name}</span>`;
-            if (visited[key] > 0)        return `<span class="city-chip visited"><i data-lucide="check"></i>${city.name}</span>`;
-            return `<span class="city-chip">${city.name}</span>`;
+            const clickable = `city-chip city-chip--clickable" data-city-key="${key}"`;
+
+            if (key === homeKey)         return `<button class="${clickable} home"><i data-lucide="home"></i>${city.name}</button>`;
+            if (key === currentKey)      return `<button class="${clickable} current"><i data-lucide="map-pin"></i>${city.name}</button>`;
+            if (visited[key] > 0)        return `<button class="${clickable} visited"><i data-lucide="check"></i>${city.name}</button>`;
+            return `<button class="${clickable}">${city.name}</button>`;
         };
 
         let html = '';
@@ -416,7 +424,15 @@ async function openMyReviewsModal() {
     const reviews = await loadMyReviews(PLAYER.playerId);
 
     if (reviews.length === 0) {
-        list.innerHTML = '<div class="dashboard-empty">Пока нет отзывов</div>';
+        list.innerHTML = `
+            <div class="dashboard-empty">
+                <p style="margin-bottom: 12px;">Пока нет отзывов</p>
+                <button class="btn btn-primary btn-sm" data-scroll="services">
+                    <i data-lucide="shopping-cart"></i> К сервисам
+                </button>
+            </div>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 

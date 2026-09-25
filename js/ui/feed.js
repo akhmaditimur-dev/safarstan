@@ -25,9 +25,13 @@ async function renderFeed() {
         if (friendIds.length === 0) {
             container.innerHTML = `
                 <div class="feed-empty">
-                    Добавь друзей, чтобы видеть их события
+                    <p style="margin-bottom: 14px;">Добавь друзей, чтобы видеть их события</p>
+                    <button class="btn btn-primary btn-sm" data-open-modal="friendsModal">
+                        <i data-lucide="users"></i> Найти друзей
+                    </button>
                 </div>
             `;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
             return;
         }
         items = await loadFriendsFeed(friendIds, 10);
@@ -38,11 +42,22 @@ async function renderFeed() {
     }
 
     if (items.length === 0) {
-        container.innerHTML = `
-            <div class="feed-empty">
-                Пока пусто. Сделай чек-ин или добавь место!
-            </div>
-        `;
+        const ctaHtml = currentFeedFilter === 'mine'
+            ? `
+                <p style="margin-bottom: 14px;">У тебя пока нет событий</p>
+                <button class="btn btn-primary btn-sm" data-scroll="map">
+                    <i data-lucide="map"></i> Открыть карту
+                </button>
+            `
+            : `
+                <p style="margin-bottom: 14px;">Пока пусто. Сделай чек-ин или добавь место!</p>
+                <button class="btn btn-primary btn-sm" data-scroll="map">
+                    <i data-lucide="map"></i> К карте
+                </button>
+            `;
+
+        container.innerHTML = `<div class="feed-empty">${ctaHtml}</div>`;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 

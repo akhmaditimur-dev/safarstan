@@ -4,7 +4,11 @@ let currentQuestTab = 'active';
 let _questsExpanded = false;
 const QUESTS_LIMIT = 3;
 
-function renderQuests() {
+async function renderQuests() {
+    if (typeof renderQuestsSkeleton === 'function') {
+        renderQuestsSkeleton('questsList', 4);
+    }
+    // ...дальше идёт текущий код
     if (!PLAYER) return;
 
     const container = document.getElementById('questsList');
