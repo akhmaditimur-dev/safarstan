@@ -1,8 +1,11 @@
-/* ============ МОДАЛЬНЫЕ ОКНА (Т-Банк-стиль) ============ */
+/* ============ МОДАЛЬНЫЕ ОКНА ============ */
 
+/* ============================================
+   БАЗА
+   ============================================ */
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    inset: 0;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(6px);
     display: flex;
@@ -21,8 +24,8 @@
 .modal {
     background: var(--color-surface);
     border-radius: var(--radius-2xl);
-    padding: 36px;
-    max-width: 480px;
+    padding: 22px;
+    max-width: 440px;
     width: 100%;
     box-shadow: var(--shadow-xl);
     animation: modalIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -47,27 +50,39 @@
 
 .modal-subtitle {
     color: var(--color-text-soft);
-    font-size: var(--fs-sm);
-    margin-bottom: 24px;
+    font-size: var(--fs-xs);
+    margin-bottom: 16px;
     line-height: 1.5;
 }
 
-.modal-close {
+/* ============================================
+   КНОПКИ ЗАКРЫТИЯ И НАЗАД
+   ============================================ */
+.modal-close,
+.modal-back {
     position: absolute;
     top: 16px;
-    right: 16px;
     background: var(--color-bg-soft);
     border: none;
-    font-size: 18px;
     cursor: pointer;
     color: var(--color-text-soft);
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 5;
+}
+
+.modal-close {
+    right: 16px;
+    font-size: 18px;
+}
+
+.modal-back {
+    left: 16px;
 }
 
 .modal-close:hover {
@@ -76,40 +91,37 @@
     transform: rotate(90deg);
 }
 
-.modal--profile {
-    max-width: 600px;
+.modal-back:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    transform: translateX(-2px);
 }
 
-.modal--friends {
-    max-width: 560px;
+.modal-back svg {
+    width: 20px;
+    height: 20px;
 }
 
-/* === Адаптация === */
-@media (max-width: 600px) {
-    .modal {
-        padding: 24px;
-        border-radius: var(--radius-xl);
-        max-height: 95vh;
-    }
-    
-    .modal h2 {
-        font-size: var(--fs-xl);
-    }
-    
-    .modal-close {
-        width: 36px;
-        height: 36px;
-        top: 12px;
-        right: 12px;
-    }
-}
+/* ============================================
+   РАЗМЕРЫ МОДАЛОК
+   ============================================ */
+.modal--profile  { max-width: 600px; }
+.modal--friends  { max-width: 560px; }
+.modal--wide     { max-width: 720px; }
+.modal--qr       { max-width: 360px; text-align: center; }
+.modal--confirm  { max-width: 420px; text-align: center; }
+.modal--onboarding { max-width: 440px; text-align: center; padding: 40px 28px 24px; }
+.modal--reset    { max-width: 480px; max-height: 85vh; overflow-y: auto; }
+.modal--faq      { max-width: 640px; max-height: 85vh; overflow-y: auto; padding: 40px 36px 32px; }
+.modal--legal    { max-width: 720px; max-height: 85vh; overflow-y: auto; padding: 40px 36px 32px; }
 
-/* Модалка подтверждения */
-.modal--confirm {
-    max-width: 420px;
-    text-align: center;
-}
+/* Модалки поверх других */
+#playerProfileModal { z-index: 1100 !important; }
+#qrModal            { z-index: 1200 !important; }
 
+/* ============================================
+   МОДАЛКА ПОДТВЕРЖДЕНИЯ
+   ============================================ */
 .modal--confirm h2 {
     margin: 0 0 8px 0;
     font-family: var(--font-heading);
@@ -130,7 +142,6 @@
 /* ============================================
    НАСТРОЙКИ МОДУЛЕЙ (тумблеры)
    ============================================ */
-
 .modules-settings {
     display: flex;
     flex-direction: column;
@@ -166,7 +177,7 @@
     text-align: center;
 }
 
-/* --- Тумблер --- */
+/* ---- Тумблер ---- */
 .toggle {
     position: relative;
     display: inline-block;
@@ -184,10 +195,7 @@
 
 .toggle__slider {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: var(--color-border);
     border-radius: 999px;
     transition: background 0.2s;
@@ -219,12 +227,31 @@
     outline-offset: 2px;
 }
 
-/* === СЕТКА ТЕМ === */
+/* ============================================
+   СЕТКА ТЕМ
+   ============================================ */
 .theme-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin-bottom: 8px;
+}
+
+.theme-grid--compact {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.theme-grid--compact .theme-option {
+    padding: 6px 2px;
+}
+
+.theme-grid--compact .theme-option__preview {
+    height: 32px;
+}
+
+.theme-grid--compact .theme-option__label {
+    font-size: 10px;
 }
 
 .theme-option {
@@ -257,29 +284,12 @@
     border: 1px solid var(--color-border);
 }
 
-.theme-option__preview--light {
-    background: linear-gradient(135deg, #fafafa 0%, #16a34a 100%);
-}
-
-.theme-option__preview--dark {
-    background: linear-gradient(135deg, #0f1419 0%, #22c55e 100%);
-}
-
-.theme-option__preview--sky {
-    background: linear-gradient(135deg, #f0f9ff 0%, #0ea5e9 100%);
-}
-
-.theme-option__preview--nature {
-    background: linear-gradient(135deg, #f7f5ef 0%, #4d7c0f 100%);
-}
-
-.theme-option__preview--space {
-    background: linear-gradient(135deg, #0b0620 0%, #a855f7 50%, #ec4899 100%);
-}
-
-.theme-option__preview--orient {
-    background: linear-gradient(135deg, #fdf8f0 0%, #c2410c 50%, #d97706 100%);
-}
+.theme-option__preview--light    { background: linear-gradient(135deg, #fafafa 0%, #16a34a 100%); }
+.theme-option__preview--dark     { background: linear-gradient(135deg, #0f1419 0%, #22c55e 100%); }
+.theme-option__preview--sky      { background: linear-gradient(135deg, #f0f9ff 0%, #0ea5e9 100%); }
+.theme-option__preview--nature   { background: linear-gradient(135deg, #f7f5ef 0%, #4d7c0f 100%); }
+.theme-option__preview--space    { background: linear-gradient(135deg, #0b0620 0%, #a855f7 50%, #ec4899 100%); }
+.theme-option__preview--orient   { background: linear-gradient(135deg, #fdf8f0 0%, #c2410c 50%, #d97706 100%); }
 
 .theme-option__label {
     font-size: var(--fs-xs);
@@ -291,97 +301,9 @@
     color: var(--color-primary);
 }
 
-/* Сообщение об успехе в модалках */
-.auth-success {
-    background: var(--color-success-light, #dcfce7);
-    color: var(--color-success-dark, #15803d);
-    padding: 10px 14px;
-    border-radius: var(--radius-md);
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-medium);
-    margin-top: 12px;
-}
-
-/* === Онбординг === */
-.modal--onboarding {
-    max-width: 440px;
-    text-align: center;
-    padding: 40px 28px 24px;
-}
-
-.onboarding-slide {
-    min-height: 260px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.onboarding-emoji {
-    font-size: 72px;
-    margin-bottom: 20px;
-    line-height: 1;
-}
-
-.modal--onboarding h2 {
-    font-size: 24px;
-    margin-bottom: 12px;
-    font-family: var(--font-heading);
-    color: var(--color-text);
-}
-
-.modal--onboarding .modal-subtitle {
-    font-size: 15px;
-    line-height: 1.5;
-    color: var(--color-text-soft);
-    margin-bottom: 0;
-}
-
-.onboarding-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin: 24px 0 20px;
-}
-
-.onboarding-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--color-border);
-    transition: all 0.2s;
-}
-
-.onboarding-dot.active {
-    background: var(--color-primary);
-    width: 24px;
-    border-radius: 4px;
-}
-
-#onboardingNextBtn {
-    width: 100%;
-    margin-bottom: 8px;
-}
-
-/* === Темы: 4 в ряд, компактнее === */
-.theme-grid--compact {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-}
-
-.theme-grid--compact .theme-option {
-    padding: 6px 2px;
-}
-
-.theme-grid--compact .theme-option__preview {
-    height: 32px;
-}
-
-.theme-grid--compact .theme-option__label {
-    font-size: 10px;
-}
-
-/* === Языки: сворачиваемый список === */
+/* ============================================
+   ЯЗЫКИ
+   ============================================ */
 .lang-select {
     position: relative;
     margin-bottom: 8px;
@@ -457,9 +379,22 @@
     font-weight: var(--fw-bold);
 }
 
+.lang-select__item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lang-select__item.disabled:hover {
+    background: transparent;
+}
+
 .lang-select__flag {
     font-size: 18px;
     line-height: 1;
+}
+
+.lang-select__label {
+    flex: 1;
 }
 
 .lang-select__item svg {
@@ -469,12 +404,20 @@
     color: var(--color-primary);
 }
 
-/* === Модалка QR === */
-.modal--qr {
-    max-width: 360px;
-    text-align: center;
+.lang-select__soon {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    background: var(--color-bg-soft);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.03em;
 }
 
+/* ============================================
+   МОДАЛКА QR
+   ============================================ */
 .qr-container {
     display: flex;
     align-items: center;
@@ -507,14 +450,9 @@
     line-height: 1.4;
 }
 
-/* === FAQ === */
-.modal--faq {
-    max-width: 640px;
-    max-height: 85vh;
-    overflow-y: auto;
-    padding: 40px 36px 32px;
-}
-
+/* ============================================
+   FAQ
+   ============================================ */
 .faq-list {
     margin-top: 24px;
 }
@@ -576,10 +514,7 @@
     transition: color var(--transition-fast);
 }
 
-.faq-item__question:hover {
-    color: var(--color-primary);
-}
-
+.faq-item__question:hover,
 .faq-item__question.active {
     color: var(--color-primary);
 }
@@ -609,73 +544,13 @@
 }
 
 @keyframes faqSlide {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-/* === Модалка сброса прогресса === */
-.modal--reset {
-    max-width: 480px;
-    max-height: 85vh;
-    overflow-y: auto;
-}
-
-.reset-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin: 16px 0 8px;
-}
-
-/* === Выключенные языки (скоро) === */
-.lang-select__item.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.lang-select__item.disabled:hover {
-    background: transparent;
-}
-
-.lang-select__label {
-    flex: 1;
-}
-
-.lang-select__soon {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    background: var(--color-bg-soft);
-    padding: 2px 6px;
-    border-radius: var(--radius-sm);
-    letter-spacing: 0.03em;
-}
-
-/* Модалки, которые должны быть ПОВЕРХ других модалок (профиль поверх друзей) */
-#playerProfileModal {
-    z-index: 1100 !important;
-}
-
-/* QR-модалка — поверх всего */
-#qrModal {
-    z-index: 1200 !important;
-}
-
-/* === Юридические документы === */
-.modal--legal {
-    max-width: 720px;
-    max-height: 85vh;
-    overflow-y: auto;
-    padding: 40px 36px 32px;
-}
-
+/* ============================================
+   ЮРИДИЧЕСКИЕ ДОКУМЕНТЫ
+   ============================================ */
 .legal-content {
     margin-top: 20px;
     font-size: var(--fs-sm);
@@ -723,7 +598,9 @@
     font-style: italic;
 }
 
-/* === Футер — ссылки === */
+/* ============================================
+   ФУТЕР — ССЫЛКИ
+   ============================================ */
 .footer-links {
     margin-top: 8px;
     display: flex;
@@ -731,6 +608,11 @@
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+.footer-links span {
+    color: var(--color-text-muted);
+    font-size: var(--fs-xs);
 }
 
 .footer-link {
@@ -750,12 +632,9 @@
     color: var(--color-primary);
 }
 
-.footer-links span {
-    color: var(--color-text-muted);
-    font-size: var(--fs-xs);
-}
-
-/* === Жалобы === */
+/* ============================================
+   ЖАЛОБЫ
+   ============================================ */
 .report-reasons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -781,15 +660,14 @@
     text-align: center;
 }
 
-.report-reason:hover {
+.report-reason:hover,
+.report-reason.active {
     background: var(--color-primary-light);
     color: var(--color-primary-dark);
 }
 
 .report-reason.active {
-    background: var(--color-primary-light);
     border-color: var(--color-primary);
-    color: var(--color-primary-dark);
 }
 
 .report-reason svg {
@@ -797,7 +675,9 @@
     height: 20px;
 }
 
-/* === Кнопка «Наверх» внутри модалки === */
+/* ============================================
+   КНОПКА «НАВЕРХ» В МОДАЛКЕ
+   ============================================ */
 .modal-scroll-top {
     position: sticky;
     bottom: 12px;
@@ -831,4 +711,57 @@
 .modal-scroll-top svg {
     width: 20px;
     height: 20px;
+}
+
+/* ============================================
+   СООБЩЕНИЯ В МОДАЛКАХ
+   ============================================ */
+.auth-success {
+    background: var(--color-success-light, #dcfce7);
+    color: var(--color-success-dark, #15803d);
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    margin-top: 12px;
+}
+
+.modal .auth-error,
+.modal .auth-success {
+    margin-top: 14px;
+}
+
+/* ============================================
+   СПИСОК СБРОСА ПРОГРЕССА
+   ============================================ */
+.reset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 16px 0 8px;
+}
+
+/* ============================================
+   АДАПТАЦИЯ
+   ============================================ */
+@media (max-width: 600px) {
+    .modal {
+        padding: 24px;
+        border-radius: var(--radius-xl);
+        max-height: 95vh;
+    }
+
+    .modal h2 {
+        font-size: var(--fs-xl);
+    }
+
+    .modal-close,
+    .modal-back {
+        width: 36px;
+        height: 36px;
+        top: 12px;
+    }
+
+    .modal-close { right: 12px; }
+    .modal-back  { left: 12px; }
 }

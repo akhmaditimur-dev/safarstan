@@ -1,4 +1,8 @@
 /* ============ МОДАЛКА ПРОФИЛЯ ============ */
+
+/* ============================================
+   БАЗА
+   ============================================ */
 .modal--profile {
     max-width: 560px;
     max-height: 85vh;
@@ -7,26 +11,9 @@
     padding: 32px;
 }
 
-.modal-close {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    background: transparent;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    color: #888;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    transition: background .15s;
-}
-
-.modal-close:hover {
-    background: #f3f4f6;
-    color: #222;
-}
-
+/* ============================================
+   ШАПКА ПРОФИЛЯ
+   ============================================ */
 .profile-header {
     display: flex;
     align-items: center;
@@ -44,6 +31,20 @@
     background: linear-gradient(135deg, #dbeafe, #ede9fe);
     border-radius: 50%;
     flex-shrink: 0;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .profile-header h2 {
@@ -57,6 +58,171 @@
     font-size: 14px;
 }
 
+.profile-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+}
+
+/* ============================================
+   РЕДАКТИРОВАНИЕ ИМЕНИ
+   ============================================ */
+.profile-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: nowrap;
+}
+
+.profile-name-row h2 {
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-edit-btn {
+    background: var(--color-bg-soft);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+#editNameBtnProfile {
+    margin-right: 40px;
+}
+
+.profile-edit-btn:hover {
+    background: var(--color-primary-light);
+    transform: scale(1.1);
+}
+
+.profile-edit-btn--small {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
+}
+
+.profile-edit-btn--small svg {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.profile-name-edit,
+.profile-username-edit {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 4px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.profile-username-edit {
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.profile-name-input,
+.profile-username-input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    font-family: var(--font-heading);
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.profile-username-input {
+    font-size: var(--fs-sm);
+    font-family: monospace;
+    font-weight: normal;
+}
+
+.profile-name-input:focus,
+.profile-username-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+.profile-name-save,
+.profile-name-cancel {
+    border: none;
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.profile-name-save {
+    background: var(--gradient-primary);
+    color: #fff;
+}
+
+.profile-name-save:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary);
+}
+
+.profile-name-cancel {
+    background: var(--color-bg-soft);
+    color: var(--color-text-soft);
+    font-weight: var(--fw-semibold);
+}
+
+.profile-name-cancel:hover {
+    background: var(--color-border);
+    color: var(--color-text);
+}
+
+/* ============================================
+   НИК
+   ============================================ */
+.profile-username-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.profile-username-label {
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+    font-family: monospace;
+}
+
+.profile-username-at {
+    font-size: var(--fs-base);
+    color: var(--color-text-muted);
+    font-family: monospace;
+}
+
+/* ============================================
+   XP-БЛОК
+   ============================================ */
 .profile-xp-block {
     background: #f7f8fa;
     border-radius: 12px;
@@ -90,9 +256,12 @@
 .profile-xp-fill {
     height: 100%;
     background: linear-gradient(90deg, #2563eb, #7c3aed);
-    transition: width .3s;
+    transition: width 0.3s;
 }
 
+/* ============================================
+   СЕКЦИИ ПРОФИЛЯ
+   ============================================ */
 .profile-section {
     margin-bottom: 22px;
 }
@@ -108,6 +277,71 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+}
+
+.city-chip-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.city-chip__edit {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--color-text-muted);
+    opacity: 0.6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s, color 0.15s;
+    border-radius: 50%;
+}
+
+.city-chip__edit:hover {
+    opacity: 1;
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+}
+
+.city-chip__edit svg {
+    width: 14px;
+    height: 14px;
+}
+
+.city-chip-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    background: var(--color-bg-soft);
+    color: var(--color-text-soft);
+    border: 1px dashed var(--color-border);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.city-chip-toggle:hover,
+.city-chip-toggle.active {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.city-chip-toggle.active {
+    border-style: solid;
+}
+
+.city-chips-extra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+    width: 100%;
 }
 
 /* Статистика */
@@ -135,7 +369,9 @@
     font-size: 12px;
 }
 
-/* Кнопка сброса */
+/* ============================================
+   КНОПКА СБРОСА
+   ============================================ */
 .profile-reset {
     width: 100%;
     background: #fef2f2;
@@ -154,134 +390,32 @@
     background: #fee2e2;
 }
 
-/* Кликабельный бейдж в шапке */
-.player-badge {
-    cursor: pointer;
-    transition: background .15s;
+/* ============================================
+   КЛИКАБЕЛЬНЫЙ ПРОФИЛЬ
+   ============================================ */
+[data-player-profile] {
+    transition: opacity var(--transition-fast);
 }
 
-.player-badge:hover {
-    background: #e0e7ff;
+[data-player-profile]:hover {
+    opacity: 0.75;
 }
 
-/* === Редактирование имени === */
-.profile-name-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-    max-width: 100%;
-    flex-wrap: nowrap;
+.review-item__name[data-player-profile]:hover,
+.card-author[data-player-profile]:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
 }
 
-.profile-name-row h2 {
-    margin: 0;
-    flex: 1;
-    min-width: 0;
-}
-
-.profile-edit-btn {
-    background: var(--color-bg-soft);
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-}
-
-/* Кнопка редактирования имени — сдвинуть вниз, чтобы не пересекалась с X */
-#editNameBtnProfile {
-    margin-right: 40px; /* ← отступ справа — освобождаем место под X */
-}
-
-.profile-edit-btn:hover {
-    background: var(--color-primary-light);
-    transform: scale(1.1);
-}
-
-/* === Инпут редактирования === */
-.profile-name-edit {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 4px;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-}
-
-.profile-name-input {
-    flex: 1;
-    min-width: 0;
-    padding: 8px 12px;
-    border: 2px solid var(--color-primary);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-lg);
-    font-weight: var(--fw-bold);
-    font-family: var(--font-heading);
-    background: var(--color-surface);
-    color: var(--color-text);
-}
-
-.profile-name-input:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px var(--color-primary-light);
-}
-
-.profile-name-save {
-    background: var(--gradient-primary);
-    color: #fff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: var(--radius-md);
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-bold);
-    cursor: pointer;
-    font-family: inherit;
-    transition: all var(--transition-fast);
-}
-
-.profile-name-save:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-primary);
-}
-
-.profile-name-cancel {
-    background: var(--color-bg-soft);
-    color: var(--color-text-soft);
-    border: none;
-    padding: 8px 12px;
-    border-radius: var(--radius-md);
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-semibold);
-    cursor: pointer;
-    font-family: inherit;
-    transition: all var(--transition-fast);
-}
-
-.profile-name-cancel:hover {
-    background: var(--color-border);
-    color: var(--color-text);
-}
-
-/* ============ МОДАЛКА СМЕНЫ АВАТАРА ============ */
-
+/* ============================================
+   МОДАЛКА СМЕНЫ АВАТАРА
+   ============================================ */
 .avatar-picker--profile {
     grid-template-columns: repeat(5, 1fr);
     gap: 8px;
     margin-bottom: 20px;
 }
 
-/* Разделитель */
 .avatar-divider {
     display: flex;
     align-items: center;
@@ -300,7 +434,6 @@
     background: var(--color-border);
 }
 
-/* Превью фото */
 .avatar-preview {
     margin-top: 12px;
     display: flex;
@@ -322,34 +455,27 @@
     object-fit: cover;
 }
 
-/* === Аватар с фото (круглый) === */
-.dashboard-avatar img,
-.profile-avatar img {
+/* Аватар с фото (дашборд) */
+.dashboard-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
 }
 
-/* Кликабельный аватар */
-.dashboard-avatar,
-.profile-avatar {
+.dashboard-avatar {
     cursor: pointer;
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.dashboard-avatar:hover,
-.profile-avatar:hover {
+.dashboard-avatar:hover {
     transform: scale(1.05);
     box-shadow: 0 0 0 4px var(--color-primary-light);
 }
 
-/* ============ ГАЛЕРЕЯ ============ */
-
-.modal--wide {
-    max-width: 720px;
-}
-
+/* ============================================
+   ГАЛЕРЕЯ
+   ============================================ */
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
@@ -377,8 +503,9 @@
     display: block;
 }
 
-/* ============ МОИ ОТЗЫВЫ ============ */
-
+/* ============================================
+   МОИ ОТЗЫВЫ
+   ============================================ */
 .my-reviews-list {
     display: flex;
     flex-direction: column;
@@ -447,8 +574,9 @@
     border-color: var(--color-danger);
 }
 
-/* ============ НАСТРОЙКИ ============ */
-
+/* ============================================
+   НАСТРОЙКИ
+   ============================================ */
 .settings-row {
     display: flex;
     gap: 8px;
@@ -469,13 +597,13 @@
     transition: all var(--transition-fast);
 }
 
-.settings-btn:hover {
+.settings-btn:hover,
+.settings-btn.active {
     background: var(--color-primary-light);
     color: var(--color-primary);
 }
 
 .settings-btn.active {
-    background: var(--color-primary-light);
     color: var(--color-primary-dark);
     border-color: var(--color-primary);
 }
@@ -484,119 +612,4 @@
     height: 1px;
     background: var(--color-border-soft);
     margin: 20px 0;
-}
-
-.btn-block {
-    width: 100%;
-    display: block;
-}
-
-/* === Кликабельный профиль === */
-[data-player-profile] {
-    transition: opacity var(--transition-fast);
-}
-
-[data-player-profile]:hover {
-    opacity: 0.75;
-}
-
-.review-item__name[data-player-profile]:hover,
-.card-author[data-player-profile]:hover {
-    color: var(--color-primary-dark);
-    text-decoration: underline;
-}
-
-/* Кнопка раскрытия городов */
-.city-chip-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: var(--radius-full);
-    font-size: var(--fs-xs);
-    font-weight: var(--fw-semibold);
-    background: var(--color-bg-soft);
-    color: var(--color-text-soft);
-    border: 1px dashed var(--color-border);
-    cursor: pointer;
-    font-family: inherit;
-    transition: all var(--transition-fast);
-}
-
-.city-chip-toggle:hover {
-    background: var(--color-primary-light);
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-}
-
-.city-chip-toggle.active {
-    background: var(--color-primary-light);
-    color: var(--color-primary);
-    border-style: solid;
-}
-
-.city-chips-extra {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 6px;
-    width: 100%;
-}
-
-/* === Ник в профиле === */
-.profile-username-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 4px;
-}
-
-.profile-username-label {
-    font-size: var(--fs-sm);
-    color: var(--color-text-muted);
-    font-family: monospace;
-}
-
-.profile-edit-btn--small {
-    width: 24px !important;
-    height: 24px !important;
-    font-size: 12px !important;
-}
-
-.profile-edit-btn--small svg {
-    width: 12px !important;
-    height: 12px !important;
-}
-
-/* Форма редактирования ника */
-.profile-username-edit {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px;
-    width: 100%;
-    margin-top: 4px;
-}
-
-.profile-username-at {
-    font-size: var(--fs-base);
-    color: var(--color-text-muted);
-    font-family: monospace;
-}
-
-.profile-username-input {
-    flex: 1;
-    min-width: 100px;
-    padding: 6px 10px;
-    border: 2px solid var(--color-primary);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-sm);
-    font-family: monospace;
-    background: var(--color-surface);
-    color: var(--color-text);
-    outline: none;
-}
-
-.profile-username-input:focus {
-    box-shadow: 0 0 0 3px var(--color-primary-light);
 }

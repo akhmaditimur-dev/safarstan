@@ -11,6 +11,7 @@ async function saveUserPlace(playerId, cityKey, category, place) {
             title: place.title,
             description: place.desc,
             meta: place.meta,
+            tags: place.tags || [],
             author_name: place.author,
             author_avatar: place.authorAvatar,
         });
@@ -39,6 +40,7 @@ async function loadUserPlaces() {
             title: row.title,
             desc: row.description,
             meta: row.meta,
+            tags: row.tags || [],
             author: row.author_name,
             authorAvatar: row.author_avatar,
             playerId: row.player_id,
@@ -46,3 +48,14 @@ async function loadUserPlaces() {
     });
     return result;
 }
+
+// ============================================
+// ВЫБОР ТЕГОВ В ФОРМЕ
+// ============================================
+document.addEventListener('click', (e) => {
+    const tag = e.target.closest('#placeTagsPicker .place-tag-option');
+    if (!tag) return;
+
+    e.preventDefault();
+    tag.classList.toggle('active');
+});

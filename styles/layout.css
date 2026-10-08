@@ -2,13 +2,13 @@
 
 .container {
     width: 100%;
-    max-width: 1280px;
+    max-width: var(--container-max);
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 var(--container-pad);
 }
 
 .section {
-    padding: 60px 0;
+    padding: 40px 0;
 }
 
 .section--alt {
@@ -19,21 +19,21 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 12px;
+    margin-bottom: 16px;
     flex-wrap: wrap;
 }
 
 .section-header h2 {
     font-family: var(--font-heading);
-    font-size: var(--fs-2xl);
+    font-size: var(--fs-xl);
     font-weight: var(--fw-extrabold);
     color: var(--color-text);
     margin: 0;
 }
 
 .dashboard {
-    padding: 24px 0 60px;
+    padding: 16px 0 40px;
 }
 
 @media (max-width: 768px) {

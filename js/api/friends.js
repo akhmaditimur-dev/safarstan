@@ -1,6 +1,8 @@
 // ============ API: ДРУЗЬЯ ============
 
-// Поиск игроков по имени или email
+// ============================================
+// ПОИСК ИГРОКОВ
+// ============================================
 async function searchPlayers(query, currentPlayerId) {
     if (!query || query.length < 2) return [];
 
@@ -19,7 +21,9 @@ async function searchPlayers(query, currentPlayerId) {
     return data || [];
 }
 
-// Отправить заявку в друзья
+// ============================================
+// ЗАЯВКИ В ДРУЗЬЯ
+// ============================================
 async function sendFriendRequest(fromId, toId) {
     const { error } = await _supabase
         .from('friend_requests')
@@ -29,14 +33,13 @@ async function sendFriendRequest(fromId, toId) {
         console.error('Ошибка отправки заявки:', error);
         return false;
     }
+
     if (typeof createNotification === 'function') {
         await createNotification(toId, 'friend_request', {}, fromId);
     }
     return true;
-    return true;
 }
 
-// Загрузить входящие заявки
 async function loadIncomingRequests(playerId) {
     const { data, error } = await _supabase
         .from('friend_requests')
@@ -57,7 +60,6 @@ async function loadIncomingRequests(playerId) {
     return data || [];
 }
 
-// Загрузить исходящие заявки
 async function loadOutgoingRequests(playerId) {
     const { data, error } = await _supabase
         .from('friend_requests')
@@ -68,9 +70,9 @@ async function loadOutgoingRequests(playerId) {
     return data || [];
 }
 
-// Принять заявку
 async function acceptFriendRequest(requestId, fromId, toId) {
     const [a, b] = [fromId, toId].sort();
+
     const { error: err1 } = await _supabase
         .from('friends')
         .insert({ player_a: a, player_b: b });
@@ -86,14 +88,13 @@ async function acceptFriendRequest(requestId, fromId, toId) {
         .eq('id', requestId);
 
     if (err2) console.error('Ошибка обновления заявки:', err2);
+
     if (typeof createNotification === 'function') {
         await createNotification(fromId, 'friend_accepted', {}, toId);
     }
     return true;
-    return true;
 }
 
-// Отклонить заявку
 async function declineFriendRequest(requestId) {
     const { error } = await _supabase
         .from('friend_requests')
@@ -103,7 +104,6 @@ async function declineFriendRequest(requestId) {
     if (error) console.error('Ошибка отклонения:', error);
 }
 
-// Отменить исходящую заявку (отозвать)
 async function cancelFriendRequest(fromId, toId) {
     const { error } = await _supabase
         .from('friend_requests')
@@ -119,9 +119,11 @@ async function cancelFriendRequest(fromId, toId) {
     return { ok: true };
 }
 
-// Загрузить список друзей
+// ============================================
+// СПИСОК ДРУЗЕЙ
+// ============================================
 async function loadFriends(playerId) {
-    // Сначала получаем строки дружбы
+    // 1. Строки дружбы
     const { data: rows, error: rowsError } = await _supabase
         .from('friends')
         .select('id, player_a, player_b')
@@ -131,15 +133,14 @@ async function loadFriends(playerId) {
         console.error('Ошибка загрузки друзей:', rowsError);
         return [];
     }
-
     if (!rows || rows.length === 0) return [];
 
-    // Собираем id всех друзей
+    // 2. ID друзей
     const friendIds = rows.map(r =>
         r.player_a === playerId ? r.player_b : r.player_a
     );
 
-    // Тянем их из public_players (RLS открыт)
+    // 3. Профили из public_players (RLS открыт)
     const { data: players, error: playersError } = await _supabase
         .from('public_players')
         .select('id, name, avatar, home_city, current_city, level, last_seen_at, username')
@@ -153,6 +154,7 @@ async function loadFriends(playerId) {
     const byId = {};
     (players || []).forEach(p => { byId[p.id] = p; });
 
+    // 4. Собираем
     return rows.map(r => {
         const fid = r.player_a === playerId ? r.player_b : r.player_a;
         const p = byId[fid] || {};
@@ -170,7 +172,6 @@ async function loadFriends(playerId) {
     });
 }
 
-// Удалить друга
 async function removeFriend(friendsRowId) {
     const { error } = await _supabase
         .from('friends')

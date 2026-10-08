@@ -16,8 +16,12 @@ function openAddPlaceModal(preselectedCategory) {
     document.getElementById('placeMeta').value = '';
     document.getElementById('placeCategory').value = preselectedCategory || 'service';
 
-    document.getElementById('addPlaceModal').style.display = 'flex';
-}
+    // Сброс тегов
+    document.querySelectorAll('#placeTagsPicker .place-tag-option').forEach(btn => {
+        btn.classList.remove('active');
+});
+
+document.getElementById('addPlaceModal').style.display = 'flex';}
 
 async function submitUserPlace() {
     if (!PLAYER) return;
@@ -30,28 +34,83 @@ async function submitUserPlace() {
     if (!name) { showWarningToast('Введи название 🙏'); return; }
     if (!desc) { showWarningToast('Добавь описание 🙏'); return; }
 
-    // Проверка названия
     const nameError = validateUserText(name, { minLength: 2, maxLength: 100, fieldName: 'Название' });
     if (nameError) { showWarningToast(nameError); return; }
 
-    // Проверка описания
     const descError = validateUserText(desc, { minLength: 2, maxLength: 500, fieldName: 'Описание' });
     if (descError) { showWarningToast(descError); return; }
-
-    if (todayAddedCount >= DAILY_LIMIT) {
-        showWarningToast('Лимит на сегодня исчерпан');
-        return;
-    }
 
     const metaParts = meta
         ? meta.split(',').map(s => s.trim()).slice(0, 2)
         : [category, '—'];
     while (metaParts.length < 2) metaParts.push('—');
 
+    // Собираем теги
+    const selectedTags = [];
+    document.querySelectorAll('#placeTagsPicker .place-tag-option.active').forEach(btn => {
+        selectedTags.push(btn.dataset.tag);
+    });
+
+    // ============ РЕЖИМ РЕДАКТИРОВАНИЯ ============
+    if (_editPlaceCtx) {
+        const { cityKey, category: oldCat, idx } = _editPlaceCtx;
+        const place = USER_PLACES[cityKey]?.[oldCat]?.[idx];
+        if (!place) { _editPlaceCtx = null; return; }
+
+        const updates = {
+            title: name,
+            description: desc,
+            category: category,
+            meta: metaParts,
+            tags: selectedTags,
+        };
+
+        if (place.id) {
+            const { error } = await _supabase
+                .from('user_places')
+                .update(updates)
+                .eq('id', place.id);
+
+            if (error) {
+                console.error('Ошибка обновления:', error);
+                showWarningToast('Не удалось сохранить');
+                return;
+            }
+        }
+
+        // Обновляем локально
+        Object.assign(place, {
+            title: name,
+            desc: desc,
+            meta: metaParts,
+            tags: selectedTags,
+        });
+
+        // Если менялась категория — переносим в другой массив
+        if (category !== oldCat) {
+            USER_PLACES[cityKey][oldCat].splice(idx, 1);
+            if (!USER_PLACES[cityKey][category]) USER_PLACES[cityKey][category] = [];
+            USER_PLACES[cityKey][category].push(place);
+        }
+
+        _editPlaceCtx = null;
+        closeAddPlaceModal();
+        showWarningToast('✅ Место обновлено');
+        renderAll();
+        return;
+    }
+
+    // ============ РЕЖИМ СОЗДАНИЯ ============
+    if (todayAddedCount >= DAILY_LIMIT) {
+        showWarningToast('Лимит на сегодня исчерпан');
+        return;
+    }
+
     const newPlace = {
         title: name,
         desc: desc,
         meta: metaParts,
+        tags: selectedTags,
         author: PLAYER.name,
         authorAvatar: PLAYER.avatar || '🧑‍💼',
     };
@@ -116,10 +175,23 @@ async function submitUserPlace() {
         }
     }
 
-    document.getElementById('addPlaceModal').style.display = 'none';
-
+    closeAddPlaceModal();
     renderAll();
     renderQuests();
+}
+
+// Сброс модалки в режим "создать"
+function closeAddPlaceModal() {
+    const modal = document.getElementById('addPlaceModal');
+    if (!modal) return;
+
+    modal.style.display = 'none';
+    _editPlaceCtx = null;
+
+    const titleEl = modal.querySelector('h2');
+    const submitBtn = document.getElementById('addPlaceSubmit');
+    if (titleEl) titleEl.textContent = 'Добавить место';
+    if (submitBtn) submitBtn.textContent = 'Добавить место';
 }
 
 async function deleteUserPlace(cityKey, category, idx) {
@@ -151,6 +223,11 @@ async function deleteUserPlace(cityKey, category, idx) {
     renderAll();
 }
 
+// ============================================
+// РЕДАКТИРОВАНИЕ UGC-МЕСТА
+// ============================================
+let _editPlaceCtx = null; // { cityKey, category, idx }
+
 async function editUserPlace(cityKey, category, idx) {
     const place = USER_PLACES[cityKey]?.[category]?.[idx];
     if (!place) return;
@@ -160,33 +237,32 @@ async function editUserPlace(cityKey, category, idx) {
         return;
     }
 
-    // ⚠️ prompt() оставлен временно — потом заменим на кастомную модалку
-    const newName = prompt('Новое название:', place.title);
-    if (newName === null) return;
-    const newDesc = prompt('Новое описание:', place.desc);
-    if (newDesc === null) return;
+    _editPlaceCtx = { cityKey, category, idx };
 
-    const updates = {};
-    if (newName.trim()) updates.title = newName.trim();
-    if (newDesc.trim()) updates.description = newDesc.trim();
+    const modal = document.getElementById('addPlaceModal');
+    if (!modal) return;
 
-    if (Object.keys(updates).length === 0) return;
+    // Меняем заголовок и кнопку
+    const titleEl = modal.querySelector('h2');
+    const submitBtn = document.getElementById('addPlaceSubmit');
+    if (titleEl) titleEl.textContent = 'Редактировать место';
+    if (submitBtn) submitBtn.textContent = 'Сохранить изменения';
 
-    if (place.id) {
-        const { error } = await _supabase
-            .from('user_places')
-            .update(updates)
-            .eq('id', place.id);
+    // Заполняем форму
+    document.getElementById('addPlaceCityLabel').textContent = `Город: ${CITIES[cityKey].name}`;
+    document.getElementById('placeName').value = place.title || '';
+    document.getElementById('placeDesc').value = place.desc || '';
+    document.getElementById('placeCategory').value = category || 'service';
 
-        if (error) {
-            console.error('Ошибка обновления:', error);
-            showWarningToast('Не удалось сохранить');
-            return;
-        }
-    }
+    // Метка
+    const metaStr = (place.meta || []).filter(m => m && m !== '—').join(', ');
+    document.getElementById('placeMeta').value = metaStr;
 
-    if (updates.title) place.title = updates.title;
-    if (updates.description) place.desc = updates.description;
+    // Теги
+    document.querySelectorAll('#placeTagsPicker .place-tag-option').forEach(btn => {
+        const tag = btn.dataset.tag;
+        btn.classList.toggle('active', (place.tags || []).includes(tag));
+    });
 
-    renderAll();
+    modal.style.display = 'flex';
 }

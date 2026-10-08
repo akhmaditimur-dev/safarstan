@@ -259,3 +259,43 @@ select.modal-input {
 .auth-agreement__link:hover {
     color: var(--color-primary-dark);
 }
+
+/* === Теги места (выбор в форме) === */
+.place-tags-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.place-tag-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-bg-soft);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md, 8px);
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.place-tag-option svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.place-tag-option:hover {
+    background: var(--color-primary-light);
+}
+
+.place-tag-option.active {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+    font-weight: 600;
+}

@@ -1,6 +1,8 @@
 // ============ API: ИГРОК ============
 
-// Загрузить профиль текущего пользователя
+// ============================================
+// ЗАГРУЗКА / СОХРАНЕНИЕ СВОЕГО ПРОФИЛЯ
+// ============================================
 async function loadPlayerFromServer() {
     const user = await getCurrentUser();
     if (!user) return null;
@@ -18,7 +20,6 @@ async function loadPlayerFromServer() {
     return data;
 }
 
-// Создать или обновить профиль
 async function savePlayerToServer(player) {
     const user = await getCurrentUser();
     if (!user) return null;
@@ -28,7 +29,7 @@ async function savePlayerToServer(player) {
         email: user.email,
         name: player.name,
         avatar: player.avatar,
-        avatar_path: player.avatarPath || null, 
+        avatar_path: player.avatarPath || null,
         home_city: player.homeCity,
         current_city: player.currentCity,
         xp: player.xp,
@@ -37,7 +38,6 @@ async function savePlayerToServer(player) {
         completed_quests: player.completedQuests || [],
         quests_claimed: player.questsClaimed || [],
         user_places_added: player.userPlacesAdded || 0,
-        updated_at: new Date().toISOString(),
         checkin_cooldowns: player.checkinCooldowns || {},
         today_checkins: player.todayCheckins || 0,
         today_date: player.todayDate || null,
@@ -60,7 +60,6 @@ async function savePlayerToServer(player) {
 // ============================================
 // ЗАГРУЗКА ПРОФИЛЯ ДРУГОГО ИГРОКА
 // ============================================
-
 async function loadPlayerById(playerId) {
     if (!playerId) return null;
 
@@ -97,8 +96,6 @@ async function loadPlayerCheckins(playerId) {
 // ============================================
 // МЯГКОЕ УДАЛЕНИЕ АККАУНТА
 // ============================================
-
-// Помечает аккаунт как удалённый
 async function softDeletePlayer(playerId) {
     const { error } = await _supabase
         .from('players')
@@ -112,11 +109,9 @@ async function softDeletePlayer(playerId) {
         console.warn('Ошибка удаления аккаунта:', error);
         return { error: error.message };
     }
-
     return { ok: true };
 }
 
-// Восстанавливает аккаунт
 async function restorePlayer(playerId) {
     const { error } = await _supabase
         .from('players')
@@ -130,11 +125,9 @@ async function restorePlayer(playerId) {
         console.warn('Ошибка восстановления:', error);
         return { error: error.message };
     }
-
     return { ok: true };
 }
 
-// Проверяет, удалён ли аккаунт
 async function isPlayerDeleted(playerId) {
     const { data, error } = await _supabase
         .from('players')
@@ -149,7 +142,6 @@ async function isPlayerDeleted(playerId) {
     };
 }
 
-// Проверяет, истёк ли срок хранения (30 дней)
 function isRestorePeriodExpired(deletedAt) {
     if (!deletedAt) return false;
     const deleted = new Date(deletedAt);
@@ -161,8 +153,6 @@ function isRestorePeriodExpired(deletedAt) {
 // ============================================
 // ПРИВАТНЫЙ ПРОФИЛЬ — ЗАПРОСЫ НА ДОСТУП
 // ============================================
-
-// Отправить запрос на просмотр профиля
 async function requestProfileAccess(fromPlayerId, toPlayerId) {
     const { error } = await _supabase
         .from('profile_access_requests')
@@ -180,7 +170,6 @@ async function requestProfileAccess(fromPlayerId, toPlayerId) {
     return { ok: true };
 }
 
-// Проверить, есть ли принятый доступ
 async function hasProfileAccess(fromPlayerId, toPlayerId) {
     const { data, error } = await _supabase
         .from('profile_access_requests')
@@ -193,7 +182,6 @@ async function hasProfileAccess(fromPlayerId, toPlayerId) {
     return data.status === 'accepted';
 }
 
-// Получить статус запроса (pending / accepted / declined / null)
 async function getProfileAccessStatus(fromPlayerId, toPlayerId) {
     const { data, error } = await _supabase
         .from('profile_access_requests')
@@ -206,7 +194,6 @@ async function getProfileAccessStatus(fromPlayerId, toPlayerId) {
     return data.status;
 }
 
-// Получить входящие запросы (для владельца приватного профиля)
 async function loadIncomingAccessRequests(playerId) {
     const { data, error } = await _supabase
         .from('profile_access_requests')
@@ -227,7 +214,6 @@ async function loadIncomingAccessRequests(playerId) {
     return data || [];
 }
 
-// Принять запрос
 async function acceptProfileAccess(requestId) {
     const { error } = await _supabase
         .from('profile_access_requests')
@@ -238,7 +224,6 @@ async function acceptProfileAccess(requestId) {
     return { ok: true };
 }
 
-// Отклонить запрос
 async function declineProfileAccess(requestId) {
     const { error } = await _supabase
         .from('profile_access_requests')
@@ -249,7 +234,6 @@ async function declineProfileAccess(requestId) {
     return { ok: true };
 }
 
-// Сохранить настройку приватности
 async function savePrivacyFlag(playerId, isPrivate) {
     const { error } = await _supabase
         .from('players')
@@ -263,7 +247,6 @@ async function savePrivacyFlag(playerId, isPrivate) {
 // ============================================
 // БЛОКИРОВКА ПОЛЬЗОВАТЕЛЕЙ
 // ============================================
-
 async function blockPlayer(blockerId, blockedId) {
     const { error } = await _supabase
         .from('blocks')
@@ -315,9 +298,7 @@ async function loadMyBlocks(playerId) {
         .from('blocks')
         .select(`
             id, created_at,
-            blocked:players!blocks_blocked_id_fkey (
-                id, name, avatar, level
-            )
+            blocked:players!blocks_blocked_id_fkey (id, name, avatar, level)
         `)
         .eq('blocker_id', playerId)
         .order('created_at', { ascending: false });
@@ -332,8 +313,6 @@ async function loadMyBlocks(playerId) {
 // ============================================
 // USERNAME (НИК ИГРОКА)
 // ============================================
-
-// Валидация ника
 function validateUsername(username) {
     if (!username) return 'Ник не может быть пустым';
     if (username.length < 3) return 'Минимум 3 символа';
@@ -346,7 +325,6 @@ function validateUsername(username) {
     return null;
 }
 
-// Проверить, свободен ли ник
 async function isUsernameAvailable(username, excludePlayerId = null) {
     let query = _supabase
         .from('public_players')
@@ -366,7 +344,6 @@ async function isUsernameAvailable(username, excludePlayerId = null) {
     return !data;
 }
 
-// Сохранить ник игрока
 async function saveUsername(playerId, username) {
     const clean = username.toLowerCase().trim();
 
@@ -388,9 +365,7 @@ async function saveUsername(playerId, username) {
     return { ok: true, username: clean };
 }
 
-// Сгенерировать ник для существующих игроков без ника
 async function generateUsernameForPlayer(playerId, baseName) {
-    // Из имени: только a-z, цифры, _
     let base = (baseName || 'player')
         .toLowerCase()
         .replace(/[^a-z0-9]/g, '')
@@ -398,7 +373,6 @@ async function generateUsernameForPlayer(playerId, baseName) {
 
     if (base.length < 3) base = 'player';
 
-    // Проверяем занятость
     let candidate = base;
     let attempt = 0;
 
@@ -406,13 +380,11 @@ async function generateUsernameForPlayer(playerId, baseName) {
         attempt++;
         candidate = `${base}${attempt}`;
         if (attempt > 100) {
-            // Фолбэк: случайное число
             candidate = `player${Math.floor(Math.random() * 99999)}`;
             break;
         }
     }
 
-    // Сохраняем
     const { error } = await _supabase
         .from('players')
         .update({ username: candidate })
@@ -422,11 +394,9 @@ async function generateUsernameForPlayer(playerId, baseName) {
         console.warn('Ошибка автогенерации ника:', error);
         return null;
     }
-
     return candidate;
 }
 
-// Загрузить игрока по нику
 async function loadPlayerByUsername(username) {
     if (!username) return null;
 
@@ -443,9 +413,36 @@ async function loadPlayerByUsername(username) {
 }
 
 // ============================================
+// СМЕНА ГОРОДА
+// ============================================
+async function savePlayerCity(playerId, type, cityKey) {
+    if (!playerId || !type || !cityKey) {
+        return { error: 'Не хватает данных' };
+    }
+    if (!CITIES[cityKey]) {
+        return { error: 'Неизвестный город' };
+    }
+    if (type !== 'home' && type !== 'current') {
+        return { error: 'Неверный тип' };
+    }
+
+    const field = type === 'home' ? 'home_city' : 'current_city';
+
+    const { error } = await _supabase
+        .from('players')
+        .update({ [field]: cityKey })
+        .eq('id', playerId);
+
+    if (error) {
+        console.warn('Ошибка смены города:', error);
+        return { error: error.message };
+    }
+    return { ok: true };
+}
+
+// ============================================
 // ЖАЛОБЫ / МОДЕРАЦИЯ
 // ============================================
-
 async function createReport(reporterId, targetType, targetId, reason, comment = null) {
     const { error } = await _supabase
         .from('reports')
@@ -464,7 +461,6 @@ async function createReport(reporterId, targetType, targetId, reason, comment = 
     return { ok: true };
 }
 
-// Проверить, не жаловался ли уже
 async function hasReported(reporterId, targetType, targetId) {
     const { data, error } = await _supabase
         .from('reports')
@@ -478,7 +474,6 @@ async function hasReported(reporterId, targetType, targetId) {
     return true;
 }
 
-// Загрузить все жалобы (для админа)
 async function loadAllReports(status = 'pending') {
     const { data, error } = await _supabase
         .from('reports')

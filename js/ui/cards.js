@@ -1,10 +1,45 @@
 // ============ UI: КАРТОЧКИ МЕСТ ============
 
+// ============================================
+// ТЕГИ МЕСТА
+// ============================================
+const PLACE_TAGS = {
+    food:     '<i data-lucide="utensils"></i> Еда',
+    history:  '<i data-lucide="landmark"></i> История',
+    night:    '<i data-lucide="moon"></i> Ночное',
+    quiet:    '<i data-lucide="volume-off"></i> Тихо',
+    family:   '<i data-lucide="users"></i> Семейное',
+    shopping: '<i data-lucide="shopping-bag"></i> Шоппинг',
+    photo:    '<i data-lucide="camera"></i> Фото',
+};
+
+function getTagLabel(tag) {
+    return PLACE_TAGS[tag] || tag;
+}
+
+// ============================================
+// РЕНДЕР СЕКЦИЙ
+// ============================================
+async function renderTransport() {
+    const list = CITIES[currentCity].transport[currentTransportType] || [];
+    await renderCards('transportList', list, currentTransportType);
+}
+
+async function renderHotels() {
+    await renderCards('hotelsList', CITIES[currentCity].hotels, 'hotel');
+}
+
+async function renderServices() {
+    await renderCards('servicesList', CITIES[currentCity].services, 'service');
+}
+
+// ============================================
+// РЕНДЕР СПИСКА КАРТОЧЕК
+// ============================================
 async function renderCards(containerId, items, category) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // Показываем skeleton пока грузятся данные
     if (typeof renderCardsSkeleton === 'function') {
         renderCardsSkeleton(containerId, 3);
     }
@@ -14,7 +49,6 @@ async function renderCards(containerId, items, category) {
     const userKeys = userPlaces.map(item => `${currentCity}|${category}|${item.title}`);
     const allKeys = [...officialKeys, ...userKeys];
 
-    // Рейтинги
     let ratings = {};
     try {
         ratings = await loadReviewsForPlaces(allKeys);
@@ -22,7 +56,6 @@ async function renderCards(containerId, items, category) {
         console.warn('Отзывы не загружены:', e);
     }
 
-    // Фото
     let photos = {};
     try {
         photos = await loadPhotosForPlaces(allKeys);
@@ -30,29 +63,16 @@ async function renderCards(containerId, items, category) {
         console.warn('Фото не загружены:', e);
     }
 
-    // Официальные места
-    const officialHtml = items.map((item) =>
-        buildCardHtml(item, category, {
-            isUserPlace: false,
-            idx: null,
-            ratings,
-            photos,
-        })
+    const officialHtml = items.map(item =>
+        buildCardHtml(item, category, { isUserPlace: false, idx: null, ratings, photos })
     ).join('');
 
-    // UGC-места
     const userHtml = userPlaces.map((item, idx) =>
-        buildCardHtml(item, category, {
-            isUserPlace: true,
-            idx,
-            ratings,
-            photos,
-        })
+        buildCardHtml(item, category, { isUserPlace: true, idx, ratings, photos })
     ).join('');
 
     container.innerHTML = officialHtml + userHtml;
 
-    // Иконки карточек
     if (typeof lucide !== 'undefined') {
         requestAnimationFrame(() => lucide.createIcons());
     }
@@ -61,7 +81,7 @@ async function renderCards(containerId, items, category) {
 }
 
 // ============================================
-// ЕДИНЫЙ ШАБЛОН КАРТОЧКИ
+// ШАБЛОН ОДНОЙ КАРТОЧКИ
 // ============================================
 function buildCardHtml(item, category, options) {
     const { isUserPlace, idx, ratings, photos } = options;
@@ -74,7 +94,7 @@ function buildCardHtml(item, category, options) {
     const coverPhoto = placePhotos[0];
     const isMine = isUserPlace && PLAYER && item.playerId === PLAYER.playerId;
 
-    // Плашка рейтинга (кликабельная — открывает отзывы)
+    // --- Плашка рейтинга ---
     const ratingBlock = (rating && rating.avg !== null && rating.count > 0) ? `
         <button class="reviews-block__rating reviews-block__rating--clickable"
                 data-toggle-reviews="${checkinKey}"
@@ -84,7 +104,7 @@ function buildCardHtml(item, category, options) {
         </button>
     ` : '';
 
-    // Фото-обложка
+    // --- Фото-обложка ---
     const photoBlock = coverPhoto ? `
         <div class="place-photo"
              data-lightbox="${coverPhoto.photo_url}"
@@ -95,15 +115,23 @@ function buildCardHtml(item, category, options) {
         </div>
     ` : '';
 
-    // Плашка автора (только для UGC)
+    // --- Автор (UGC) ---
+    const authorAvatarHtml = renderAvatarHtml(item.authorAvatar || '🧑‍💼');
     const authorBlock = isUserPlace ? `
         <div class="card-author" data-player-profile="${item.playerId || ''}" style="cursor:pointer;">
-            <span class="avatar">${item.authorAvatar || '🧑‍💼'}</span>
-            Добавлено ${item.author}
+            <span class="avatar">${authorAvatarHtml}</span>
+            Добавлено ${escapeHtml(item.author || 'Игрок')}
         </div>
     ` : '';
 
-    // Кнопки владельца (только для своих UGC)
+    // --- Теги ---
+    const tagsBlock = (item.tags && item.tags.length > 0) ? `
+        <div class="place-tags">
+            ${item.tags.map(tag => `<span class="place-tag place-tag--${tag}">${getTagLabel(tag)}</span>`).join('')}
+        </div>
+    ` : '';
+
+    // --- Кнопки владельца ---
     const ownerBlock = isMine ? `
         <div class="card-actions" style="border-top:none;padding-top:8px;">
             <button class="edit-btn"
@@ -121,7 +149,7 @@ function buildCardHtml(item, category, options) {
         </div>
     ` : '';
 
-    // Раскрывающийся блок отзывов
+    // --- Раскрывающийся блок отзывов ---
     const reviewsBlock = `
         <div class="reviews-block" data-reviews-for="${checkinKey}" style="display:none;">
             <div class="reviews-block__header">
@@ -143,6 +171,7 @@ function buildCardHtml(item, category, options) {
             ${authorBlock}
             <h3>${item.title}</h3>
             <p>${item.desc}</p>
+            ${tagsBlock}
             <div class="meta"><span>${item.meta[0]}</span><span>${item.meta[1]}</span></div>
             ${ratingBlock}
             <div class="card-actions">
@@ -167,20 +196,4 @@ function buildCardHtml(item, category, options) {
             ${ownerBlock}
         </div>
     `;
-}
-
-// ============================================
-// РЕНДЕР СЕКЦИЙ
-// ============================================
-async function renderTransport() {
-    const list = CITIES[currentCity].transport[currentTransportType] || [];
-    await renderCards('transportList', list, currentTransportType);
-}
-
-async function renderHotels() {
-    await renderCards('hotelsList', CITIES[currentCity].hotels, 'hotel');
-}
-
-async function renderServices() {
-    await renderCards('servicesList', CITIES[currentCity].services, 'service');
 }

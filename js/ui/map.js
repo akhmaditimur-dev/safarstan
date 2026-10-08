@@ -1,17 +1,23 @@
 // ============ UI: КАРТА (OpenLayers) ============
 
+// ============================================
+// СОСТОЯНИЕ
+// ============================================
 let safarstanMap = null;
-let clusterSource = null;   // ← ИЗМЕНЕНО: было citySource
+let clusterSource = null;
 let cityLayer = null;
+let tileLayer = null;
+
 let hasharSource = null;
 let hasharLayer = null;
+
+let _cityMarkersSource = null;
+let _cityMarkersLayer = null;
+let _planMarkersSource = null;
+let _planMarkersLayer = null;
+
 let cityTooltipOverlay = null;
 let currentHoveredCity = null;
-let tileLayer = null;
-let _cityMarkersLayer = null;
-let _cityMarkersSource = null;
-let _planMarkersLayer = null;
-let _planMarkersSource = null;
 
 let _cityGapStatsCache = null;
 let _cityHasharStatsCache = null;
@@ -31,7 +37,7 @@ function renderMap() {
         return;
     }
 
-    // === Кластеризация городов ===
+    // Кластеризация городов
     const baseCitySource = new ol.source.Vector();
     clusterSource = new ol.source.Cluster({
         distance: 40,
@@ -41,32 +47,32 @@ function renderMap() {
 
     cityLayer = new ol.layer.Vector({
         source: clusterSource,
-        style: cityStyleFunction,   // определяет стиль по zoom + size
+        style: cityStyleFunction,
         zIndex: 10,
     });
 
-    // === Хашары (без изменений) ===
+    // Хашары
     hasharSource = new ol.source.Vector();
     hasharLayer = new ol.layer.Vector({
         source: hasharSource,
         zIndex: 15,
     });
 
-    // === Слой меток друзей (поверх городов) ===
+    // Слой меток друзей
     _cityMarkersSource = new ol.source.Vector();
     _cityMarkersLayer = new ol.layer.Vector({
         source: _cityMarkersSource,
         zIndex: 12,
     });
 
-    // === Слой меток планов ===
+    // Слой меток планов
     _planMarkersSource = new ol.source.Vector();
     _planMarkersLayer = new ol.layer.Vector({
         source: _planMarkersSource,
         zIndex: 14,
     });
 
-    // === Тайлы ===
+    // Тайлы
     const initialStyle = typeof getMapStyle === 'function' ? getMapStyle() : 'light';
     tileLayer = new ol.layer.Tile({
         source: getTileSource(initialStyle),
@@ -90,54 +96,10 @@ function renderMap() {
         controls: ol.control.defaults.defaults({ attribution: true }),
     });
 
-    // === Клик по карте ===
-    safarstanMap.on('click', (evt) => {
-        // 1. Хашар
-        const hasharFeature = safarstanMap.forEachFeatureAtPixel(
-            evt.pixel,
-            (f) => f,
-            { hitTolerance: 8, layerFilter: (l) => l === hasharLayer }
-        );
-        if (hasharFeature) {
-            const hasharId = hasharFeature.get('hasharId');
-            if (hasharId && typeof openHasharModal === 'function') {
-                openHasharModal(hasharId);
-            }
-            return;
-        }
+    // Клик по карте
+    safarstanMap.on('click', handleMapClick);
 
-        // 2. Город или кластер
-        const feature = safarstanMap.forEachFeatureAtPixel(
-            evt.pixel,
-            (f) => f,
-            { hitTolerance: 8, layerFilter: (l) => l === cityLayer }
-        );
-
-        if (feature) {
-            const features = feature.get('features');
-
-            if (features && features.length === 1) {
-                // Один город — выбираем
-                const cityKey = features[0].get('cityKey');
-                if (cityKey && CITIES[cityKey]) {
-                    currentCity = cityKey;
-                    renderAll();
-                    if (typeof renderCitySelector === 'function') renderCitySelector();
-                    saveState();
-                }
-            } else if (features && features.length > 1) {
-                // Кластер — приближаем
-                const extent = feature.getGeometry().getExtent();
-                safarstanMap.getView().fit(extent, {
-                    duration: 400,
-                    padding: [80, 80, 80, 80],
-                    maxZoom: 12,
-                });
-            }
-        }
-    });
-
-    // === Тултип ===
+    // Тултип
     const tooltipEl = document.getElementById('cityTooltip');
     if (tooltipEl) {
         cityTooltipOverlay = new ol.Overlay({
@@ -148,46 +110,95 @@ function renderMap() {
         safarstanMap.addOverlay(cityTooltipOverlay);
     }
 
-    // === Наведение мыши ===
-    safarstanMap.on('pointermove', async (evt) => {
-        if (evt.dragging) return;
-
-        const feature = safarstanMap.forEachFeatureAtPixel(
-            evt.pixel,
-            (f) => f,
-            { hitTolerance: 8, layerFilter: (l) => l === cityLayer }
-        );
-
-        let cityKey = null;
-        if (feature) {
-            const features = feature.get('features');
-            if (features && features.length === 1) {
-                cityKey = features[0].get('cityKey');
-            }
-        }
-
-        safarstanMap.getTargetElement().style.cursor = feature ? 'pointer' : '';
-
-        if (cityKey === currentHoveredCity) return;
-        currentHoveredCity = cityKey;
-
-        if (!cityKey) {
-            hideCityTooltip();
-            return;
-        }
-
-        await showCityTooltip(cityKey);
-    });
+    // Наведение мыши
+    safarstanMap.on('pointermove', handleMapPointerMove);
 
     updateMapMarkers();
+    autoCenterOnMyCity();
+}
 
-    // === Автоцентрирование ===
-    if (typeof isMapLayerEnabled !== 'function' || isMapLayerEnabled('autoCenter')) {
-        if (PLAYER && PLAYER.currentCity && CITIES[PLAYER.currentCity]?.coords) {
-            const coords = CITIES[PLAYER.currentCity].coords;
-            safarstanMap.getView().setCenter(ol.proj.fromLonLat([coords.lng, coords.lat]));
-            safarstanMap.getView().setZoom(6);
+function handleMapClick(evt) {
+    // 1. Хашар
+    const hasharFeature = safarstanMap.forEachFeatureAtPixel(
+        evt.pixel,
+        (f) => f,
+        { hitTolerance: 8, layerFilter: (l) => l === hasharLayer }
+    );
+    if (hasharFeature) {
+        const hasharId = hasharFeature.get('hasharId');
+        if (hasharId && typeof openHasharModal === 'function') {
+            openHasharModal(hasharId);
         }
+        return;
+    }
+
+    // 2. Город или кластер
+    const feature = safarstanMap.forEachFeatureAtPixel(
+        evt.pixel,
+        (f) => f,
+        { hitTolerance: 8, layerFilter: (l) => l === cityLayer }
+    );
+
+    if (!feature) return;
+
+    const features = feature.get('features');
+
+    if (features && features.length === 1) {
+        const cityKey = features[0].get('cityKey');
+        if (cityKey && CITIES[cityKey]) {
+            currentCity = cityKey;
+            renderAll();
+            if (typeof renderCitySelector === 'function') renderCitySelector();
+            saveState();
+        }
+    } else if (features && features.length > 1) {
+        const extent = feature.getGeometry().getExtent();
+        safarstanMap.getView().fit(extent, {
+            duration: 400,
+            padding: [80, 80, 80, 80],
+            maxZoom: 12,
+        });
+    }
+}
+
+async function handleMapPointerMove(evt) {
+    if (evt.dragging) return;
+
+    const feature = safarstanMap.forEachFeatureAtPixel(
+        evt.pixel,
+        (f) => f,
+        { hitTolerance: 8, layerFilter: (l) => l === cityLayer }
+    );
+
+    let cityKey = null;
+    if (feature) {
+        const features = feature.get('features');
+        if (features && features.length === 1) {
+            cityKey = features[0].get('cityKey');
+        }
+    }
+
+    safarstanMap.getTargetElement().style.cursor = feature ? 'pointer' : '';
+
+    if (cityKey === currentHoveredCity) return;
+    currentHoveredCity = cityKey;
+
+    if (!cityKey) {
+        hideCityTooltip();
+        return;
+    }
+
+    await showCityTooltip(cityKey);
+}
+
+function autoCenterOnMyCity() {
+    if (!safarstanMap) return;
+    if (typeof isMapLayerEnabled === 'function' && !isMapLayerEnabled('autoCenter')) return;
+
+    if (PLAYER && PLAYER.currentCity && CITIES[PLAYER.currentCity]?.coords) {
+        const coords = CITIES[PLAYER.currentCity].coords;
+        safarstanMap.getView().setCenter(ol.proj.fromLonLat([coords.lng, coords.lat]));
+        safarstanMap.getView().setZoom(6);
     }
 }
 
@@ -198,7 +209,7 @@ function cityStyleFunction(feature) {
     const features = feature.get('features');
     const size = features ? features.length : 1;
 
-    // === Кластер (2+ города) ===
+    // Кластер (2+ города)
     if (size > 1) {
         return new ol.style.Style({
             image: new ol.style.Circle({
@@ -214,13 +225,11 @@ function cityStyleFunction(feature) {
         });
     }
 
-    // === Один город ===
-    const singleFeature = features[0];
-    const status = singleFeature.get('status') || 'unvisited';
+    // Один город
+    const status = features[0].get('status') || 'unvisited';
 
     let fillColor = '#94a3b8';
     let radius = 8;
-    let strokeColor = '#ffffff';
     let strokeWidth = 2;
 
     if (status === 'home') {
@@ -235,7 +244,7 @@ function cityStyleFunction(feature) {
         image: new ol.style.Circle({
             radius,
             fill: new ol.style.Fill({ color: fillColor }),
-            stroke: new ol.style.Stroke({ color: strokeColor, width: strokeWidth }),
+            stroke: new ol.style.Stroke({ color: '#ffffff', width: strokeWidth }),
         }),
     });
 }
@@ -264,11 +273,9 @@ function updateMapMarkers() {
         clusterSource.getSource().addFeature(feature);
     });
 
-    // Метки друзей и планов
     renderFriendMarkers();
     renderPlanMarkers();
 
-    // Хашары
     if (typeof isMapLayerEnabled !== 'function' || isMapLayerEnabled('hashars')) {
         renderHasharMarkers();
     } else if (hasharSource) {
@@ -282,13 +289,13 @@ function getCityStatus(cityKey) {
     const visited = PLAYER.visitedCities || {};
 
     if (cityKey === PLAYER.homeCity) return { cls: 'home', label: 'Родной город' };
-    if (cityKey === PLAYER.currentCity) return { cls: 'current', label: 'Текущий город' };
+    if (cityKey === PLAYER.currentCity) return { cls: 'current', label: 'Живу здесь' };
     if (visited[cityKey] > 0) return { cls: 'visited', label: `Посещён (${visited[cityKey]} чек-инов)` };
     return { cls: 'unvisited', label: 'Не посещено' };
 }
 
 // ============================================
-// МЕТКИ ДРУЗЕЙ НА КАРТЕ
+// МЕТКИ ДРУЗЕЙ
 // ============================================
 async function renderFriendMarkers() {
     if (!_cityMarkersSource) return;
@@ -304,7 +311,6 @@ async function renderFriendMarkers() {
     } catch (err) {
         return;
     }
-
     if (!stats) return;
 
     Object.entries(stats).forEach(([cityKey, count]) => {
@@ -317,7 +323,7 @@ async function renderFriendMarkers() {
             geometry: new ol.geom.Point(
                 ol.proj.fromLonLat([city.coords.lng, city.coords.lat])
             ),
-            count: count,
+            count,
         });
 
         feature.setStyle(new ol.style.Style({
@@ -338,7 +344,7 @@ async function renderFriendMarkers() {
 }
 
 // ============================================
-// МЕТКИ ПЛАНОВ НА КАРТЕ
+// МЕТКИ ПЛАНОВ
 // ============================================
 async function renderPlanMarkers() {
     if (!_planMarkersSource) return;
@@ -347,7 +353,6 @@ async function renderPlanMarkers() {
     if (typeof isMapLayerEnabled === 'function' && !isMapLayerEnabled('markersPlans')) {
         return;
     }
-
     if (!PLAYER || !PLAYER.playerId) return;
 
     let plans = [];
@@ -356,17 +361,15 @@ async function renderPlanMarkers() {
     } catch (err) {
         return;
     }
-
     if (!plans || plans.length === 0) return;
 
-    // Группируем планы по городам
     const byCity = {};
     plans.forEach(p => {
         if (!p.city_key) return;
         byCity[p.city_key] = (byCity[p.city_key] || 0) + 1;
     });
 
-    Object.entries(byCity).forEach(([cityKey, count]) => {
+    Object.entries(byCity).forEach(([cityKey]) => {
         const city = CITIES[cityKey];
         if (!city || !city.coords) return;
 
@@ -385,7 +388,6 @@ async function renderPlanMarkers() {
             text: new ol.style.Text({
                 text: '📅',
                 font: '12px Inter, Arial, sans-serif',
-                offsetY: 0,
             }),
         }));
 
@@ -394,44 +396,7 @@ async function renderPlanMarkers() {
 }
 
 // ============================================
-// КЭШ СТАТИСТИКИ (без изменений)
-// ============================================
-async function getCityGapStatsCached() {
-    if (_cityGapStatsCache) return _cityGapStatsCache;
-    try {
-        _cityGapStatsCache = await loadCityGapStats();
-    } catch (err) {
-        console.warn('Ошибка загрузки статистики гапов:', err);
-        _cityGapStatsCache = {};
-    }
-    return _cityGapStatsCache;
-}
-
-async function getCityHasharStatsCached() {
-    if (_cityHasharStatsCache) return _cityHasharStatsCache;
-    try {
-        _cityHasharStatsCache = await loadCityHasharStats();
-    } catch (err) {
-        console.warn('Ошибка загрузки статистики хашаров:', err);
-        _cityHasharStatsCache = {};
-    }
-    return _cityHasharStatsCache;
-}
-
-function resetCityStatsCache() {
-    _cityGapStatsCache = null;
-    _cityHasharStatsCache = null;
-}
-
-// ============================================
-// БЕЙДЖИ ГАПОВ — только в тултипе
-// ============================================
-async function renderGapBadges() {
-    return;
-}
-
-// ============================================
-// ТОЧКИ ХАШАРОВ (без изменений)
+// МЕТКИ ХАШАРОВ
 // ============================================
 async function renderHasharMarkers() {
     if (!safarstanMap || !hasharSource) return;
@@ -451,12 +416,8 @@ async function renderHasharMarkers() {
     }
 
     const catSymbols = {
-        repair: 'Р',
-        trees:  'Д',
-        cleanup:'У',
-        help:   'П',
-        charity:'Б',
-        other:  '•',
+        repair: 'Р', trees: 'Д', cleanup: 'У',
+        help: 'П', charity: 'Б', other: '•',
     };
 
     hashars.forEach(h => {
@@ -481,7 +442,6 @@ async function renderHasharMarkers() {
                 text: symbol,
                 font: 'bold 12px Inter, Arial, sans-serif',
                 fill: new ol.style.Fill({ color: '#ffffff' }),
-                offsetY: 0,
             }),
         }));
 
@@ -490,7 +450,7 @@ async function renderHasharMarkers() {
 }
 
 // ============================================
-// ТУЛТИП ГОРОДА (без изменений, но с метками планов)
+// ТУЛТИП ГОРОДА
 // ============================================
 async function showCityTooltip(cityKey) {
     if (!safarstanMap || !cityTooltipOverlay) return;
@@ -579,17 +539,41 @@ function hideCityTooltip() {
 }
 
 // ============================================
-// СТИЛЬ / ТАЙЛЫ КАРТЫ
+// КЭШ СТАТИСТИКИ
 // ============================================
+async function getCityGapStatsCached() {
+    if (_cityGapStatsCache) return _cityGapStatsCache;
+    try {
+        _cityGapStatsCache = await loadCityGapStats();
+    } catch (err) {
+        console.warn('Ошибка загрузки статистики гапов:', err);
+        _cityGapStatsCache = {};
+    }
+    return _cityGapStatsCache;
+}
 
+async function getCityHasharStatsCached() {
+    if (_cityHasharStatsCache) return _cityHasharStatsCache;
+    try {
+        _cityHasharStatsCache = await loadCityHasharStats();
+    } catch (err) {
+        console.warn('Ошибка загрузки статистики хашаров:', err);
+        _cityHasharStatsCache = {};
+    }
+    return _cityHasharStatsCache;
+}
+
+function resetCityStatsCache() {
+    _cityGapStatsCache = null;
+    _cityHasharStatsCache = null;
+}
+
+// ============================================
+// СТИЛЬ / ТАЙЛЫ
+// ============================================
 const TILE_SOURCES = {
-    // Светлая — обычный OSM
     light: () => new ol.source.OSM(),
-
-    // Тёмная — тоже OSM, но с CSS-фильтром (см. updateMapStyle)
     dark: () => new ol.source.OSM(),
-
-    // Спутник — Esri (без ключа)
     satellite: () => new ol.source.XYZ({
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         attributions: '© Esri',
@@ -602,28 +586,19 @@ function getTileSource(style) {
     return factory();
 }
 
-// Обновить тайлы карты (при смене стиля)
 function updateMapStyle(style) {
     if (!safarstanMap || !tileLayer) return;
 
-    // Меняем источник тайлов
     tileLayer.setSource(getTileSource(style));
 
-    // Для тёмной — добавляем CSS-фильтр на контейнер карты
     const el = document.getElementById('safarstanMap');
     if (el) {
-        if (style === 'dark') {
-            el.classList.add('map--dark');
-        } else {
-            el.classList.remove('map--dark');
-        }
+        el.classList.toggle('map--dark', style === 'dark');
     }
 
-    // Обновляем подсветку в дропдауне
     updateMapStyleDropdown();
 }
 
-// Подсветка активного стиля в дропдауне на карте
 function updateMapStyleDropdown() {
     const style = typeof getMapStyle === 'function' ? getMapStyle() : 'light';
     document.querySelectorAll('[data-map-style]').forEach(btn => {
@@ -631,19 +606,15 @@ function updateMapStyleDropdown() {
     });
 }
 
-// Тема карты при смене темы сайта — карта переключается автоматически
 function updateMapTiles(theme) {
-    // Тема карты следует за темой сайта
     const mapStyle = (theme === 'dark' || theme === 'space') ? 'dark' : 'light';
 
-    // Но если явно выбран спутник — оставляем
     const userStyle = typeof getMapStyle === 'function' ? getMapStyle() : 'light';
     if (userStyle === 'satellite') return;
 
     updateMapStyle(mapStyle);
 }
 
-// Автоцентрирование на текущем городе
 function centerMapOnMyCity() {
     if (!safarstanMap) return;
     if (typeof isMapLayerEnabled === 'function' && !isMapLayerEnabled('autoCenter')) return;

@@ -5,7 +5,9 @@
     background: var(--color-bg-soft);
 }
 
-/* === СЕТКА: 3 КОЛОНКИ === */
+/* ============================================
+   СЕТКА: 3 КОЛОНКИ
+   ============================================ */
 .dashboard__grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
@@ -21,7 +23,9 @@
     align-items: stretch;
 }
 
-/* === КАРТОЧКА === */
+/* ============================================
+   КАРТОЧКА
+   ============================================ */
 .dashboard-card {
     background: var(--color-surface);
     border-radius: var(--radius-xl);
@@ -57,7 +61,9 @@
     margin: 0;
 }
 
-/* === ПРОФИЛЬ === */
+/* ============================================
+   ПРОФИЛЬ
+   ============================================ */
 .dashboard-user {
     display: flex;
     align-items: center;
@@ -81,6 +87,13 @@
     border-radius: 50%;
     flex-shrink: 0;
     overflow: hidden;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.dashboard-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 4px var(--color-primary-light);
 }
 
 .dashboard-avatar img {
@@ -105,7 +118,7 @@
     flex: 1;
     min-width: 0;
     font-family: var(--font-heading);
-    font-size: var(--fs-xl);
+    font-size: var(--fs-lg);
     font-weight: var(--fw-extrabold);
     color: var(--color-text);
     line-height: 1.2;
@@ -117,27 +130,9 @@
     font-size: var(--fs-sm);
 }
 
-.profile-edit-btn {
-    background: var(--color-bg-soft);
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background var(--transition-fast), transform var(--transition-fast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.profile-edit-btn:hover {
-    background: var(--color-primary-light);
-    transform: scale(1.1);
-}
-
-/* === XP === */
+/* ============================================
+   XP
+   ============================================ */
 .dashboard-xp__text {
     display: flex;
     justify-content: space-between;
@@ -175,7 +170,9 @@
     border-radius: var(--radius-full);
 }
 
-/* === МОИ ГОРОДА === */
+/* ============================================
+   МОИ ГОРОДА
+   ============================================ */
 .dashboard-cities-section {
     display: flex;
     flex-direction: column;
@@ -196,7 +193,9 @@
     gap: 6px;
 }
 
-/* === ЧИПЫ ГОРОДОВ === */
+/* ============================================
+   ЧИПЫ ГОРОДОВ
+   ============================================ */
 .city-chip {
     display: inline-flex;
     align-items: center;
@@ -217,27 +216,26 @@
     flex-shrink: 0;
 }
 
-.city-chip.home {
-    background: #bbf7d0;
-    color: #14532d;
+.city-chip.home    { background: #bbf7d0; color: #14532d; }
+.city-chip.current { background: #dcfce7; color: #166534; }
+.city-chip.visited { background: #f0fdf4; color: #15803d; }
+
+.city-chip--clickable {
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.city-chip.current {
-    background: #dcfce7;
-    color: #166534;
+.city-chip--clickable:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-xs);
 }
 
-.city-chip.visited {
-    background: #f0fdf4;
-    color: #15803d;
-}
-
-/* === СТРОКИ ДАШБОРДА (Мой вклад, Квесты, Гапы, Хашары) === */
+/* ============================================
+   СТРОКИ ДАШБОРДА
+   ============================================ */
 .dashboard-row,
 .dashboard-quest,
-.dashboard-contribution__item,
-.gap-card,
-.hashar-card {
+.dashboard-contribution__item {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -341,7 +339,9 @@
     flex-shrink: 0;
 }
 
-/* === НАВИГАЦИЯ В КАРТОЧКЕ === */
+/* ============================================
+   НАВИГАЦИЯ В КАРТОЧКЕ (сайдбар)
+   ============================================ */
 .dashboard-card--nav {
     padding: 16px;
     gap: 0;
@@ -364,11 +364,48 @@
     margin: 0;
 }
 
+.dashboard-nav-title--toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 8px 12px 4px;
+    font-family: var(--font-heading);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    text-align: left;
+}
+
+.dashboard-nav-title--toggle:hover {
+    color: var(--color-primary);
+}
+
+.dashboard-nav-title__arrow {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.5;
+    flex-shrink: 0;
+    transition: transform var(--transition-fast);
+}
+
+.dashboard-nav-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .dashboard-nav-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 8px;
+    padding: 8px 10px;
     background: transparent;
     border: none;
     border-radius: var(--radius-md);
@@ -388,8 +425,8 @@
 }
 
 .dashboard-nav-icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -398,8 +435,8 @@
 }
 
 .dashboard-nav-icon svg {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     stroke: currentColor;
     stroke-width: 2;
     fill: none;
@@ -424,19 +461,15 @@
     border-radius: var(--radius-full);
 }
 
-.dashboard-nav-arrow {
-    color: var(--color-text-muted);
-    font-size: var(--fs-sm);
-    transition: transform var(--transition-fast), color var(--transition-fast);
-}
-
 .dashboard-nav-divider {
     height: 1px;
     background: var(--color-border-soft);
     margin: 12px 0;
 }
 
-/* === ПЛАНЫ === */
+/* ============================================
+   ПЛАНЫ
+   ============================================ */
 .dashboard-plans {
     display: flex;
     flex-direction: column;
@@ -517,7 +550,9 @@
     background: var(--color-surface);
 }
 
-/* === ЛЕНТА === */
+/* ============================================
+   ЛЕНТА
+   ============================================ */
 .feed-filters {
     display: flex;
     gap: 4px;
@@ -626,7 +661,69 @@
     font-size: var(--fs-sm);
 }
 
-/* === ПУСТОЕ СОСТОЯНИЕ === */
+/* ============================================
+   ЛАЙК В ЛЕНТЕ
+   ============================================ */
+.feed-item__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.feed-like {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-md, 8px);
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+
+.feed-like:hover {
+    background: var(--color-bg-soft);
+    color: #ef4444;
+}
+
+.feed-like svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.15s;
+}
+
+.feed-like--active {
+    color: #ef4444;
+}
+
+.feed-like--active svg {
+    fill: #ef4444;
+    stroke: #ef4444;
+}
+
+.feed-like--active:hover svg {
+    transform: scale(1.15);
+}
+
+.feed-like__count {
+    font-weight: 600;
+    min-width: 8px;
+    text-align: left;
+}
+
+.feed-like__count:empty {
+    display: none;
+}
+
+/* ============================================
+   ПУСТЫЕ СОСТОЯНИЯ
+   ============================================ */
 .dashboard-empty {
     text-align: center;
     color: var(--color-text-muted);
@@ -635,36 +732,9 @@
     line-height: 1.4;
 }
 
-/* === АДАПТАЦИЯ === */
-@media (max-width: 700px) {
-    .dashboard {
-        padding: 16px 0 40px;
-    }
-
-    .dashboard__grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-    }
-
-    .dashboard-col {
-        gap: 14px;
-    }
-
-    .dashboard-card {
-        padding: 18px;
-    }
-
-    .dashboard-avatar {
-        width: 56px;
-        height: 56px;
-    }
-
-    .dashboard-user h2 {
-        font-size: var(--fs-lg);
-    }
-}
-
-/* === Плавающая кнопка «В дашборд» === */
+/* ============================================
+   ПЛАВАЮЩАЯ КНОПКА «В ДАШБОРД»
+   ============================================ */
 .back-to-dashboard {
     position: fixed;
     bottom: 90px;
@@ -674,14 +744,13 @@
     border-radius: 50%;
     background: var(--color-bg-soft);
     color: var(--color-text);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border: none;
-    box-shadow: var(--shadow-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 90;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
@@ -696,58 +765,32 @@
     stroke-width: 2.5;
 }
 
-/* На мобильных — выше, чтобы не мешало нижнему меню */
-@media (max-width: 768px) {
-    .back-to-dashboard {
-        bottom: 90px;
+/* ============================================
+   АДАПТАЦИЯ
+   ============================================ */
+@media (max-width: 700px) {
+    .dashboard {
+        padding: 16px 0 40px;
     }
-}
 
-/* === Сворачиваемый заголовок группы в сайдбаре === */
-.dashboard-nav-title--toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    background: transparent;
-    border: none;
-    padding: 8px 12px 4px;
-    font-family: var(--font-heading);
-    font-size: var(--fs-xs);
-    font-weight: var(--fw-bold);
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: color var(--transition-fast);
-    text-align: left;
-}
+    .dashboard__grid {
+        gap: 12px;
+    }
+    .dashboard-col {
+        gap: 12px;
+    }
 
-.dashboard-nav-title--toggle:hover {
-    color: var(--color-primary);
-}
+    .dashboard-card {
+        padding: 14px;
+        gap: 10px;
+    }
 
-.dashboard-nav-title__arrow {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.5;
-    flex-shrink: 0;
-    transition: transform var(--transition-fast);
-}
+    .dashboard-avatar {
+        width: 56px;
+        height: 56px;
+    }
 
-.dashboard-nav-items {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-/* Кликабельные чипы городов */
-.city-chip--clickable {
-    cursor: pointer;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.city-chip--clickable:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-xs);
+    .dashboard-user h2 {
+        font-size: var(--fs-lg);
+    }
 }

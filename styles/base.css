@@ -14,7 +14,7 @@ body {
     font-family: var(--font-text);
     font-size: var(--fs-base);
     font-weight: var(--fw-normal);
-    line-height: 1.6;
+    line-height: 1.45;
     background: var(--color-bg);
     color: var(--color-text);
     -webkit-font-smoothing: antialiased;
@@ -30,9 +30,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 { font-size: var(--fs-5xl); font-weight: var(--fw-extrabold); }
-h2 { font-size: var(--fs-3xl); }
-h3 { font-size: var(--fs-xl); }
-h4 { font-size: var(--fs-lg); }
+h2 { font-size: var(--fs-2xl); font-weight: var(--fw-extrabold); }
+h3 { font-size: var(--fs-lg); }
+h4 { font-size: var(--fs-base); }
 
 p {
     color: var(--color-text-soft);
@@ -69,17 +69,17 @@ img {
    ============================================ */
 
 .logo svg {
-    width: 22px;
-    height: 22px;
-    vertical-align: -4px;
-    margin-right: 6px;
+    width: 18px;
+    height: 18px;
+    vertical-align: -3px;
+    margin-right: 4px;
     color: #fff;
 }
 
 .header-search__icon svg,
 .city-search__icon svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     color: var(--color-text-soft);
 }
 
@@ -116,20 +116,20 @@ img {
 
 .city-analytics__card h4 svg,
 .profile-section h3 svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     vertical-align: -3px;
     margin-right: 4px;
 }
 
 .map-settings-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 }
 
 .rating-star svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
 }
 
 .modal-close svg {

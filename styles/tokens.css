@@ -46,15 +46,15 @@
     --font-heading: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
     /* === РАЗМЕРЫ ШРИФТА === */
-    --fs-xs:    0.75rem;
-    --fs-sm:    0.875rem;
-    --fs-base:  1rem;
-    --fs-lg:    1.125rem;
-    --fs-xl:    1.25rem;
-    --fs-2xl:   1.5rem;
-    --fs-3xl:   2rem;
-    --fs-4xl:   2.5rem;
-    --fs-5xl:   clamp(2.5rem, 6vw, 4.5rem);
+    --fs-xs:    0.6875rem;   /* 11px */
+    --fs-sm:    0.8125rem;   /* 13px */
+    --fs-base:  0.875rem;    /* 14px */
+    --fs-lg:    1rem;        /* 16px */
+    --fs-xl:    1.125rem;    /* 18px */
+    --fs-2xl:   1.25rem;     /* 20px */
+    --fs-3xl:   1.5rem;      /* 24px */
+    --fs-4xl:   1.875rem;    /* 30px */
+    --fs-5xl:   clamp(1.875rem, 4vw, 3rem);   /* hero */
 
     /* === ВЕС ШРИФТА === */
     --fw-normal:  400;
@@ -65,23 +65,23 @@
 
     /* === ОТСТУПЫ === */
     --sp-1: 4px;
-    --sp-2: 8px;
-    --sp-3: 12px;
-    --sp-4: 16px;
-    --sp-5: 20px;
-    --sp-6: 24px;
-    --sp-8: 32px;
-    --sp-10: 40px;
-    --sp-12: 48px;
-    --sp-16: 64px;
-    --sp-20: 80px;
+    --sp-2: 6px;
+    --sp-3: 10px;
+    --sp-4: 12px;
+    --sp-5: 16px;
+    --sp-6: 20px;
+    --sp-8: 24px;
+    --sp-10: 32px;
+    --sp-12: 40px;
+    --sp-16: 48px;
+    --sp-20: 64px;
 
     /* === СКРУГЛЕНИЯ === */
-    --radius-sm:   8px;
-    --radius-md:   12px;
-    --radius-lg:   16px;
-    --radius-xl:   24px;
-    --radius-2xl:  32px;
+    --radius-sm:   6px;
+    --radius-md:   10px;
+    --radius-lg:   12px;
+    --radius-xl:   16px;
+    --radius-2xl:  20px;
     --radius-full: 9999px;
 
     /* === ТЕНИ === */
@@ -102,8 +102,8 @@
     --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
     /* === КОНТЕЙНЕР === */
-    --container-max: 1100px;
-    --container-pad: 20px;
+    --container-max: 1200px;
+    --container-pad: 16px;
 
     /* === РАЗМЕРЫ ИКОНОК === */
     --icon-xs:  14px;

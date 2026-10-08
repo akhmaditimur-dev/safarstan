@@ -3,25 +3,47 @@
 let FEED = [];
 let currentFeedFilter = 'all';
 
+// ============================================
+// ХЕЛПЕР: АВАТАР (URL → img, эмодзи → текст)
+// ============================================
+if (typeof renderAvatarHtml === 'undefined') {
+    window.renderAvatarHtml = function(avatar) {
+        if (!avatar) return '🧑‍💼';
+        if (typeof avatar === 'string' && avatar.startsWith('http')) {
+            return `<img src="${avatar}" alt="" loading="lazy">`;
+        }
+        return avatar;
+    };
+}
+
+// ============================================
+// РЕНДЕР ЛЕНТЫ
+// ============================================
 async function renderFeed() {
     if (!PLAYER) return;
 
     const container = document.getElementById('dashFeed');
     if (!container) return;
 
-    // Показываем skeleton только для пустой ленты
     if (currentFeedFilter === 'all' && typeof renderFeedSkeleton === 'function') {
         renderFeedSkeleton('dashFeed', 4);
     }
 
     FEED = await loadFeed(10);
 
+    let feedLikes = {};
+    if (FEED.length > 0) {
+        feedLikes = await loadFeedLikes(FEED.map(f => f.id));
+    }
+
     let items = FEED;
 
     if (currentFeedFilter === 'mine') {
         items = FEED.filter(item => item.player_id === PLAYER.playerId);
+
     } else if (currentFeedFilter === 'friends') {
         const friendIds = (typeof FRIENDS !== 'undefined' ? FRIENDS : []).map(f => f.id);
+
         if (friendIds.length === 0) {
             container.innerHTML = `
                 <div class="feed-empty">
@@ -35,6 +57,7 @@ async function renderFeed() {
             return;
         }
         items = await loadFriendsFeed(friendIds, 10);
+
     } else if (currentFeedFilter === 'recommend') {
         container.innerHTML = renderRecommendations();
         if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -42,35 +65,42 @@ async function renderFeed() {
     }
 
     if (items.length === 0) {
-        const ctaHtml = currentFeedFilter === 'mine'
-            ? `
-                <p style="margin-bottom: 14px;">У тебя пока нет событий</p>
-                <button class="btn btn-primary btn-sm" data-scroll="map">
-                    <i data-lucide="map"></i> Открыть карту
-                </button>
-            `
-            : `
-                <p style="margin-bottom: 14px;">Пока пусто. Сделай чек-ин или добавь место!</p>
-                <button class="btn btn-primary btn-sm" data-scroll="map">
-                    <i data-lucide="map"></i> К карте
-                </button>
-            `;
-
-        container.innerHTML = `<div class="feed-empty">${ctaHtml}</div>`;
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        renderFeedEmpty(container);
         return;
     }
 
-    container.innerHTML = items.map(item => renderFeedItem(item)).join('');
+    container.innerHTML = items
+        .map(item => renderFeedItem(item, feedLikes[item.id] || { count: 0, myLike: false }))
+        .join('');
+
     fillFeedAvatars();
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+function renderFeedEmpty(container) {
+    const ctaHtml = currentFeedFilter === 'mine'
+        ? `
+            <p style="margin-bottom: 14px;">У тебя пока нет событий</p>
+            <button class="btn btn-primary btn-sm" data-scroll="map">
+                <i data-lucide="map"></i> Открыть карту
+            </button>
+        `
+        : `
+            <p style="margin-bottom: 14px;">Пока пусто. Сделай чек-ин или добавь место!</p>
+            <button class="btn btn-primary btn-sm" data-scroll="map">
+                <i data-lucide="map"></i> К карте
+            </button>
+        `;
+
+    container.innerHTML = `<div class="feed-empty">${ctaHtml}</div>`;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
 // ============================================
-// ОТРИСОВКА ОДНОГО СОБЫТИЯ
+// ОДНО СОБЫТИЕ
 // ============================================
-function renderFeedItem(item) {
+function renderFeedItem(item, likeInfo) {
     const player = item.players || {};
     const name = player.name || 'Игрок';
     const avatar = player.avatar || '🧑‍💼';
@@ -78,7 +108,6 @@ function renderFeedItem(item) {
     const cityName = item.city_key && CITIES[item.city_key] ? CITIES[item.city_key].name : '';
     const pid = item.player_id || '';
 
-    // Имя игрока — кликабельное
     const nameHtml = `<strong class="feed-player-link" data-player-profile="${pid}" style="cursor:pointer;">${escapeHtml(name)}</strong>`;
 
     let text = '';
@@ -108,19 +137,28 @@ function renderFeedItem(item) {
 
     const avatarHtml = renderAvatarHtml(avatar);
 
+    const likeData = likeInfo || { count: 0, myLike: false };
+    const likeClass = likeData.myLike ? 'feed-like feed-like--active' : 'feed-like';
+
     return `
         <div class="feed-item" data-player-id="${pid}">
             <div class="feed-item__avatar" data-player-profile="${pid}" style="cursor:pointer;">${avatarHtml}</div>
             <div class="feed-item__body">
                 <div class="feed-item__text">${text}</div>
-                <div class="feed-item__time">${timeAgo(item.created_at)}</div>
+                <div class="feed-item__footer">
+                    <div class="feed-item__time">${timeAgo(item.created_at)}</div>
+                    <button class="${likeClass}" data-feed-like="${item.id}">
+                        <i data-lucide="heart"></i>
+                        <span class="feed-like__count">${likeData.count || ''}</span>
+                    </button>
+                </div>
             </div>
         </div>
     `;
 }
 
 // ============================================
-// ДОЗАГРУЗКА АВАТАРОВ (если бэк вернул без players)
+// ДОЗАГРУЗКА АВАТАРОВ
 // ============================================
 async function fillFeedAvatars() {
     const items = document.querySelectorAll('.feed-item[data-player-id]');
@@ -129,15 +167,11 @@ async function fillFeedAvatars() {
     items.forEach(el => {
         const avatarEl = el.querySelector('.feed-item__avatar');
         if (!avatarEl) return;
-
-        // Если аватар уже <img> — всё ок
         if (avatarEl.querySelector('img')) return;
 
-        // Если эмодзи — всё ок
         const text = avatarEl.textContent.trim();
         if (text && !text.startsWith('http')) return;
 
-        // Нужно дозагрузить
         const pid = el.dataset.playerId;
         if (pid) idsToLoad.add(pid);
     });
@@ -171,7 +205,7 @@ function renderRecommendations() {
 
     const recommendations = [];
 
-    // 1. Новые места в моих городах (UGC)
+    // 1. Новые UGC-места в моих городах
     const visitedCities = Object.keys(PLAYER.visitedCities || {});
     const myCities = [PLAYER.homeCity, PLAYER.currentCity, ...visitedCities]
         .filter((v, i, a) => v && a.indexOf(v) === i);
@@ -205,7 +239,7 @@ function renderRecommendations() {
         });
     }
 
-    // 3. Что можно сделать
+    // 3. Непосещённые места
     if (myCities.length > 0) {
         const cityName = CITIES[PLAYER.currentCity]?.name || '';
         recommendations.push({
@@ -268,12 +302,38 @@ function timeAgo(timestamp) {
 }
 
 // ============================================
-// ХЕЛПЕР: АВАТАР (URL → img, эмодзи → текст)
+// ЛАЙКИ — ОБРАБОТЧИК
 // ============================================
-function renderAvatarHtml(avatar) {
-    if (!avatar) return '🧑‍💼';
-    if (typeof avatar === 'string' && avatar.startsWith('http')) {
-        return `<img src="${avatar}" alt="" loading="lazy">`;
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-feed-like]');
+    if (!btn || !PLAYER) return;
+
+    const feedId = btn.dataset.feedLike;
+    if (!feedId) return;
+
+    if (btn.dataset.loading === '1') return;
+    btn.dataset.loading = '1';
+
+    const result = await toggleFeedLike(feedId);
+    btn.dataset.loading = '';
+
+    if (result.error) {
+        if (typeof showWarningToast === 'function') showWarningToast('Не удалось поставить лайк');
+        return;
     }
-    return avatar;
-}
+
+    const countEl = btn.querySelector('.feed-like__count');
+    let currentCount = parseInt(countEl?.textContent) || 0;
+
+    if (result.liked) {
+        btn.classList.add('feed-like--active');
+        currentCount += 1;
+    } else {
+        btn.classList.remove('feed-like--active');
+        currentCount = Math.max(0, currentCount - 1);
+    }
+
+    if (countEl) {
+        countEl.textContent = currentCount > 0 ? currentCount : '';
+    }
+});

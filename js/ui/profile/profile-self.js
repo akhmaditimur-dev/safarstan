@@ -1,69 +1,77 @@
 // ============ UI: PROFILE — СВОЙ ПРОФИЛЬ ============
 
 let selectedAvatar = '🧑‍💼';
-let selectedNewAvatar = null;
 
-// === Обновление данных игрока (дашборд + модалка профиля) ===
+// ============================================
+// ОБНОВЛЕНИЕ ДАННЫХ ИГРОКА (дашборд + модалка)
+// ============================================
 function updatePlayerBadge() {
     if (!PLAYER) return;
 
     const xpInLevel = PLAYER.xp % 100;
     const xpToNext = 100 - xpInLevel;
+    const nextLabel = `до уровня ${PLAYER.level + 1}: ${xpToNext} XP`;
 
     // Дашборд
-    const dashAvatar = document.getElementById('dashAvatar');
-    const dashName = document.getElementById('dashName');
-    const dashLevel = document.getElementById('dashLevel');
-    const dashXP = document.getElementById('dashXP');
-    const dashXPNext = document.getElementById('dashXPNext');
-    const dashXPBar = document.getElementById('dashXPBar');
+    const dashAvatar   = document.getElementById('dashAvatar');
+    const dashName     = document.getElementById('dashName');
+    const dashLevel    = document.getElementById('dashLevel');
+    const dashXP       = document.getElementById('dashXP');
+    const dashXPNext   = document.getElementById('dashXPNext');
+    const dashXPBar    = document.getElementById('dashXPBar');
 
     if (dashAvatar) renderAvatar(dashAvatar, PLAYER.avatar);
-    if (dashName) dashName.textContent = PLAYER.name;
-    if (dashLevel) dashLevel.textContent = PLAYER.level;
-    if (dashXP) dashXP.textContent = PLAYER.xp;
-    if (dashXPNext) dashXPNext.textContent = `до уровня ${PLAYER.level + 1}: ${xpToNext} XP`;
-    if (dashXPBar) dashXPBar.style.width = `${xpInLevel}%`;
+    if (dashName)   dashName.textContent = PLAYER.name;
+    if (dashLevel)  dashLevel.textContent = PLAYER.level;
+    if (dashXP)     dashXP.textContent = PLAYER.xp;
+    if (dashXPNext) dashXPNext.textContent = nextLabel;
+    if (dashXPBar)  dashXPBar.style.width = `${xpInLevel}%`;
 
     // Модалка профиля
-    const profileAvatar = document.getElementById('profileAvatar');
-    const profileName = document.getElementById('profileName');
-    const profileLevel = document.getElementById('profileLevel');
-    const profileXP = document.getElementById('profileXP');
-    const profileXPNext = document.getElementById('profileXPNext');
-    const profileXPBar = document.getElementById('profileXPBar');
+    const profileAvatar   = document.getElementById('profileAvatar');
+    const profileName     = document.getElementById('profileName');
+    const profileLevel    = document.getElementById('profileLevel');
+    const profileXP       = document.getElementById('profileXP');
+    const profileXPNext   = document.getElementById('profileXPNext');
+    const profileXPBar    = document.getElementById('profileXPBar');
 
     if (profileAvatar) renderAvatar(profileAvatar, PLAYER.avatar);
-    if (profileName) profileName.textContent = PLAYER.name;
-    if (profileLevel) profileLevel.textContent = PLAYER.level;
-    if (profileXP) profileXP.textContent = PLAYER.xp;
-    if (profileXPNext) profileXPNext.textContent = `до уровня ${PLAYER.level + 1}: ${xpToNext} XP`;
-    if (profileXPBar) profileXPBar.style.width = `${xpInLevel}%`;
+    if (profileName)   profileName.textContent = PLAYER.name;
+    if (profileLevel)  profileLevel.textContent = PLAYER.level;
+    if (profileXP)     profileXP.textContent = PLAYER.xp;
+    if (profileXPNext) profileXPNext.textContent = nextLabel;
+    if (profileXPBar)  profileXPBar.style.width = `${xpInLevel}%`;
 }
 
-// === Свой профиль — модалка ===
+// ============================================
+// РЕНДЕР МОДАЛКИ ПРОФИЛЯ
+// ============================================
 function renderProfile() {
     if (!PLAYER) return;
 
-    // Skeleton пока грузим
     if (typeof renderProfileSkeleton === 'function') {
         renderProfileSkeleton();
     }
-    // ...дальше идёт текущий код
 
+    renderProfileHeader();
+    renderProfileCities();
+    renderProfileStats();
+    renderProfileBadges();
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// --- Шапка ---
+function renderProfileHeader() {
     const avatarEl = document.getElementById('profileAvatar');
     const nameEl = document.getElementById('profileName');
     const levelEl = document.getElementById('profileLevel');
+    const usernameEl = document.getElementById('profileUsername');
 
     if (avatarEl) renderAvatar(avatarEl, PLAYER.avatar);
     if (nameEl) nameEl.textContent = PLAYER.name;
     if (levelEl) levelEl.textContent = PLAYER.level;
-
-    // Ник
-    const usernameEl = document.getElementById('profileUsername');
-    if (usernameEl) {
-        usernameEl.textContent = PLAYER.username || '—';
-    }
+    if (usernameEl) usernameEl.textContent = PLAYER.username || '—';
 
     const xpInLevel = PLAYER.xp % 100;
     const xpToNext = 100 - xpInLevel;
@@ -75,102 +83,125 @@ function renderProfile() {
     if (xpEl) xpEl.textContent = PLAYER.xp;
     if (xpNextEl) xpNextEl.textContent = `до уровня ${PLAYER.level + 1}: ${xpToNext} XP`;
     if (xpBarEl) xpBarEl.style.width = `${xpInLevel}%`;
-
-    // Города — родной + текущий + свёрнутые остальные
-    const citiesEl = document.getElementById('profileCities');
-    if (citiesEl) {
-        const visited = PLAYER.visitedCities || {};
-        const homeKey = PLAYER.homeCity;
-        const currentKey = PLAYER.currentCity;
-
-        // Главные города (всегда видно)
-        const mainKeys = [homeKey, currentKey].filter((v, i, a) => v && a.indexOf(v) === i);
-
-        // Остальные разбиваем на «посещённые» и «непосещённые»
-        const otherVisited = [];
-        const otherUnvisited = [];
-
-        Object.entries(CITIES).forEach(([key, city]) => {
-            if (mainKeys.includes(key)) return;
-            if (visited[key] > 0) otherVisited.push({ key, city });
-            else otherUnvisited.push({ key, city });
-        });
-
-        const renderChip = (key, city) => {
-            const clickable = `city-chip city-chip--clickable" data-city-key="${key}"`;
-
-            if (key === homeKey)         return `<button class="${clickable} home"><i data-lucide="home"></i>${city.name}</button>`;
-            if (key === currentKey)      return `<button class="${clickable} current"><i data-lucide="map-pin"></i>${city.name}</button>`;
-            if (visited[key] > 0)        return `<button class="${clickable} visited"><i data-lucide="check"></i>${city.name}</button>`;
-            return `<button class="${clickable}">${city.name}</button>`;
-        };
-
-        let html = '';
-
-        // Главные
-        mainKeys.forEach(key => {
-            const city = CITIES[key];
-            if (city) html += renderChip(key, city);
-        });
-
-        // Кнопки раскрытия
-        if (otherVisited.length > 0) {
-            html += `<button class="city-chip-toggle" data-toggle-cities="visited">Посещённые (${otherVisited.length})</button>`;
-        }
-        if (otherUnvisited.length > 0) {
-            html += `<button class="city-chip-toggle" data-toggle-cities="unvisited">Другие (${otherUnvisited.length})</button>`;
-        }
-
-        // Скрытые секции
-        if (otherVisited.length > 0) {
-            html += `<div class="city-chips-extra" id="cityExtraVisited" style="display:none;">
-                ${otherVisited.map(({key, city}) => renderChip(key, city)).join('')}
-            </div>`;
-        }
-        if (otherUnvisited.length > 0) {
-            html += `<div class="city-chips-extra" id="cityExtraUnvisited" style="display:none;">
-                ${otherUnvisited.map(({key, city}) => renderChip(key, city)).join('')}
-            </div>`;
-        }
-
-        citiesEl.innerHTML = html;
-    }
-
-    // Статистика
-    const statsEl = document.getElementById('profileStats');
-    if (statsEl) {
-        const visited = PLAYER.visitedCities || {};
-        const totalCheckins = Object.values(PLAYER.checkins || {}).reduce((s, n) => s + n, 0);
-        const uniquePlaces = Object.keys(PLAYER.checkins || {}).length;
-        const visitedCount = Object.values(visited).filter(n => n > 0).length;
-
-        statsEl.innerHTML = `
-            <div class="profile-stat"><strong>${totalCheckins}</strong><small>Чек-инов</small></div>
-            <div class="profile-stat"><strong>${visitedCount}</strong><small>Городов</small></div>
-            <div class="profile-stat"><strong>${uniquePlaces}</strong><small>Мест</small></div>
-        `;
-    }
-
-    // Достижения
-    const badgesEl = document.getElementById('profileBadges');
-    if (badgesEl) {
-        const earned = new Set(PLAYER.badges || []);
-        badgesEl.innerHTML = BADGES.map(badge => {
-            const has = earned.has(badge.id);
-            return `
-                <div class="profile-badge ${has ? 'earned' : 'locked'}">
-                    <div class="badge-icon"><i data-lucide="${badge.icon}"></i></div>
-                    <div class="badge-name">${badge.name}</div>
-                    <div class="badge-desc">${badge.desc}</div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// === Аватар-пикер (для регистрации) ===
+// --- Мои города ---
+function renderProfileCities() {
+    const citiesEl = document.getElementById('profileCities');
+    if (!citiesEl) return;
+
+    const visited = PLAYER.visitedCities || {};
+    const homeKey = PLAYER.homeCity;
+    const currentKey = PLAYER.currentCity;
+
+    const mainKeys = [homeKey, currentKey].filter((v, i, a) => v && a.indexOf(v) === i);
+
+    const otherVisited = [];
+    const otherUnvisited = [];
+
+    Object.entries(CITIES).forEach(([key, city]) => {
+        if (mainKeys.includes(key)) return;
+        if (visited[key] > 0) otherVisited.push({ key, city });
+        else otherUnvisited.push({ key, city });
+    });
+
+    const renderChip = (key, city) => {
+        const clickable = `city-chip city-chip--clickable" data-city-key="${key}"`;
+
+        const editBtn = (type) => `
+            <button class="city-chip__edit" data-edit-city="${type}" title="Сменить город">
+                <i data-lucide="pencil"></i>
+            </button>
+        `;
+
+        if (key === homeKey) {
+            return `
+                <span class="city-chip-wrap">
+                    <button class="${clickable} home"><i data-lucide="home"></i>${city.name}</button>
+                    ${editBtn('home')}
+                </span>
+            `;
+        }
+        if (key === currentKey) {
+            return `
+                <span class="city-chip-wrap">
+                    <button class="${clickable} current"><i data-lucide="map-pin"></i>${city.name}</button>
+                    ${editBtn('current')}
+                </span>
+            `;
+        }
+        if (visited[key] > 0) {
+            return `<button class="${clickable} visited"><i data-lucide="check"></i>${city.name}</button>`;
+        }
+        return `<button class="${clickable}">${city.name}</button>`;
+    };
+
+    let html = '';
+
+    mainKeys.forEach(key => {
+        const city = CITIES[key];
+        if (city) html += renderChip(key, city);
+    });
+
+    if (otherVisited.length > 0) {
+        html += `<button class="city-chip-toggle" data-toggle-cities="visited">Посещённые (${otherVisited.length})</button>`;
+    }
+    if (otherUnvisited.length > 0) {
+        html += `<button class="city-chip-toggle" data-toggle-cities="unvisited">Другие (${otherUnvisited.length})</button>`;
+    }
+
+    if (otherVisited.length > 0) {
+        html += `<div class="city-chips-extra" id="cityExtraVisited" style="display:none;">
+            ${otherVisited.map(({key, city}) => renderChip(key, city)).join('')}
+        </div>`;
+    }
+    if (otherUnvisited.length > 0) {
+        html += `<div class="city-chips-extra" id="cityExtraUnvisited" style="display:none;">
+            ${otherUnvisited.map(({key, city}) => renderChip(key, city)).join('')}
+        </div>`;
+    }
+
+    citiesEl.innerHTML = html;
+}
+
+// --- Статистика ---
+function renderProfileStats() {
+    const statsEl = document.getElementById('profileStats');
+    if (!statsEl) return;
+
+    const visited = PLAYER.visitedCities || {};
+    const totalCheckins = Object.values(PLAYER.checkins || {}).reduce((s, n) => s + n, 0);
+    const uniquePlaces = Object.keys(PLAYER.checkins || {}).length;
+    const visitedCount = Object.values(visited).filter(n => n > 0).length;
+
+    statsEl.innerHTML = `
+        <div class="profile-stat"><strong>${totalCheckins}</strong><small>Чек-инов</small></div>
+        <div class="profile-stat"><strong>${visitedCount}</strong><small>Городов</small></div>
+        <div class="profile-stat"><strong>${uniquePlaces}</strong><small>Мест</small></div>
+    `;
+}
+
+// --- Достижения ---
+function renderProfileBadges() {
+    const badgesEl = document.getElementById('profileBadges');
+    if (!badgesEl) return;
+
+    const earned = new Set(PLAYER.badges || []);
+    badgesEl.innerHTML = BADGES.map(badge => {
+        const has = earned.has(badge.id);
+        return `
+            <div class="profile-badge ${has ? 'earned' : 'locked'}">
+                <div class="badge-icon"><i data-lucide="${badge.icon}"></i></div>
+                <div class="badge-name">${badge.name}</div>
+                <div class="badge-desc">${badge.desc}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ============================================
+// АВАТАР-ПИКЕР (для регистрации)
+// ============================================
 function initAvatarPicker() {
     const picker = document.getElementById('regAvatarPicker');
     if (!picker) return;
@@ -188,16 +219,21 @@ function initAvatarPicker() {
     });
 }
 
-// === Select городов ===
+// ============================================
+// SELECT ГОРОДОВ
+// ============================================
+function buildCityOptionsHtml() {
+    return Object.entries(CITIES)
+        .map(([key, city]) => `<option value="${key}">${city.name} (${city.country})</option>`)
+        .join('');
+}
+
 function fillCitySelects() {
     const homeSelect = document.getElementById('regHomeCity');
     const currentSelect = document.getElementById('regCurrentCity');
     if (!homeSelect || !currentSelect) return;
 
-    const options = Object.entries(CITIES)
-        .map(([key, city]) => `<option value="${key}">${city.name} (${city.country})</option>`)
-        .join('');
-
+    const options = buildCityOptionsHtml();
     homeSelect.innerHTML = options;
     currentSelect.innerHTML = options;
     currentSelect.value = homeSelect.value;
@@ -207,21 +243,13 @@ function fillPlanCitySelect(preselectKey) {
     const select = document.getElementById('planCity');
     if (!select) return;
 
-    select.innerHTML = Object.entries(CITIES)
-        .map(([key, city]) => `<option value="${key}">${city.name} (${city.country})</option>`)
-        .join('');
-
+    select.innerHTML = buildCityOptionsHtml();
     if (preselectKey) select.value = preselectKey;
 }
 
-// === Иконки ===
-function renderIcons() {
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-}
-
-// === Редактирование имени ===
+// ============================================
+// РЕДАКТИРОВАНИЕ ИМЕНИ
+// ============================================
 function enableNameEdit() {
     const profileModal = document.getElementById('profileModal');
     const isProfileModal = profileModal && profileModal.style.display === 'flex';
@@ -312,13 +340,119 @@ function cancelNameEdit() {
     if (editBtn) editBtn.style.display = '';
 }
 
-// === Смена аватара ===
+// ============================================
+// РЕДАКТИРОВАНИЕ НИКА
+// ============================================
+function enableUsernameEdit() {
+    if (!PLAYER) return;
+
+    const row = document.querySelector('.profile-username-row');
+    const usernameSpan = document.getElementById('profileUsername');
+    const editBtn = document.getElementById('editUsernameBtn');
+    if (!row || !usernameSpan || !editBtn) return;
+
+    usernameSpan.parentElement.style.display = 'none';
+    editBtn.style.display = 'none';
+
+    const form = document.createElement('div');
+    form.className = 'profile-username-edit';
+    form.id = 'usernameEditForm';
+    form.innerHTML = `
+        <span class="profile-username-at">@</span>
+        <input type="text" id="usernameEditInput" class="profile-username-input"
+               value="${PLAYER.username || ''}"
+               placeholder="твой_ник"
+               maxlength="20"
+               autocomplete="off"
+               spellcheck="false">
+        <button class="profile-name-save" id="usernameEditSave">✓</button>
+        <button class="profile-name-cancel" id="usernameEditCancel">✕</button>
+        <p id="usernameEditError" class="auth-error" style="display:none;width:100%;"></p>
+    `;
+
+    row.parentNode.insertBefore(form, row.nextSibling);
+
+    const input = document.getElementById('usernameEditInput');
+    input.focus();
+    input.select();
+
+    input.addEventListener('input', () => {
+        const pos = input.selectionStart;
+        input.value = input.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+        input.setSelectionRange(pos, pos);
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') saveUsernameEdit();
+        if (e.key === 'Escape') cancelUsernameEdit();
+    });
+
+    document.getElementById('usernameEditSave').addEventListener('click', saveUsernameEdit);
+    document.getElementById('usernameEditCancel').addEventListener('click', cancelUsernameEdit);
+}
+
+async function saveUsernameEdit() {
+    const input = document.getElementById('usernameEditInput');
+    const errorEl = document.getElementById('usernameEditError');
+    if (!input) return;
+
+    const newUsername = input.value.trim().toLowerCase();
+
+    if (newUsername === PLAYER.username) {
+        cancelUsernameEdit();
+        return;
+    }
+
+    const validationError = validateUsername(newUsername);
+    if (validationError) {
+        errorEl.textContent = validationError;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    errorEl.style.display = 'none';
+
+    const result = await saveUsername(PLAYER.playerId, newUsername);
+
+    if (result.error) {
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    PLAYER.username = result.username;
+    cancelUsernameEdit();
+
+    const usernameEl = document.getElementById('profileUsername');
+    if (usernameEl) usernameEl.textContent = PLAYER.username;
+
+    showWarningToast('✅ Ник изменён: @' + PLAYER.username);
+
+    setTimeout(() => {
+        if (typeof renderProfile === 'function') renderProfile();
+    }, 50);
+}
+
+function cancelUsernameEdit() {
+    const form = document.getElementById('usernameEditForm');
+    const row = document.querySelector('.profile-username-row');
+    const label = document.querySelector('.profile-username-label');
+    const editBtn = document.getElementById('editUsernameBtn');
+
+    if (form) form.remove();
+    if (row) row.style.display = '';
+    if (label) label.style.display = '';
+    if (editBtn) editBtn.style.display = '';
+}
+
+// ============================================
+// СМЕНА АВАТАРА
+// ============================================
 function openAvatarModal() {
     if (!PLAYER) return;
     const modal = document.getElementById('avatarModal');
     if (!modal) return;
 
-    selectedNewAvatar = null;
     const preview = document.getElementById('avatarPreview');
     const errorEl = document.getElementById('avatarError');
     const fileInput = document.getElementById('avatarFileInput');
@@ -382,7 +516,9 @@ async function saveUploadedAvatar(file) {
     closeAvatarModal();
 }
 
-// === Галерея ===
+// ============================================
+// ГАЛЕРЕЯ
+// ============================================
 async function openGalleryModal() {
     if (!PLAYER || !PLAYER.playerId) return;
     const modal = document.getElementById('galleryModal');
@@ -411,7 +547,9 @@ function closeGalleryModal() {
     if (modal) modal.style.display = 'none';
 }
 
-// === Мои отзывы ===
+// ============================================
+// МОИ ОТЗЫВЫ
+// ============================================
 async function openMyReviewsModal() {
     if (!PLAYER || !PLAYER.playerId) return;
     const modal = document.getElementById('myReviewsModal');
@@ -462,7 +600,9 @@ function closeMyReviewsModal() {
     if (modal) modal.style.display = 'none';
 }
 
-// === Настройки ===
+// ============================================
+// НАСТРОЙКИ
+// ============================================
 function openSettingsModal() {
     if (!PLAYER) return;
     const modal = document.getElementById('settingsModal');
@@ -483,114 +623,4 @@ function openSettingsModal() {
 function closeSettingsModal() {
     const modal = document.getElementById('settingsModal');
     if (modal) modal.style.display = 'none';
-}
-
-// ============================================
-// РЕДАКТИРОВАНИЕ НИКА
-// ============================================
-
-function enableUsernameEdit() {
-    if (!PLAYER) return;
-
-    const row = document.querySelector('.profile-username-row');
-    const usernameSpan = document.getElementById('profileUsername');
-    const editBtn = document.getElementById('editUsernameBtn');
-    if (!row || !usernameSpan || !editBtn) return;
-
-    // Скрываем текущие
-    usernameSpan.parentElement.style.display = 'none';
-    editBtn.style.display = 'none';
-
-    // Форма
-    const form = document.createElement('div');
-    form.className = 'profile-username-edit';
-    form.id = 'usernameEditForm';
-    form.innerHTML = `
-        <span class="profile-username-at">@</span>
-        <input type="text" id="usernameEditInput" class="profile-username-input"
-               value="${PLAYER.username || ''}"
-               placeholder="твой_ник"
-               maxlength="20"
-               autocomplete="off"
-               spellcheck="false">
-        <button class="profile-name-save" id="usernameEditSave">✓</button>
-        <button class="profile-name-cancel" id="usernameEditCancel">✕</button>
-        <p id="usernameEditError" class="auth-error" style="display:none;width:100%;"></p>
-    `;
-
-    row.parentNode.insertBefore(form, row.nextSibling);
-
-    const input = document.getElementById('usernameEditInput');
-    input.focus();
-    input.select();
-
-    input.addEventListener('input', () => {
-        // Приводим к lowercase
-        const pos = input.selectionStart;
-        input.value = input.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
-        input.setSelectionRange(pos, pos);
-    });
-
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') saveUsernameEdit();
-        if (e.key === 'Escape') cancelUsernameEdit();
-    });
-
-    document.getElementById('usernameEditSave').addEventListener('click', saveUsernameEdit);
-    document.getElementById('usernameEditCancel').addEventListener('click', cancelUsernameEdit);
-}
-
-async function saveUsernameEdit() {
-    const input = document.getElementById('usernameEditInput');
-    const errorEl = document.getElementById('usernameEditError');
-    if (!input) return;
-
-    const newUsername = input.value.trim().toLowerCase();
-
-    if (newUsername === PLAYER.username) {
-        cancelUsernameEdit();
-        return;
-    }
-
-    const validationError = validateUsername(newUsername);
-    if (validationError) {
-        errorEl.textContent = validationError;
-        errorEl.style.display = 'block';
-        return;
-    }
-
-    errorEl.style.display = 'none';
-
-    const result = await saveUsername(PLAYER.playerId, newUsername);
-
-    if (result.error) {
-        errorEl.textContent = result.error;
-        errorEl.style.display = 'block';
-        return;
-    }
-
-    PLAYER.username = result.username;
-    cancelUsernameEdit();
-
-    // Обновляем текст ника сразу
-    const usernameEl = document.getElementById('profileUsername');
-    if (usernameEl) usernameEl.textContent = PLAYER.username;
-
-    showWarningToast('✅ Ник изменён: @' + PLAYER.username);
-
-    setTimeout(() => {
-        if (typeof renderProfile === 'function') renderProfile();
-    }, 50);
-}
-
-function cancelUsernameEdit() {
-    const form = document.getElementById('usernameEditForm');
-    const row = document.querySelector('.profile-username-row');
-    const label = document.querySelector('.profile-username-label');
-    const editBtn = document.getElementById('editUsernameBtn');
-
-    if (form) form.remove();
-    if (row) row.style.display = '';
-    if (label) label.style.display = '';   // ← ВОССТАНАВЛИВАЕМ
-    if (editBtn) editBtn.style.display = '';
 }
