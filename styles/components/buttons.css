@@ -474,3 +474,14 @@
     font-size: 14px;
     opacity: 0.6;
 }
+
+/* === Убираем двойной "+" у кнопок (уже есть Lucide-иконка) === */
+.add-place-btn::before,
+.add-place-btn::after,
+#hasharCreateBtn::before,
+#dashAddPlanBtn::before,
+#gapCreateBtn::before,
+#dashHasharCreateBtn::before {
+    content: none !important;
+    display: none !important;
+}
