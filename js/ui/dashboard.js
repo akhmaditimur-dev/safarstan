@@ -30,7 +30,12 @@ async function showDashboard() {
     await renderPlans();
     await renderFriends();
     await renderFeed();
-
+    
+    // === КАЛЕНДАРЬ ===
+    if (typeof renderCalendar === 'function') {
+        renderCalendar();
+    }
+    
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 

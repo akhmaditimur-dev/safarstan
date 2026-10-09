@@ -765,3 +765,119 @@
     .modal-close { right: 12px; }
     .modal-back  { left: 12px; }
 }
+
+/* === Модалка «С кем был?» === */
+.tag-friends-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+    margin: 12px 0;
+    padding: 4px 0;
+}
+
+.tag-friend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--color-bg-soft);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+}
+
+.tag-friend-item:hover {
+    background: var(--color-primary-light);
+}
+
+.tag-friend-item.active {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+}
+
+.tag-friend-item__avatar {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--color-surface);
+    font-size: 20px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.tag-friend-item__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tag-friend-item__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tag-friend-item__name {
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tag-friend-item__level {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
+
+.tag-friend-item__check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+}
+
+.tag-friend-item.active .tag-friend-item__check {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+
+.tag-friend-item__check svg {
+    width: 14px;
+    height: 14px;
+    display: none;
+}
+
+.tag-friend-item.active .tag-friend-item__check svg {
+    display: block;
+}
+
+.tag-friends-hint {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+.tag-friends-empty {
+    text-align: center;
+    padding: 20px;
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+}

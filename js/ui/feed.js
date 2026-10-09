@@ -32,8 +32,15 @@ async function renderFeed() {
     FEED = await loadFeed(10);
 
     let feedLikes = {};
+    let feedTags = {};
     if (FEED.length > 0) {
         feedLikes = await loadFeedLikes(FEED.map(f => f.id));
+
+        // Загружаем отметки друзей для чек-инов
+        const checkinEvents = FEED.filter(f => f.event_type === 'checkin' && f.id);
+        if (checkinEvents.length > 0 && typeof loadCheckinTagsForFeed === 'function') {
+            feedTags = await loadCheckinTagsForFeed(checkinEvents);
+        }
     }
 
     let items = FEED;
@@ -70,7 +77,11 @@ async function renderFeed() {
     }
 
     container.innerHTML = items
-        .map(item => renderFeedItem(item, feedLikes[item.id] || { count: 0, myLike: false }))
+        .map(item => renderFeedItem(
+            item,
+            feedLikes[item.id] || { count: 0, myLike: false },
+            feedTags[item.id] || []
+        ))
         .join('');
 
     fillFeedAvatars();
@@ -100,7 +111,7 @@ function renderFeedEmpty(container) {
 // ============================================
 // ОДНО СОБЫТИЕ
 // ============================================
-function renderFeedItem(item, likeInfo) {
+function renderFeedItem(item, likeInfo, taggedFriends) {
     const player = item.players || {};
     const name = player.name || 'Игрок';
     const avatar = player.avatar || '🧑‍💼';
@@ -113,9 +124,21 @@ function renderFeedItem(item, likeInfo) {
     let text = '';
 
     switch (item.event_type) {
-        case 'checkin':
-            text = `${nameHtml} был в <strong>${escapeHtml(data.place || 'месте')}</strong>${cityName ? ` (${escapeHtml(cityName)})` : ''}`;
+        case 'checkin': {
+            // Строим список отмеченных друзей
+            let withHtml = '';
+            if (taggedFriends && taggedFriends.length > 0) {
+                const friendNames = taggedFriends.map(f => escapeHtml(f.name)).join(', ');
+
+                if (taggedFriends.length === 1) {
+                    withHtml = ` <span class="feed-with">с ${friendNames}</span>`;
+                } else {
+                    withHtml = ` <span class="feed-with">с ${friendNames}</span>`;
+                }
+            }
+            text = `${nameHtml} был в <strong>${escapeHtml(data.place || 'месте')}</strong>${cityName ? ` (${escapeHtml(cityName)})` : ''}${withHtml}`;
             break;
+        }
         case 'ugc':
             text = `${nameHtml} добавил место <strong>${escapeHtml(data.title || '')}</strong>${cityName ? ` в ${escapeHtml(cityName)}` : ''}`;
             break;

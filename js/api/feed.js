@@ -131,3 +131,54 @@ async function loadFriendsFeed(friendIds, limit = 10) {
     }
     return data || [];
 }
+
+// ============================================
+// ЗАГРУЗКА ОТМЕТОК ДЛЯ СОБЫТИЙ ЛЕНТЫ
+// ============================================
+// Принимает массив feed-объектов, возвращает { feedId: [ {id, name, avatar}, ... ] }
+async function loadCheckinTagsForFeed(feedItems) {
+    if (!feedItems || feedItems.length === 0) return {};
+
+    // Вытаскиваем checkinId из event_data
+    const checkinIds = feedItems
+        .map(f => f.event_data?.checkinId)
+        .filter(id => id);
+
+    if (checkinIds.length === 0) return {};
+
+    const { data, error } = await _supabase
+        .from('checkin_tags')
+        .select(`
+            checkin_id,
+            tagged_id,
+            tagged:public_players!checkin_tags_tagged_id_fkey (id, name, avatar)
+        `)
+        .in('checkin_id', checkinIds);
+
+    if (error) {
+        console.warn('Ошибка загрузки отметок для ленты:', error);
+        return {};
+    }
+
+    // Группируем по checkinId
+    const byCheckin = {};
+    (data || []).forEach(row => {
+        if (!byCheckin[row.checkin_id]) byCheckin[row.checkin_id] = [];
+        byCheckin[row.checkin_id].push({
+            id: row.tagged_id,
+            name: row.tagged?.name || 'Игрок',
+            avatar: row.tagged?.avatar || '🧑‍💼',
+        });
+    });
+
+    // Переводим в { feedId: [...] }
+    const result = {};
+    feedItems.forEach(f => {
+        const cid = f.event_data?.checkinId;
+        if (cid && byCheckin[cid]) {
+            result[f.id] = byCheckin[cid];
+        }
+    });
+
+    return result;
+}

@@ -42,19 +42,22 @@ async function checkIn(checkinKey) {
         return;
     }
 
-    // === ПРОХОДИМ — ДЕЛАЕМ ЧЕК-ИН ===
-    const cityKey = checkinKey.split('|')[0];
-    const category = checkinKey.split('|')[1];
-    const placeTitle = checkinKey.split('|')[2];
+    // === РАЗБОР КЛЮЧА ===
+    const [cityKey, category, placeTitle] = checkinKey.split('|');
     const isFirstTimeInCity = !PLAYER.visitedCities[cityKey];
 
+    const isHomeCity = (cityKey === PLAYER.homeCity);
+    const isCurrentCity = (cityKey === PLAYER.currentCity);
+    const isForeignCity = !isHomeCity && !isCurrentCity;
+
+    // === XP ===
     let xpGained = 5;
     let reason = 'Свой город';
 
-    if (cityKey === PLAYER.homeCity && cityKey !== PLAYER.currentCity) {
+    if (isHomeCity && !isCurrentCity) {
         xpGained = 7;
         reason = 'Родной город';
-    } else if (cityKey !== PLAYER.currentCity && cityKey !== PLAYER.homeCity) {
+    } else if (isForeignCity) {
         xpGained = 15;
         reason = 'Чужой город';
     }
@@ -64,44 +67,51 @@ async function checkIn(checkinKey) {
         reason = 'Новый город!';
     }
 
-    // Обновляем PLAYER
+    // === ОБНОВЛЕНИЕ PLAYER ===
     PLAYER.checkins[checkinKey] = (PLAYER.checkins[checkinKey] || 0) + 1;
     PLAYER.visitedCities[cityKey] = (PLAYER.visitedCities[cityKey] || 0) + 1;
     PLAYER.xp += xpGained;
-
-    // Обновляем защиту
     PLAYER.checkinCooldowns[checkinKey] = now;
     PLAYER.todayCheckins += 1;
 
-    // Очки городам
+    // === ОЧКИ ГОРОДАМ ===
     ensureCityScores();
-    const isHomeCity = (cityKey === PLAYER.homeCity);
-    const isCurrentCity = (cityKey === PLAYER.currentCity);
-    const isForeignCity = !isHomeCity && !isCurrentCity;
 
-    if (isCurrentCity) CITY_SCORES[cityKey].residents += 5;
-    if (isHomeCity && !isCurrentCity) CITY_SCORES[cityKey].home += 7;
-    if (isForeignCity) {
-        const bonus = isFirstTimeInCity ? 20 : 10;
-        CITY_SCORES[cityKey].hospitality += bonus;
+    let cityScoreField = 'residents';
+    let cityScoreValue = 5;
+
+    if (isCurrentCity) {
+        cityScoreField = 'residents';
+        cityScoreValue = 5;
+        CITY_SCORES[cityKey].residents += 5;
+    } else if (isHomeCity) {
+        cityScoreField = 'home';
+        cityScoreValue = 7;
+        CITY_SCORES[cityKey].home += 7;
+    } else {
+        cityScoreField = 'hospitality';
+        cityScoreValue = isFirstTimeInCity ? 20 : 10;
+        CITY_SCORES[cityKey].hospitality += cityScoreValue;
     }
 
-    // Уровень
+    // === УРОВЕНЬ ===
     const oldLevel = PLAYER.level;
     PLAYER.level = getLevelFromXP(PLAYER.xp);
 
-    // Сохранение
+    // === СОХРАНЕНИЕ НА СЕРВЕР ===
     await savePlayerToServer(PLAYER);
+
+    // Чек-ин → получаем checkinId → событие в ленту
+    const checkinId = await saveCheckin(PLAYER.playerId, cityKey, category, placeTitle);
+
     await saveFeedEvent(PLAYER.playerId, 'checkin', {
         place: placeTitle,
+        checkinId: checkinId || null,
     }, cityKey);
-    await saveCheckin(PLAYER.playerId, cityKey, category, placeTitle);
-    await updateCityScore(
-        cityKey,
-        isCurrentCity ? 'residents' : isHomeCity ? 'home' : 'hospitality',
-        isCurrentCity ? 5 : isHomeCity ? 7 : (isFirstTimeInCity ? 20 : 10)
-    );
 
+    await updateCityScore(cityKey, cityScoreField, cityScoreValue);
+
+    // === UI: тосты и уровни ===
     updatePlayerBadge();
     showXPToast(xpGained, reason);
 
@@ -109,6 +119,7 @@ async function checkIn(checkinKey) {
         setTimeout(() => showLevelUp(PLAYER.level), 400);
     }
 
+    // === БЕЙДЖИ ===
     const newBadges = checkBadges();
     if (newBadges.length > 0) {
         await savePlayerToServer(PLAYER);
@@ -117,6 +128,7 @@ async function checkIn(checkinKey) {
         });
     }
 
+    // === КВЕСТЫ ===
     const newQuests = checkQuests();
     if (newQuests.length > 0) {
         await savePlayerToServer(PLAYER);
@@ -126,9 +138,21 @@ async function checkIn(checkinKey) {
         });
     }
 
+    // === ПЕРЕРИСОВКА ===
     if (typeof resetRatingsCache === 'function') resetRatingsCache();
+
     renderAll();
     renderRatings();
     renderQuests();
     updateMapMarkers();
+
+    // Обновляем ленту, чтобы событие появилось сразу
+    if (typeof renderFeed === 'function') {
+        await renderFeed();
+    }
+
+    // === ОТМЕТКА ДРУЗЕЙ ===
+    if (checkinId) {
+        openTagFriendsModal(checkinId, checkinKey, placeTitle);
+    }
 }

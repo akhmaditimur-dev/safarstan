@@ -175,9 +175,9 @@ function buildCardHtml(item, category, options) {
             <div class="meta"><span>${item.meta[0]}</span><span>${item.meta[1]}</span></div>
             ${ratingBlock}
             <div class="card-actions">
-                <button class="checkin-btn" data-key="${checkinKey}">
-                    <i data-lucide="check"></i>
-                    ${visited ? `Был${count > 1 ? ' ×' + count : ''}` : 'Я здесь'}
+                <button class="checkin-btn ${visited ? (count > 1 ? 'checkin-btn--multi' : 'checkin-btn--visited') : 'checkin-btn--new'}" data-key="${checkinKey}">
+                    <i data-lucide="${visited ? 'check' : 'map-pin'}"></i>
+                    ${visited ? `Был × ${count}` : 'Отметиться'}
                 </button>
                 <button class="photo-btn"
                         data-add-photo="${checkinKey}"

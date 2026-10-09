@@ -68,7 +68,7 @@
     <link rel="stylesheet" href="styles/sections/photos.css">
     <link rel="stylesheet" href="styles/sections/landing.css">
     <link rel="stylesheet" href="styles/sections/dashboard.css">
-    <link rel="stylesheet" href="styles/sections/sections.css">
+    <link rel="stylesheet" href="styles/sections/calendar.css">    <link rel="stylesheet" href="styles/sections/sections.css">
     <link rel="stylesheet" href="styles/responsive.css">
 </head>
 <body>
@@ -176,7 +176,25 @@
                 </div>
 
                 <!-- ПРАВАЯ КОЛОНКА -->
+                <!-- ПРАВАЯ КОЛОНКА -->
                 <div class="dashboard-col dashboard-col--right">
+                    <!-- КАЛЕНДАРЬ -->
+                    <div class="dashboard-card dashboard-card--calendar" id="dashCalendarCard">
+                        <div class="dashboard-card__header">
+                            <h3>Календарь</h3>
+                            <div class="calendar-nav">
+                                <button class="calendar-nav__btn" id="calPrevBtn" title="Предыдущий месяц">
+                                    <i data-lucide="chevron-left"></i>
+                                </button>
+                                <span class="calendar-nav__label" id="calMonthLabel">—</span>
+                                <button class="calendar-nav__btn" id="calNextBtn" title="Следующий месяц">
+                                    <i data-lucide="chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid" id="calGrid"></div>
+                    </div>
+
                     <div class="dashboard-card">
                         <h3>Мой вклад</h3>
                         <div class="dashboard-contribution" id="dashContribution"></div>
@@ -1015,6 +1033,16 @@
         </div>
     </div>
 
+    <!-- Модалка: события дня -->
+    <div id="calendarDayModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="calendarDayClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2 id="calendarDayTitle">—</h2>
+            <p class="modal-subtitle">События этого дня</p>
+            <div id="calendarDayList" class="calendar-day-list"></div>
+        </div>
+    </div>
+
     <div id="friendsModal" class="modal-overlay" style="display:none;">
         <div class="modal modal--friends">
             <button id="friendsClose" class="modal-close"><i data-lucide="x"></i></button>
@@ -1073,6 +1101,24 @@
             <div id="photoPreview" class="photo-preview"></div>
             <button id="photoSubmit" class="modal-btn">Загрузить фото</button>
             <p id="photoError" class="auth-error" style="display:none;"></p>
+        </div>
+    </div>
+
+    <!-- Модалка: с кем был (отметить друзей после чек-ина) -->
+    <div id="tagFriendsModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="tagFriendsClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>С кем ты был?</h2>
+            <p class="modal-subtitle" id="tagFriendsSubtitle">—</p>
+
+            <div id="tagFriendsList" class="tag-friends-list"></div>
+
+            <p class="tag-friends-hint">
+                Можно отметить до <strong>5 друзей</strong>. XP им не идёт — просто приятное упоминание.
+            </p>
+
+            <button id="tagFriendsSubmit" class="modal-btn">Отметить</button>
+            <button id="tagFriendsSkip" class="btn btn-ghost btn-block">Пропустить</button>
         </div>
     </div>
 
@@ -1396,9 +1442,11 @@
     <script defer src="js/api/auth.js"></script>
     <script defer src="js/api/player.js"></script>
     <script defer src="js/api/checkins.js"></script>
+    <script defer src="js/api/checkin-tags.js"></script>
     <script defer src="js/api/cities.js"></script>
     <script defer src="js/api/ugc.js"></script>
     <script defer src="js/api/plans.js"></script>
+    <script defer src="js/api/calendar.js"></script>
     <script defer src="js/api/feed.js"></script>
     <script defer src="js/api/feed-likes.js"></script>
     <script defer src="js/api/friends.js"></script>
@@ -1416,6 +1464,7 @@
     <script defer src="js/game/ugc.js"></script>
 
     <script defer src="js/ui/toast.js"></script>
+    <script defer src="js/ui/checkin-tags.js"></script>
     <script defer src="js/ui/skeleton.js"></script>
     <script defer src="js/ui/cards.js"></script>
     <script defer src="js/ui/sections.js"></script>
@@ -1432,6 +1481,7 @@
     <script defer src="js/ui/profile/profile-share.js"></script>
     <script defer src="js/ui/header-search.js"></script>
     <script defer src="js/ui/dashboard.js"></script>
+    <script defer src="js/ui/calendar.js"></script>
     <script defer src="js/ui/feed.js"></script>
     <script defer src="js/ui/friends.js"></script>
     <script defer src="js/ui/reviews.js"></script>

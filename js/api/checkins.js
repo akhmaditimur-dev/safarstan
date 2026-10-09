@@ -3,7 +3,7 @@
 // Сохранить чек-ин в базу
 async function saveCheckin(playerId, cityKey, category, placeTitle) {
     const placeKey = `${cityKey}|${category}|${placeTitle}`;
-    const { error } = await _supabase
+    const { data, error } = await _supabase
         .from('checkins')
         .insert({
             player_id: playerId,
@@ -11,8 +11,15 @@ async function saveCheckin(playerId, cityKey, category, placeTitle) {
             category: category,
             place_title: placeTitle,
             place_key: placeKey,
-        });
-    if (error) console.error('Ошибка чек-ина:', error);
+        })
+        .select('id')
+        .single();
+
+    if (error) {
+        console.error('Ошибка чек-ина:', error);
+        return null;
+    }
+    return data?.id || null;
 }
 
 // Загрузить все чек-ины игрока

@@ -794,3 +794,10 @@
         font-size: var(--fs-lg);
     }
 }
+
+/* === Упоминание друзей в ленте === */
+.feed-with {
+    color: var(--color-text-soft);
+    font-style: italic;
+    font-weight: 500;
+}

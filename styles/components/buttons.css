@@ -210,23 +210,83 @@
     transform: translateY(-1px);
 }
 
-/* ---- Чек-ин «Я здесь» ---- */
+/* === Кнопка чек-ина — 3 состояния === */
 .checkin-btn {
+    flex: 1;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: var(--gradient-primary);
-    color: #fff;
-    border: none;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
     padding: 8px 16px;
+    border: none;
     border-radius: var(--radius-full);
+    font-family: inherit;
     font-size: var(--fs-sm);
     font-weight: var(--fw-bold);
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     transition: all var(--transition-base);
-    font-family: inherit;
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
     letter-spacing: -0.01em;
+}
+
+.checkin-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.5;
+    flex-shrink: 0;
+}
+
+/* Не чекинился — призыв, ярко */
+.checkin-btn--new {
+    background: var(--gradient-primary);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+}
+
+.checkin-btn--new:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(22, 163, 74, 0.35);
+}
+
+.checkin-btn--new:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* 1 раз — приглушённая зелёная */
+.checkin-btn--visited {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    border: 2px solid var(--color-primary);
+}
+
+.checkin-btn--visited:hover {
+    background: var(--color-primary-soft);
+    transform: translateY(-1px);
+}
+
+.checkin-btn--visited:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* 2+ раз — зелёная с оранжевым акцентом */
+.checkin-btn--multi {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    border: 2px solid var(--color-warm);
+    position: relative;
+}
+
+.checkin-btn--multi:hover {
+    background: var(--color-warm-light);
+    color: var(--color-warm-dark);
+    transform: translateY(-1px);
+}
+
+.checkin-btn--multi:active {
+    transform: translateY(0) scale(0.98);
 }
 
 .checkin-btn:hover {

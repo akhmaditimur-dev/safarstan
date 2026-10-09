@@ -151,8 +151,13 @@ function renderGapCreateForm() {
             <option value="once">Один раз</option>
         </select>
 
-        <button id="gapCreateSubmit" class="modal-btn">Создать гап</button>
-    `;
+        <label class="modal-label">Ближайшая встреча — дата</label>
+        <input type="date" id="gapStartDateInput" class="modal-input">
+
+        <label class="modal-label">Время (опционально)</label>
+        <input type="time" id="gapTimeInput" class="modal-input" value="18:00">
+
+        <button id="gapCreateSubmit" class="modal-btn">Создать гап</button>    `;
 
     const picker = document.getElementById('gapEmojiPicker');
     if (picker) {
@@ -162,6 +167,14 @@ function renderGapCreateForm() {
             picker.querySelectorAll('.gap-emoji-option').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         };
+    }
+
+    // Устанавливаем дату по умолчанию — завтра
+    const dateInput = document.getElementById('gapStartDateInput');
+    if (dateInput) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateInput.value = tomorrow.toISOString().slice(0, 10);
     }
 }
 
@@ -213,14 +226,31 @@ function renderGapView(gap) {
 }
 
 function formatSchedule(schedule) {
-    if (!schedule) return 'Расписание не задано';
+    if (!schedule || !schedule.type) return 'Расписание не задано';
+
     const map = {
         weekly: 'Каждую неделю',
         biweekly: 'Раз в две недели',
         monthly: 'Раз в месяц',
         once: 'Один раз',
     };
-    return map[schedule.type] || 'По договорённости';
+
+    const base = map[schedule.type] || 'По договорённости';
+
+    // Добавляем дату и время, если есть
+    const parts = [base];
+
+    if (schedule.startDate) {
+        const d = new Date(schedule.startDate);
+        const months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+        parts.push(`с ${d.getDate()} ${months[d.getMonth()]}`);
+    }
+
+    if (schedule.time) {
+        parts.push(`в ${schedule.time}`);
+    }
+
+    return parts.join(', ');
 }
 
 // ============================================
@@ -349,6 +379,14 @@ document.addEventListener('click', async (e) => {
         const emojiBtn = document.querySelector('#gapEmojiPicker .gap-emoji-option.active');
         const emoji = emojiBtn ? emojiBtn.dataset.emoji : '☕';
         const scheduleType = document.getElementById('gapScheduleInput').value;
+        const startDate = document.getElementById('gapStartDateInput').value;
+        const startTime = document.getElementById('gapTimeInput').value;
+
+        // Валидация даты
+        if (!startDate) {
+            showWarningToast('Укажи дату ближайшей встречи');
+            return;
+        }
 
         const result = await createGap({
             name,
@@ -356,7 +394,11 @@ document.addEventListener('click', async (e) => {
             cityKey: document.getElementById('gapCityInput').value,
             meetPoint: document.getElementById('gapMeetInput').value.trim(),
             avatarEmoji: emoji,
-            schedule: { type: scheduleType },
+            schedule: {
+                type: scheduleType,
+                startDate: startDate,
+                time: startTime || null,
+            },
         });
 
         if (result.error) {

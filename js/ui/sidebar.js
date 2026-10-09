@@ -18,6 +18,7 @@ const SIDEBAR_CONFIG = [
         title: 'Личное',
         items: [
             { id: 'navProfileBtn',        icon: 'user',         label: 'Профиль',              action: 'modal',  modal: 'profileModal',         module: null },
+            { id: 'navCalendarBtn',       icon: 'calendar',     label: 'Календарь',            action: 'scroll', target: 'dashCalendarCard',    module: null },
             { id: 'navFriendsBtn',        icon: 'users',        label: 'Друзья',               action: 'modal',  modal: 'friendsModal',         counter: 'dashFriendsCount', module: 'friends' },
             { id: 'navAccessRequestsBtn', icon: 'user-check',   label: 'Запросы на профиль',   action: 'modal',  modal: 'accessRequestsModal',  counter: 'dashAccessRequestsCount', module: 'accessRequests', hiddenIfNot: 'isPrivate' },
             { id: 'navGalleryBtn',        icon: 'image',        label: 'Моя галерея',          action: 'modal',  modal: 'galleryModal',         module: 'gallery' },
