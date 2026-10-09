@@ -88,20 +88,27 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 5px;
     min-width: 0;
-    padding: 10px 14px;
-    font-size: var(--fs-sm);
+    padding: 6px 12px;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
     font-family: inherit;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background var(--transition-fast),
+                color var(--transition-fast),
+                transform var(--transition-fast);
 }
 
 .checkin-btn svg {
-    width: 16px;
-    height: 16px;
-    stroke-width: 2;
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.2;
     flex-shrink: 0;
 }
 
@@ -109,8 +116,8 @@
 .card-actions .reviews-toggle-btn,
 .card-actions .edit-btn,
 .card-actions .delete-btn {
-    width: 34px;
-    height: 34px;
+    width: 28px;
+    height: 28px;
     padding: 0;
     border-radius: 50%;
     display: flex;
@@ -119,20 +126,19 @@
     flex-shrink: 0;
     position: relative;
     background: transparent;
-    border: 1px solid var(--color-border);
+    border: none;
     color: var(--color-text-soft);
     cursor: pointer;
     font-family: inherit;
     transition: background var(--transition-fast),
-                color var(--transition-fast),
-                border-color var(--transition-fast);
+                color var(--transition-fast);
 }
 
 .card-actions .photo-btn svg,
 .card-actions .reviews-toggle-btn svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2;
+    width: 15px;
+    height: 15px;
+    stroke-width: 2.2;
 }
 
 .card-actions .photo-btn:hover,
@@ -144,15 +150,15 @@
 
 .card-actions .edit-btn,
 .card-actions .delete-btn {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
 }
 
 .card-actions .edit-btn svg,
 .card-actions .delete-btn svg {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2;
+    width: 13px;
+    height: 13px;
+    stroke-width: 2.2;
 }
 
 .card-actions .edit-btn:hover {
@@ -394,19 +400,54 @@
     }
 
     .card-actions .checkin-btn {
-        padding: 9px 12px;
+        padding: 5px 10px;
         font-size: var(--fs-xs);
     }
 
     .card-actions .photo-btn,
     .card-actions .reviews-toggle-btn {
-        width: 36px;
-        height: 36px;
+        width: 26px;
+        height: 26px;
     }
 
     .card-actions .photo-btn svg,
     .card-actions .reviews-toggle-btn svg {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
     }
+}
+
+/* ============================================
+   КНОПКА ЧЕК-ИНА — ЦВЕТ ПО СТАТУСУ
+   ============================================ */
+
+/* Отметиться — зелёный (primary) */
+.checkin-btn.checkin-btn--new {
+    background: var(--gradient-primary);
+    color: #fff;
+}
+
+.checkin-btn.checkin-btn--new:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-primary);
+}
+
+/* Был 1 раз — светло-зелёный */
+.checkin-btn.checkin-btn--visited {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
+
+.checkin-btn.checkin-btn--visited:hover {
+    background: var(--color-primary-soft);
+}
+
+/* Был более 1 раза — светло-оранжевый */
+.checkin-btn.checkin-btn--multi {
+    background: var(--color-warm-light);
+    color: var(--color-warm-dark);
+}
+
+.checkin-btn.checkin-btn--multi:hover {
+    background: #fde68a;
 }

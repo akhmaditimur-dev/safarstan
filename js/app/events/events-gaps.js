@@ -75,6 +75,7 @@ on('planSubmit', 'click', async () => {
         return;
     }
 
+    const planId = document.getElementById('planId')?.value || '';
     const cityKey = document.getElementById('planCity').value;
     const placeTitle = document.getElementById('planPlace').value.trim();
     const visitDate = document.getElementById('planDate').value;
@@ -85,32 +86,72 @@ on('planSubmit', 'click', async () => {
         return;
     }
 
-    await savePlan(PLAYER.playerId, {
-        cityKey,
-        placeTitle: placeTitle || null,
-        visitDate,
-        note: note || null,
-    });
+    if (planId) {
+        // === Обновление ===
+        const res = await updatePlan(planId, {
+            cityKey,
+            placeTitle: placeTitle || null,
+            visitDate,
+            note: note || null,
+        });
+        if (res?.error) {
+            showWarningToast('Не удалось сохранить');
+            return;
+        }
+        showWarningToast('✅ План обновлён');
+    } else {
+        // === Создание ===
+        await savePlan(PLAYER.playerId, {
+            cityKey,
+            placeTitle: placeTitle || null,
+            visitDate,
+            note: note || null,
+        });
 
-    await saveFeedEvent(PLAYER.playerId, 'plan', {
-        placeTitle: placeTitle || null,
-    }, cityKey);
+        await saveFeedEvent(PLAYER.playerId, 'plan', {
+            placeTitle: placeTitle || null,
+        }, cityKey);
+
+        showWarningToast('✅ План сохранён');
+    }
 
     document.getElementById('planModal').style.display = 'none';
     await renderPlans();
 });
 
 document.addEventListener('click', async (e) => {
-    if (e.target.dataset.planComplete) {
-        await completePlan(e.target.dataset.planComplete);
+    // Кнопка может быть <button> с иконкой внутри — ищем через closest
+    const completeBtn = e.target.closest('[data-plan-complete]');
+    if (completeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        await completePlan(completeBtn.dataset.planComplete);
         await renderPlans();
         return;
     }
-    if (e.target.dataset.planDelete) {
+
+    const deleteBtn = e.target.closest('[data-plan-delete]');
+    if (deleteBtn) {
+        e.preventDefault();
+        e.stopPropagation();
         const ok = await showConfirm('Удалить план?', { okText: 'Удалить' });
         if (!ok) return;
-        await deletePlan(e.target.dataset.planDelete);
+        await deletePlan(deleteBtn.dataset.planDelete);
         await renderPlans();
+        return;
+    }
+
+    const editBtn = e.target.closest('[data-plan-edit]');
+    if (editBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const planId = editBtn.dataset.planEdit;
+        const plan = (typeof PLANS !== 'undefined' ? PLANS : []).find(p => p.id === planId);
+        if (!plan) {
+            console.warn('План не найден:', planId);
+            return;
+        }
+        openPlanModal(plan.city_key, plan);
         return;
     }
 });

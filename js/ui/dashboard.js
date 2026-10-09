@@ -271,6 +271,9 @@ async function renderPlans() {
                     </div>
                 </div>
                 <div class="plan-item__actions">
+                    <button class="plan-item__btn" data-plan-edit="${plan.id}" title="Редактировать">
+                        <i data-lucide="pencil"></i>
+                    </button>
                     <button class="plan-item__btn" data-plan-complete="${plan.id}" title="Выполнено">
                         <i data-lucide="check"></i>
                     </button>

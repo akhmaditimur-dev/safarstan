@@ -57,3 +57,22 @@ async function completePlan(planId) {
 
     if (error) console.error('Ошибка завершения плана:', error);
 }
+
+// Обновить существующий план
+async function updatePlan(planId, plan) {
+    const { error } = await _supabase
+        .from('plans')
+        .update({
+            city_key: plan.cityKey,
+            place_title: plan.placeTitle || null,
+            visit_date: plan.visitDate,
+            note: plan.note || null,
+        })
+        .eq('id', planId);
+
+    if (error) {
+        console.error('Ошибка обновления плана:', error);
+        return { error: error.message };
+    }
+    return { ok: true };
+}

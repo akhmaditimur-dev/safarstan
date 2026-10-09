@@ -202,17 +202,40 @@ function toggleTheme() {
 // ============================================
 // ПЛАНЫ
 // ============================================
-function openPlanModal(cityKey) {
+function openPlanModal(cityKey, existingPlan = null) {
     if (!PLAYER) return;
 
     fillPlanCitySelect(cityKey || currentCity);
 
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    document.getElementById('planDate').value = tomorrow.toISOString().split('T')[0];
+    const titleEl = document.querySelector('#planModal h2');
+    const submitBtn = document.getElementById('planSubmit');
+    const planIdInput = document.getElementById('planId');
 
-    document.getElementById('planPlace').value = '';
-    document.getElementById('planNote').value = '';
+    if (existingPlan) {
+        // Режим редактирования
+        if (titleEl) titleEl.textContent = 'Редактировать план';
+        if (submitBtn) submitBtn.textContent = 'Сохранить изменения';
+        if (planIdInput) planIdInput.value = existingPlan.id;
+
+        document.getElementById('planCity').value = existingPlan.city_key || currentCity;
+        document.getElementById('planPlace').value = existingPlan.place_title || '';
+        document.getElementById('planDate').value = existingPlan.visit_date
+            ? existingPlan.visit_date.split('T')[0]
+            : '';
+        document.getElementById('planNote').value = existingPlan.note || '';
+    } else {
+        // Режим создания
+        if (titleEl) titleEl.textContent = 'Запланировать визит';
+        if (submitBtn) submitBtn.textContent = 'Сохранить план';
+        if (planIdInput) planIdInput.value = '';
+
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('planDate').value = tomorrow.toISOString().split('T')[0];
+
+        document.getElementById('planPlace').value = '';
+        document.getElementById('planNote').value = '';
+    }
 
     document.getElementById('planModal').style.display = 'flex';
 }

@@ -2,7 +2,7 @@
 
 /* === Общие стили секций === */
 .section {
-    padding: 28px 0;
+    padding: 24px 0;
 }
 
 .section--alt {
@@ -17,7 +17,7 @@
     font-weight: var(--fw-extrabold);
     color: var(--color-text);
     letter-spacing: -0.02em;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     line-height: 1.2;
 }
 
@@ -115,6 +115,14 @@
         height: 400px;
     }
 }
+
+    /* Половина padding между соседними секциями — без схлопывания в ноль */
+    .section + .section,
+    .section + .section--alt,
+    .section--alt + .section,
+    .section--alt + .section--alt {
+        padding-top: 12px;
+    }
 
 @media (max-width: 600px) {
     .section {

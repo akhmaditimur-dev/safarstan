@@ -199,3 +199,57 @@ document.addEventListener('click', (e) => {
         }
     }, 100);
 });
+
+// ============================================
+// МОИ ПЛАНЫ: удаление, выполнение, редактирование
+// ============================================
+
+// Удалить план
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-plan-delete]');
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const ok = await showConfirm('Удалить план?', { okText: 'Удалить' });
+    if (!ok) return;
+
+    await deletePlan(btn.dataset.planDelete);
+    await renderPlans();
+});
+
+// Отметить выполненным
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-plan-complete]');
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const ok = await showConfirm('Отметить выполненным?', { okText: 'Да' });
+    if (!ok) return;
+
+    await completePlan(btn.dataset.planComplete);
+    await renderPlans();
+});
+
+// Редактировать план
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-plan-edit]');
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const planId = btn.dataset.planEdit;
+    const plan = (typeof PLANS !== 'undefined' ? PLANS : []).find(p => p.id === planId);
+    if (!plan) {
+        console.warn('План не найден:', planId);
+        return;
+    }
+
+    if (typeof openPlanModal === 'function') {
+        openPlanModal(plan.city_key, plan);
+    }
+});
