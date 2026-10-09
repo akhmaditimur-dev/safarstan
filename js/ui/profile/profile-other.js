@@ -22,10 +22,13 @@ async function openPlayerProfile(playerId) {
     // Сброс статуса
     const ppStatusEl = document.getElementById('ppStatus');
     if (ppStatusEl) { ppStatusEl.style.display = 'none'; ppStatusEl.innerHTML = ''; }
+
+    // Возвращаем вкладки видимыми (могли скрыться у приватного профиля)
+    const ppTabsReset = document.getElementById('ppTabs');
+    if (ppTabsReset) ppTabsReset.style.display = '';    setPpTab('overview');
     document.getElementById('ppCities').innerHTML = '';
     document.getElementById('ppStats').innerHTML = '';
-    document.getElementById('ppBadges').innerHTML = '';
-    document.getElementById('ppAddFriendBtn').style.display = 'none';
+    document.getElementById('ppBadges').innerHTML = '';    document.getElementById('ppAddFriendBtn').style.display = 'none';
     document.getElementById('ppRemoveFriendBtn').style.display = 'none';
     document.getElementById('ppPendingBtn').style.display = 'none';
 
@@ -228,6 +231,13 @@ function closePlayerProfile() {
 }
 
 async function renderPrivateProfile(player, playerId) {
+    // Скрываем вкладки — они бессмысленны при приватном профиле
+    const ppTabs = document.getElementById('ppTabs');
+    if (ppTabs) ppTabs.style.display = 'none';
+
+    const ppPanes = document.querySelectorAll('#playerProfileModal .profile-tab-pane');
+    ppPanes.forEach(p => p.style.display = 'none');
+
     document.getElementById('ppCities').innerHTML = '';
     document.getElementById('ppStats').innerHTML = '';
     document.getElementById('ppBadges').innerHTML = '';
@@ -313,3 +323,21 @@ async function renderPrivateProfile(player, playerId) {
         });
     }
 }
+
+// Переключение вкладок чужого профиля
+function setPpTab(tabKey) {
+    const tabs = document.querySelectorAll('#ppTabs .profile-tab');
+    const panes = document.querySelectorAll('#playerProfileModal .profile-tab-pane[data-pp-pane]');
+    if (!tabs.length || !panes.length) return;
+
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.ppTab === tabKey));
+    panes.forEach(p => {
+        p.style.display = p.dataset.ppPane === tabKey ? '' : 'none';
+    });
+}
+
+document.addEventListener('click', (e) => {
+    const tab = e.target.closest('#ppTabs .profile-tab');
+    if (!tab) return;
+    setPpTab(tab.dataset.ppTab);
+});

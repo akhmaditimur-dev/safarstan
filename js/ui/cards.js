@@ -160,8 +160,16 @@ function buildCardHtml(item, category, options) {
                         ? `<strong><i data-lucide="star"></i> ${rating.avg}</strong><span>· ${rating.count}</span>`
                         : `<span>Нет отзывов</span>`}
                 </button>
+                <div class="reviews-sort">
+                    <select class="reviews-sort__select" data-reviews-sort="${checkinKey}">
+                        <option value="new">Новые</option>
+                        <option value="high">Высокий рейтинг</option>
+                        <option value="low">Низкий рейтинг</option>
+                    </select>
+                </div>
             </div>
             <div class="reviews-list" data-reviews-list="${checkinKey}"></div>
+            <div class="reviews-footer" data-reviews-footer="${checkinKey}" style="display:none;"></div>
         </div>
     `;
 

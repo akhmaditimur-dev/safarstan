@@ -172,3 +172,18 @@ async function loadMyPhotos(playerId) {
     }
     return data || [];
 }
+
+// Количество моих фото (для статистики профиля)
+async function countMyPhotos(playerId) {
+    if (!playerId) return null;
+    const { count, error } = await _supabase
+        .from('photos')
+        .select('id', { count: 'exact', head: true })
+        .eq('player_id', playerId);
+
+    if (error) {
+        console.warn('countMyPhotos error:', error);
+        return null;
+    }
+    return count || 0;
+}

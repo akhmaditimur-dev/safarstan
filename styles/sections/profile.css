@@ -613,3 +613,37 @@
     background: var(--color-border-soft);
     margin: 20px 0;
 }
+
+/* ============================================
+   ВКЛАДКИ ПРОФИЛЯ
+   ============================================ */
+.profile-tabs {
+    display: flex;
+    gap: var(--sp-2);
+    margin: 0 0 var(--sp-5);
+    padding-bottom: var(--sp-3);
+    border-bottom: 1px solid var(--color-border-soft);
+}
+
+.profile-tab {
+    background: transparent;
+    border: none;
+    color: var(--color-text-soft);
+    padding: var(--sp-2) var(--sp-4);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.profile-tab:hover {
+    background: var(--color-bg-soft);
+    color: var(--color-text);
+}
+
+.profile-tab.active {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}

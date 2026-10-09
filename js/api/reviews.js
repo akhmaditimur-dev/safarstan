@@ -165,3 +165,19 @@ async function updateReview(reviewId, rating, text) {
     }
     return { ok: true };
 }
+
+// Количество моих отзывов (для статистики профиля)
+async function countMyReviews(playerId) {
+    if (!playerId) return null;
+    const { count, error } = await _supabase
+        .from('reviews')
+        .select('id', { count: 'exact', head: true })
+        .eq('player_id', playerId)
+        .eq('is_deleted', false);
+
+    if (error) {
+        console.warn('countMyReviews error:', error);
+        return null;
+    }
+    return count || 0;
+}

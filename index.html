@@ -556,10 +556,19 @@
                 <div class="profile-xp-fill" id="profileXPBar"></div>
             </div>
         </div>
-        <div class="profile-section"><h3>Мои города</h3><div class="profile-cities" id="profileCities"></div></div>
-        <div class="profile-section"><h3>Статистика</h3><div class="profile-stats" id="profileStats"></div></div>
-        <div class="profile-section"><h3>Достижения</h3><div class="profile-badges" id="profileBadges"></div></div>
-        <div class="profile-section" id="myProfileActionsSection">
+        <div class="profile-tabs" id="profileTabs">
+            <button class="profile-tab active" data-profile-tab="overview">Обзор</button>
+            <button class="profile-tab" data-profile-tab="badges">Достижения</button>
+        </div>
+
+        <div class="profile-tab-pane" data-profile-pane="overview">
+            <div class="profile-section"><h3>Мои города</h3><div class="profile-cities" id="profileCities"></div></div>
+            <div class="profile-section"><h3>Статистика</h3><div class="profile-stats" id="profileStats"></div></div>
+        </div>
+
+        <div class="profile-tab-pane" data-profile-pane="badges" style="display:none;">
+            <div class="profile-section"><h3>Достижения</h3><div class="profile-badges" id="profileBadges"></div></div>
+        </div>        <div class="profile-section" id="myProfileActionsSection">
             <button id="myProfileShareBtn" class="btn btn-secondary btn-block"><i data-lucide="share-2"></i> Поделиться профилем</button>
             <button id="myProfileShowQrBtn" class="btn btn-secondary btn-block"><i data-lucide="qr-code"></i> Показать QR</button>
         </div>
@@ -580,10 +589,19 @@
                         </div>
                 </div>
             </div>
-            <div class="profile-section"><h3><i data-lucide="building-2"></i> Города</h3><div class="profile-cities" id="ppCities"></div></div>
-            <div class="profile-section"><h3><i data-lucide="bar-chart-3"></i> Статистика</h3><div class="profile-stats" id="ppStats"></div></div>
-            <div class="profile-section"><h3><i data-lucide="award"></i> Достижения</h3><div class="profile-badges" id="ppBadges"></div></div>
-            <div class="profile-section" id="ppActionsSection">
+            <div class="profile-tabs" id="ppTabs">
+                <button class="profile-tab active" data-pp-tab="overview">Обзор</button>
+                <button class="profile-tab" data-pp-tab="badges">Достижения</button>
+            </div>
+
+            <div class="profile-tab-pane" data-pp-pane="overview">
+                <div class="profile-section"><h3><i data-lucide="building-2"></i> Города</h3><div class="profile-cities" id="ppCities"></div></div>
+                <div class="profile-section"><h3><i data-lucide="bar-chart-3"></i> Статистика</h3><div class="profile-stats" id="ppStats"></div></div>
+            </div>
+
+            <div class="profile-tab-pane" data-pp-pane="badges" style="display:none;">
+                <div class="profile-section"><h3><i data-lucide="award"></i> Достижения</h3><div class="profile-badges" id="ppBadges"></div></div>
+            </div>            <div class="profile-section" id="ppActionsSection">
                 <button id="ppShareBtn" class="btn btn-secondary btn-block"><i data-lucide="share-2"></i> Поделиться профилем</button>
                 <button id="ppShowQrBtn" class="btn btn-secondary btn-block"><i data-lucide="qr-code"></i> Показать QR</button>
                 <button id="ppAddFriendBtn" class="btn btn-primary btn-block" style="display:none;"><i data-lucide="user-plus"></i> Добавить в друзья</button>
@@ -628,6 +646,7 @@
             <button id="myReviewsClose" class="modal-close"><i data-lucide="x"></i></button>
             <h2>Мои отзывы</h2>
             <p class="modal-subtitle">Все твои отзывы о местах</p>
+            <div id="myReviewsToolbar" class="my-reviews-toolbar"></div>
             <div id="myReviewsList" class="my-reviews-list"></div>
         </div>
     </div>
@@ -1097,8 +1116,7 @@
             <h2>Добавить фото</h2>
             <p class="modal-subtitle" id="photoPlaceName">—</p>
             <label class="modal-label">Выбери фото (макс. 3 МБ)</label>
-            <input type="file" id="photoInput" class="modal-input" accept="image/*">
-            <div id="photoPreview" class="photo-preview"></div>
+            <input type="file" id="photoInput" class="modal-input" accept="image/*" capture="environment">            <div id="photoPreview" class="photo-preview"></div>
             <button id="photoSubmit" class="modal-btn">Загрузить фото</button>
             <p id="photoError" class="auth-error" style="display:none;"></p>
         </div>

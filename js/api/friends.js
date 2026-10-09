@@ -180,3 +180,18 @@ async function removeFriend(friendsRowId) {
 
     if (error) console.error('Ошибка удаления друга:', error);
 }
+
+// Количество моих друзей (для статистики профиля)
+async function countMyFriends(playerId) {
+    if (!playerId) return null;
+    const { count, error } = await _supabase
+        .from('friends')
+        .select('id', { count: 'exact', head: true })
+        .or(`player_a.eq.${playerId},player_b.eq.${playerId}`);
+
+    if (error) {
+        console.warn('countMyFriends error:', error);
+        return null;
+    }
+    return count || 0;
+}

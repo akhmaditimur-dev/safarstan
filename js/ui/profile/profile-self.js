@@ -53,12 +53,27 @@ function renderProfile() {
         renderProfileSkeleton();
     }
 
+    // Сброс вкладки на «Обзор» при каждом открытии
+    setProfileTab('overview');
+
     renderProfileHeader();
     renderProfileCities();
     renderProfileStats();
     renderProfileBadges();
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// Переключение вкладок своего профиля
+function setProfileTab(tabKey) {
+    const tabs = document.querySelectorAll('#profileTabs .profile-tab');
+    const panes = document.querySelectorAll('#profileModal .profile-tab-pane[data-profile-pane]');
+    if (!tabs.length || !panes.length) return;
+
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.profileTab === tabKey));
+    panes.forEach(p => {
+        p.style.display = p.dataset.profilePane === tabKey ? '' : 'none';
+    });
 }
 
 // --- Шапка ---
@@ -165,20 +180,44 @@ function renderProfileCities() {
 }
 
 // --- Статистика ---
-function renderProfileStats() {
+async function renderProfileStats() {
     const statsEl = document.getElementById('profileStats');
     if (!statsEl) return;
 
+    // Локальные данные (мгновенно)
     const visited = PLAYER.visitedCities || {};
     const totalCheckins = Object.values(PLAYER.checkins || {}).reduce((s, n) => s + n, 0);
     const uniquePlaces = Object.keys(PLAYER.checkins || {}).length;
     const visitedCount = Object.values(visited).filter(n => n > 0).length;
 
+    // Сразу рисуем с прочерками для серверных цифр
     statsEl.innerHTML = `
         <div class="profile-stat"><strong>${totalCheckins}</strong><small>Чек-инов</small></div>
         <div class="profile-stat"><strong>${visitedCount}</strong><small>Городов</small></div>
         <div class="profile-stat"><strong>${uniquePlaces}</strong><small>Мест</small></div>
+        <div class="profile-stat"><strong id="psReviews">—</strong><small>Отзывов</small></div>
+        <div class="profile-stat"><strong id="psPhotos">—</strong><small>Фото</small></div>
+        <div class="profile-stat"><strong id="psFriends">—</strong><small>Друзей</small></div>
     `;
+
+    // Параллельно тянем серверные метрики
+    try {
+        const [reviewsCount, photosCount, friendsCount] = await Promise.all([
+            countMyReviews(PLAYER.playerId),
+            countMyPhotos(PLAYER.playerId),
+            countMyFriends(PLAYER.playerId),
+        ]);
+
+        const elR = document.getElementById('psReviews');
+        const elP = document.getElementById('psPhotos');
+        const elF = document.getElementById('psFriends');
+
+        if (elR) elR.textContent = reviewsCount ?? '—';
+        if (elP) elP.textContent = photosCount ?? '—';
+        if (elF) elF.textContent = friendsCount ?? '—';
+    } catch (err) {
+        console.warn('Не удалось загрузить расширенную статистику:', err);
+    }
 }
 
 // --- Достижения ---
@@ -550,6 +589,14 @@ function closeGalleryModal() {
 // ============================================
 // МОИ ОТЗЫВЫ
 // ============================================
+const MY_REVIEWS_STATE = {
+    q: '',
+    rating: 'all',   // 'all' | '5' | '4' | '3' | 'none'
+    city: 'all',
+    sort: 'new',     // 'new' | 'old' | 'high' | 'low'
+    all: [],
+};
+
 async function openMyReviewsModal() {
     if (!PLAYER || !PLAYER.playerId) return;
     const modal = document.getElementById('myReviewsModal');
@@ -560,13 +607,136 @@ async function openMyReviewsModal() {
     modal.style.display = 'flex';
 
     const reviews = await loadMyReviews(PLAYER.playerId);
+    MY_REVIEWS_STATE.all = reviews;
+    MY_REVIEWS_STATE.q = '';
+    MY_REVIEWS_STATE.rating = 'all';
+    MY_REVIEWS_STATE.city = 'all';
+    MY_REVIEWS_STATE.sort = 'new';
+
+    const searchInput = document.getElementById('myReviewsSearch');
+    if (searchInput) searchInput.value = '';
+
+    renderMyReviewsToolbar();
+    renderMyReviewsList();
+}
+
+function closeMyReviewsModal() {
+    const modal = document.getElementById('myReviewsModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function renderMyReviewsToolbar() {
+    const toolbar = document.getElementById('myReviewsToolbar');
+    if (!toolbar) return;
+
+    const reviews = MY_REVIEWS_STATE.all;
+
+    // Города, в которых есть отзывы
+    const cityKeys = [...new Set(reviews.map(r => r.place_key.split('|')[0]))];
+    const showCityFilter = cityKeys.length > 1;
+
+    const ratingChips = [
+        { key: 'all',  label: 'Все' },
+        { key: '5',    label: '5★' },
+        { key: '4',    label: '4★' },
+        { key: '3',    label: '3★' },
+        { key: 'none', label: 'Без оценки' },
+    ];
+
+    const sortChips = [
+        { key: 'new',  label: 'Новые' },
+        { key: 'old',  label: 'Старые' },
+        { key: 'high', label: 'Высокий рейтинг' },
+        { key: 'low',  label: 'Низкий рейтинг' },
+    ];
+
+    toolbar.innerHTML = `
+        <div class="my-reviews-search">
+            <span class="my-reviews-search__icon"><i data-lucide="search"></i></span>
+            <input type="text" id="myReviewsSearch" class="my-reviews-search__input"
+                   placeholder="Поиск по тексту или месту"
+                   value="${escapeHtml(MY_REVIEWS_STATE.q)}">
+            <button type="button" class="my-reviews-search__clear" id="myReviewsSearchClear"
+                    style="${MY_REVIEWS_STATE.q ? '' : 'display:none;'}">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <div class="my-reviews-chips" data-filter="rating">
+            ${ratingChips.map(c => `
+                <button type="button" class="my-reviews-chip ${MY_REVIEWS_STATE.rating === c.key ? 'active' : ''}"
+                        data-my-rating="${c.key}">${c.label}</button>
+            `).join('')}
+        </div>
+
+        ${showCityFilter ? `
+            <div class="my-reviews-chips" data-filter="city">
+                <button type="button" class="my-reviews-chip ${MY_REVIEWS_STATE.city === 'all' ? 'active' : ''}"
+                        data-my-city="all">Все города</button>
+                ${cityKeys.map(k => `
+                    <button type="button" class="my-reviews-chip ${MY_REVIEWS_STATE.city === k ? 'active' : ''}"
+                            data-my-city="${k}">${CITIES[k] ? CITIES[k].name : k}</button>
+                `).join('')}
+            </div>
+        ` : ''}
+
+        <div class="my-reviews-chips" data-filter="sort">
+            ${sortChips.map(c => `
+                <button type="button" class="my-reviews-chip ${MY_REVIEWS_STATE.sort === c.key ? 'active' : ''}"
+                        data-my-sort="${c.key}">${c.label}</button>
+            `).join('')}
+        </div>
+    `;
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function getFilteredMyReviews() {
+    const { q, rating, city, sort, all } = MY_REVIEWS_STATE;
+    const needle = q.trim().toLowerCase();
+
+    let arr = all.filter(r => {
+        const [cityKey, , placeTitle] = r.place_key.split('|');
+
+        if (city !== 'all' && cityKey !== city) return false;
+
+        if (rating === 'none') {
+            if (r.rating) return false;
+        } else if (rating !== 'all') {
+            if (Number(r.rating) !== Number(rating)) return false;
+        }
+
+        if (needle) {
+            const hay = (r.text + ' ' + placeTitle).toLowerCase();
+            if (!hay.includes(needle)) return false;
+        }
+
+        return true;
+    });
+
+    arr.sort((a, b) => {
+        if (sort === 'new')  return new Date(b.created_at) - new Date(a.created_at);
+        if (sort === 'old')  return new Date(a.created_at) - new Date(b.created_at);
+        if (sort === 'high') return (b.rating || 0) - (a.rating || 0);
+        if (sort === 'low')  return (a.rating || 0) - (b.rating || 0);
+        return 0;
+    });
+
+    return arr;
+}
+
+function renderMyReviewsList() {
+    const list = document.getElementById('myReviewsList');
+    if (!list) return;
+
+    const reviews = getFilteredMyReviews();
 
     if (reviews.length === 0) {
         list.innerHTML = `
             <div class="dashboard-empty">
-                <p style="margin-bottom: 12px;">Пока нет отзывов</p>
-                <button class="btn btn-primary btn-sm" data-scroll="services">
-                    <i data-lucide="shopping-cart"></i> К сервисам
+                <p style="margin-bottom: 12px;">Ничего не найдено</p>
+                <button class="btn btn-secondary btn-sm" id="myReviewsResetBtn">
+                    <i data-lucide="rotate-ccw"></i> Сбросить фильтры
                 </button>
             </div>
         `;
@@ -581,7 +751,7 @@ async function openMyReviewsModal() {
 
         return `
             <div class="my-review-item">
-                <div class="my-review-place">${placeTitle} · ${cityName}</div>
+                <div class="my-review-place">${escapeHtml(placeTitle)} · ${escapeHtml(cityName)}</div>
                 ${stars ? `<div class="my-review-rating">${stars}</div>` : ''}
                 <div class="my-review-text">${escapeHtml(r.text)}</div>
                 <div class="my-review-footer">
@@ -624,3 +794,10 @@ function closeSettingsModal() {
     const modal = document.getElementById('settingsModal');
     if (modal) modal.style.display = 'none';
 }
+
+// Клики по вкладкам своего профиля
+document.addEventListener('click', (e) => {
+    const tab = e.target.closest('#profileTabs .profile-tab');
+    if (!tab) return;
+    setProfileTab(tab.dataset.profileTab);
+});

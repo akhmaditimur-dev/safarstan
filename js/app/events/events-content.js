@@ -131,33 +131,56 @@ document.addEventListener('click', async (e) => {
 
     if (block.style.display === 'none' || !block.style.display) {
         block.style.display = 'block';
-        const listEl = block.querySelector(`[data-reviews-list="${key}"]`);
-        if (listEl && !listEl.dataset.loaded) {
-            await loadReviewsForOne(key, listEl);
-            listEl.dataset.loaded = '1';
+
+        // Загружаем один раз и кэшируем
+        if (!REVIEWS_CACHE[key]) {
+            const listEl = block.querySelector(`[data-reviews-list="${key}"]`);
+            if (listEl) listEl.innerHTML = '<div class="reviews-empty">⏳ Загрузка...</div>';
+            try {
+                REVIEWS_CACHE[key] = await loadReviews(key);
+            } catch (err) {
+                console.warn('Ошибка загрузки отзывов:', err);
+                REVIEWS_CACHE[key] = [];
+            }
         }
+
+        const listEl = block.querySelector(`[data-reviews-list="${key}"]`);
+        if (listEl) renderReviewsForBlock(key, listEl);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     } else {
         block.style.display = 'none';
     }
 });
 
-async function loadReviewsForOne(placeKey, listEl) {
-    listEl.innerHTML = '<div class="reviews-empty">⏳ Загрузка...</div>';
+// Смена сортировки отзывов на карточке
+document.addEventListener('change', (e) => {
+    const select = e.target.closest('[data-reviews-sort]');
+    if (!select) return;
 
-    try {
-        const reviews = await loadReviews(placeKey);
+    const key = select.dataset.reviewsSort;
+    REVIEWS_SORT[key] = select.value;
 
-        if (reviews.length === 0) {
-            listEl.innerHTML = '<div class="reviews-empty">Отзывов пока нет. Будь первым! 💬</div>';
-            return;
-        }
+    const block = document.querySelector(`.reviews-block[data-reviews-for="${key}"]`);
+    const listEl = block ? block.querySelector(`[data-reviews-list="${key}"]`) : null;
+    if (listEl) renderReviewsForBlock(key, listEl);
+});
 
-        listEl.innerHTML = reviews.map(rev => renderReviewItem(rev)).join('');
-    } catch (err) {
-        console.warn('Ошибка загрузки отзывов:', err);
-        listEl.innerHTML = '<div class="reviews-empty">Ошибка загрузки</div>';
-    }
-}
+// «Показать все» / «Свернуть»
+document.addEventListener('click', (e) => {
+    const expandBtn = e.target.closest('[data-reviews-expand]');
+    const collapseBtn = e.target.closest('[data-reviews-collapse]');
+
+    const key = expandBtn ? expandBtn.dataset.reviewsExpand
+              : collapseBtn ? collapseBtn.dataset.reviewsCollapse
+              : null;
+    if (!key) return;
+
+    REVIEWS_EXPANDED[key] = !!expandBtn;
+
+    const block = document.querySelector(`.reviews-block[data-reviews-for="${key}"]`);
+    const listEl = block ? block.querySelector(`[data-reviews-list="${key}"]`) : null;
+    if (listEl) renderReviewsForBlock(key, listEl);
+});
 
 // === Мои отзывы (модалка) ===
 on('navReviewsBtn', 'click', () => {
@@ -166,6 +189,57 @@ on('navReviewsBtn', 'click', () => {
 on('myReviewsClose', 'click', closeMyReviewsModal);
 on('myReviewsModal', 'click', (e) => {
     if (e.target.id === 'myReviewsModal') closeMyReviewsModal();
+});
+
+// Поиск в «Моих отзывах» (debounce)
+let myReviewsSearchTimer = null;
+document.addEventListener('input', (e) => {
+    if (e.target.id !== 'myReviewsSearch') return;
+    const val = e.target.value;
+    clearTimeout(myReviewsSearchTimer);
+    myReviewsSearchTimer = setTimeout(() => {
+        MY_REVIEWS_STATE.q = val;
+        const clearBtn = document.getElementById('myReviewsSearchClear');
+        if (clearBtn) clearBtn.style.display = val ? '' : 'none';
+        renderMyReviewsList();
+    }, 200);
+});
+
+// Клик по чипам фильтров и сортировки
+document.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-my-rating], [data-my-city], [data-my-sort]');
+    if (!chip) return;
+
+    if (chip.dataset.myRating !== undefined) MY_REVIEWS_STATE.rating = chip.dataset.myRating;
+    if (chip.dataset.myCity   !== undefined) MY_REVIEWS_STATE.city   = chip.dataset.myCity;
+    if (chip.dataset.mySort   !== undefined) MY_REVIEWS_STATE.sort   = chip.dataset.mySort;
+
+    renderMyReviewsToolbar();
+    renderMyReviewsList();
+});
+
+// Очистка поиска
+document.addEventListener('click', (e) => {
+    if (e.target.closest('#myReviewsSearchClear')) {
+        MY_REVIEWS_STATE.q = '';
+        const input = document.getElementById('myReviewsSearch');
+        if (input) input.value = '';
+        e.target.closest('#myReviewsSearchClear').style.display = 'none';
+        renderMyReviewsList();
+    }
+});
+
+// Сброс фильтров из пустого состояния
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('#myReviewsResetBtn')) return;
+    MY_REVIEWS_STATE.q = '';
+    MY_REVIEWS_STATE.rating = 'all';
+    MY_REVIEWS_STATE.city = 'all';
+    MY_REVIEWS_STATE.sort = 'new';
+    const input = document.getElementById('myReviewsSearch');
+    if (input) input.value = '';
+    renderMyReviewsToolbar();
+    renderMyReviewsList();
 });
 
 document.addEventListener('click', async (e) => {
