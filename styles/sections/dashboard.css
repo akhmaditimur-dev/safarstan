@@ -2,7 +2,7 @@
 
 .dashboard {
     padding: 24px 0 60px;
-    background: var(--color-bg-soft);
+    background: transparent;
 }
 
 /* ============================================
@@ -216,9 +216,9 @@
     flex-shrink: 0;
 }
 
-.city-chip.home    { background: #bbf7d0; color: #14532d; }
-.city-chip.current { background: #dcfce7; color: #166534; }
-.city-chip.visited { background: #f0fdf4; color: #15803d; }
+.city-chip.home    { background: var(--color-primary-light); color: var(--color-primary-dark); }
+.city-chip.current { background: var(--color-primary-soft);  color: var(--color-primary-dark); }
+.city-chip.visited { background: var(--color-primary-soft);  color: var(--color-primary); }
 
 .city-chip--clickable {
     cursor: pointer;
@@ -444,7 +444,7 @@
 }
 
 .dashboard-nav-item:hover .dashboard-nav-icon {
-    color: var(--color-primary-dark, #15803d);
+    color: var(--color-primary-dark);
 }
 
 .dashboard-nav-label {
@@ -756,7 +756,7 @@
 
 .back-to-dashboard:hover {
     transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 12px 32px rgba(22, 163, 74, 0.35);
+    box-shadow: 0 12px 32px rgba(22, 101, 52, 0.35);
 }
 
 .back-to-dashboard svg {

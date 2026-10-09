@@ -6,7 +6,7 @@
 }
 
 .section--alt {
-    background: var(--color-bg-soft);
+    background: color-mix(in srgb, var(--color-bg-soft) 85%, transparent);
 }
 
 /* === Заголовки секций === */
