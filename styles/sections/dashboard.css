@@ -801,3 +801,131 @@
     font-style: italic;
     font-weight: 500;
 }
+
+/* ============================================
+   ПОЛЕЗНОЕ РЯДОМ
+   ============================================ */
+.useful-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.useful-list--full {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.useful-item {
+    padding: 12px 14px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background var(--transition-fast);
+}
+
+.useful-item:hover {
+    background: var(--color-primary-light);
+}
+
+.useful-item__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.useful-item__cat {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-primary);
+}
+
+.useful-item__cat svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2.5;
+}
+
+.useful-badge {
+    font-size: var(--fs-xs);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-weight: var(--fw-semibold);
+    line-height: 1.4;
+}
+
+.useful-badge--friend {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
+
+.useful-badge--ad {
+    background: var(--color-warm-light);
+    color: var(--color-warm-dark);
+}
+
+.useful-badge--admin {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.useful-item__delete {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.useful-item__delete:hover {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.useful-item__delete svg {
+    width: 14px;
+    height: 14px;
+}
+
+.useful-item__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+}
+
+.useful-item__desc {
+    font-size: var(--fs-xs);
+    color: var(--color-text-soft);
+    line-height: 1.4;
+}
+
+.useful-item__meta {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
+
+.useful-item__meta a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.useful-item__link {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.useful-item__link:hover {
+    text-decoration: underline;
+}

@@ -15,11 +15,28 @@ async function saveFeedEvent(playerId, eventType, eventData = {}, cityKey = null
 }
 
 // Загрузить ленту (свои + друзья + рекомендованные из моих городов)
-// Загрузить ленту (свои + друзья + рекомендованные из моих городов)
-async function loadFeed(limit = 10) {
+async function loadFeed(limit = 10, filter = 'all') {
+    // === Фильтр «Мой город» — только события в текущем городе ===
+    if (filter === 'city' && PLAYER && PLAYER.currentCity) {
+        const { data, error } = await _supabase
+            .from('feed')
+            .select(`
+                id, event_type, event_data, city_key, created_at, player_id,
+                players:player_id (name, avatar, home_city, current_city)
+            `)
+            .eq('city_key', PLAYER.currentCity)
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+        if (error) {
+            console.warn('Ошибка ленты города:', error);
+            return [];
+        }
+        return data || [];
+    }
+
     // === Проверка PLAYER ===
     if (!PLAYER || !PLAYER.playerId) {
-        // Fallback: общая лента
         const { data, error } = await _supabase
             .from('feed')
             .select(`
@@ -39,17 +56,14 @@ async function loadFeed(limit = 10) {
     const myId = PLAYER.playerId;
     if (!myId) return [];
 
-    // === Фильтруем friendIds от undefined/null ===
     const friendIds = (typeof FRIENDS !== 'undefined' ? FRIENDS : [])
         .map(f => f && f.id)
         .filter(id => typeof id === 'string' && id.length > 0);
 
-    // Города, которые я отметил
     const visitedCities = Object.keys(PLAYER.visitedCities || {});
     const myCities = [PLAYER.homeCity, PLAYER.currentCity, ...visitedCities]
         .filter((v, i, a) => v && a.indexOf(v) === i);
 
-    // === ЧАСТЬ 1: Свои + друзья ===
     const idsForFeed = [myId, ...friendIds]
         .filter(id => typeof id === 'string' && id.length > 0);
 
@@ -67,7 +81,6 @@ async function loadFeed(limit = 10) {
         console.warn('Ошибка личной ленты:', err1);
     }
 
-    // === ЧАСТЬ 2: События от чужих в моих городах ===
     let cityFeed = [];
     if (myCities.length > 0) {
         const excludeIds = [myId, ...friendIds]
@@ -83,7 +96,6 @@ async function loadFeed(limit = 10) {
             .order('created_at', { ascending: false })
             .limit(Math.floor(limit / 2));
 
-        // Если есть кого исключать — применяем .not
         if (excludeIds.length > 0) {
             query = query.not('player_id', 'in', `(${excludeIds.join(',')})`);
         }
@@ -96,7 +108,6 @@ async function loadFeed(limit = 10) {
         cityFeed = otherFeed || [];
     }
 
-    // === ОБЪЕДИНЯЕМ ===
     const all = [...(personalFeed || []), ...cityFeed];
 
     const seen = new Set();

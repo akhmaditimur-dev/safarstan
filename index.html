@@ -165,6 +165,7 @@
                             <h3>Лента</h3>
                             <div class="feed-filters" id="feedFilters">
                                 <button class="feed-filter active" data-feed="all">Всё</button>
+                                <button class="feed-filter" data-feed="city">Мой город</button>
                                 <button class="feed-filter" data-feed="friends">Друзья</button>
                                 <button class="feed-filter" data-feed="mine">Мои</button>
                                 <button class="feed-filter" data-feed="recommend">Рекомендации</button>
@@ -192,6 +193,19 @@
                             </div>
                         </div>
                         <div class="calendar-grid" id="calGrid"></div>
+                    </div>
+
+                    <div class="dashboard-card" id="dashUsefulCard">
+                        <div class="dashboard-card__header">
+                            <h3>Полезное рядом</h3>
+                            <button class="btn btn-ghost btn-sm" id="usefulAddBtn" title="Добавить место">
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </div>
+                        <div class="useful-list" id="dashUseful"></div>
+                        <button class="btn btn-secondary btn-sm btn-block" id="usefulShowAllBtn">
+                            Показать все
+                        </button>
                     </div>
 
                     <div class="dashboard-card">
@@ -237,7 +251,7 @@
     <section class="hero">
         <div class="container">
             <h1>Куда отправимся?</h1>
-            <p class="hero__subtitle">Safarstan — исследуй, открывай и живи в городах</p>
+            <p class="hero__subtitle">Safarstan — исследуй, открывай живи в городах</p>
 
             <div class="hero__columns">
                 <div class="hero__col hero__col--left">
@@ -1436,6 +1450,56 @@
         </div>
     </div>
 
+    <!-- Модалка: добавить полезное место -->
+    <div id="usefulAddModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="usefulAddClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Добавить полезное место</h2>
+            <p class="modal-subtitle" id="usefulAddCityLabel">Город: —</p>
+
+            <label class="modal-label">Название</label>
+            <input type="text" id="usefulTitle" class="modal-input" placeholder="Например, Кофейня у Азиза" maxlength="80">
+
+            <label class="modal-label">Описание</label>
+            <textarea id="usefulDesc" class="modal-input" rows="2" placeholder="Почему стоит зайти?" maxlength="300"></textarea>
+
+            <label class="modal-label">Категория</label>
+            <select id="usefulCategory" class="modal-input">
+                <option value="food">Еда</option>
+                <option value="shop">Магазин</option>
+                <option value="service">Услуги</option>
+                <option value="beauty">Красота</option>
+                <option value="health">Здоровье</option>
+                <option value="auto">Авто</option>
+                <option value="other">Другое</option>
+            </select>
+
+            <label class="modal-label">Адрес</label>
+            <input type="text" id="usefulAddress" class="modal-input" placeholder="Например, Юнусабад, 4-й квартал, 12">
+
+            <label class="modal-label">Телефон (опционально)</label>
+            <input type="text" id="usefulPhone" class="modal-input" placeholder="+998 90 123 45 67">
+
+            <label class="modal-label">Ссылка (опционально)</label>
+            <input type="text" id="usefulLink" class="modal-input" placeholder="https://t.me/...">
+
+            <button id="usefulAddSubmit" class="modal-btn">Добавить (+5 XP)</button>
+            <p id="usefulError" class="auth-error" style="display:none;"></p>
+        </div>
+    </div>
+
+    <!-- Модалка: все полезное -->
+    <div id="usefulAllModal" class="modal-overlay" style="display:none;">
+        <div class="modal modal--wide">
+            <button id="usefulAllClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Полезное рядом</h2>
+            <p class="modal-subtitle">Места, которые советуют в твоём городе</p>
+            <div id="usefulAllToolbar" class="my-reviews-toolbar"></div>
+            <div id="usefulAllList" class="useful-list useful-list--full"></div>
+        </div>
+    </div>
+
+
     <div id="lightbox" class="lightbox" style="display:none;">
         <button id="lightboxClose" class="lightbox__close"><i data-lucide="x"></i></button>
         <div id="lightboxCounter" class="lightbox__counter" style="display:none;">1 / 1</div>
@@ -1473,6 +1537,7 @@
     <script defer src="js/api/hashars.js"></script>
     <script defer src="js/api/notifications.js"></script>
     <script defer src="js/api/presence.js"></script>
+    <script defer src="js/api/useful.js"></script>
 
     <script defer src="js/game/helpers.js"></script>
     <script defer src="js/game/checkin.js"></script>
@@ -1511,7 +1576,9 @@
     <script defer src="js/ui/hashars.js"></script>
     <script defer src="js/ui/notifications.js"></script>
     <script defer src="js/ui/onboarding.js"></script>
-    <script defer src="js/ui/landing.js"></script>    <script defer src="js/ui/faq.js"></script>
+    <script defer src="js/ui/landing.js"></script>
+    <script defer src="js/ui/useful.js"></script>
+    <script defer src="js/ui/faq.js"></script>
 
     <script defer src="js/app/init.js"></script>
     <script defer src="js/app/events/events-helpers.js"></script>
@@ -1524,6 +1591,7 @@
     <script defer src="js/app/events/events-reports.js"></script>
     <script defer src="js/app/events/events-legal.js"></script>
     <script defer src="js/app/events/events-sidebar.js"></script>
+    <script defer src="js/app/events/events-useful.js"></script>
     <script defer src="js/app/start.js"></script>
 
 </body>

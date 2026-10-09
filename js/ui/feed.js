@@ -29,7 +29,7 @@ async function renderFeed() {
         renderFeedSkeleton('dashFeed', 4);
     }
 
-    FEED = await loadFeed(10);
+    FEED = await loadFeed(10, currentFeedFilter);
 
     let feedLikes = {};
     let feedTags = {};
@@ -45,7 +45,11 @@ async function renderFeed() {
 
     let items = FEED;
 
-    if (currentFeedFilter === 'mine') {
+    if (currentFeedFilter === 'city') {
+        // Уже отфильтровано на сервере в loadFeed
+        items = FEED;
+
+    } else if (currentFeedFilter === 'mine') {
         items = FEED.filter(item => item.player_id === PLAYER.playerId);
 
     } else if (currentFeedFilter === 'friends') {
@@ -90,19 +94,34 @@ async function renderFeed() {
 }
 
 function renderFeedEmpty(container) {
-    const ctaHtml = currentFeedFilter === 'mine'
-        ? `
+    const cityName = PLAYER && PLAYER.currentCity && CITIES[PLAYER.currentCity]
+        ? CITIES[PLAYER.currentCity].name
+        : 'твоём городе';
+
+    let ctaHtml = '';
+
+    if (currentFeedFilter === 'mine') {
+        ctaHtml = `
             <p style="margin-bottom: 14px;">У тебя пока нет событий</p>
             <button class="btn btn-primary btn-sm" data-scroll="map">
                 <i data-lucide="map"></i> Открыть карту
             </button>
-        `
-        : `
+        `;
+    } else if (currentFeedFilter === 'city') {
+        ctaHtml = `
+            <p style="margin-bottom: 14px;">В <strong>${escapeHtml(cityName)}</strong> пока тихо</p>
+            <button class="btn btn-primary btn-sm" data-scroll="map">
+                <i data-lucide="map"></i> Отметиться первым
+            </button>
+        `;
+    } else {
+        ctaHtml = `
             <p style="margin-bottom: 14px;">Пока пусто. Сделай чек-ин или добавь место!</p>
             <button class="btn btn-primary btn-sm" data-scroll="map">
                 <i data-lucide="map"></i> К карте
             </button>
         `;
+    }
 
     container.innerHTML = `<div class="feed-empty">${ctaHtml}</div>`;
     if (typeof lucide !== 'undefined') lucide.createIcons();

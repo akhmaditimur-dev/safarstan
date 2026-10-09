@@ -30,6 +30,9 @@ async function showDashboard() {
     await renderPlans();
     await renderFriends();
     await renderFeed();
+    if (typeof renderUsefulCard === 'function') {
+        await renderUsefulCard();
+    }
     
     // === КАЛЕНДАРЬ ===
     if (typeof renderCalendar === 'function') {
