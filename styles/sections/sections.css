@@ -2,7 +2,7 @@
 
 /* === Общие стили секций === */
 .section {
-    padding: 48px 0;
+    padding: 28px 0;
 }
 
 .section--alt {
@@ -37,7 +37,7 @@
 
 /* === О ГОРОДЕ === */
 #info {
-    padding: 40px 0;
+    padding: 24px 0;
 }
 
 .city-header {
@@ -98,7 +98,7 @@
 /* === АДАПТАЦИЯ === */
 @media (max-width: 900px) {
     .section {
-        padding: 60px 0;
+        padding: 36px 0;
     }
     
     .section > .container > h2,
@@ -118,7 +118,7 @@
 
 @media (max-width: 600px) {
     .section {
-        padding: 36px 0;
+        padding: 22px 0;
     }
     
     .section > .container > h2,
