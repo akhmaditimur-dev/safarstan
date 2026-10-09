@@ -2,6 +2,8 @@
 
 const CHECKIN_COOLDOWN_MS = 60 * 60 * 1000;   // 1 час
 const DAILY_CHECKIN_LIMIT = 5;                // 5 в день
+const REVISIT_XP_DAYS = 30;                   // через 30 дней — полный XP снова
+const REVISIT_XP_MS = REVISIT_XP_DAYS * 24 * 60 * 60 * 1000;
 
 let lastCheckinTime = 0;
 
@@ -51,6 +53,18 @@ async function checkIn(checkinKey) {
     const isForeignCity = !isHomeCity && !isCurrentCity;
 
     // === XP ===
+    // === ПРОВЕРКА: был ли тут раньше и когда ===
+    const previousVisits = PLAYER.checkins[checkinKey] || 0;
+    const lastVisitAt = PLAYER.checkinLastAt?.[checkinKey] || 0;
+    const daysSinceLastVisit = lastVisitAt
+        ? (now - lastVisitAt) / (24 * 60 * 60 * 1000)
+        : Infinity;
+
+    // Если > 30 дней — считаем как новое посещение (или первое вообще)
+    const isRevisit = previousVisits > 0 && daysSinceLastVisit >= REVISIT_XP_DAYS;
+    const treatAsNew = previousVisits === 0 || isRevisit;
+
+    // === XP ===
     let xpGained = 5;
     let reason = 'Свой город';
 
@@ -62,16 +76,30 @@ async function checkIn(checkinKey) {
         reason = 'Чужой город';
     }
 
+    if (treatAsNew) {
+        // Свежий визит — полный XP + бонус за новое место
+        if (isRevisit) {
+            reason = `Снова тут (${REVISIT_XP_DAYS}+ дней)`;
+        }
+    } else {
+        // Был недавно — уменьшенный XP
+        xpGained = Math.max(1, Math.floor(xpGained / 2));
+        reason = 'Повторный визит';
+    }
+
     if (isFirstTimeInCity) {
         xpGained += 30;
         reason = 'Новый город!';
     }
 
     // === ОБНОВЛЕНИЕ PLAYER ===
+    if (!PLAYER.checkinLastAt) PLAYER.checkinLastAt = {};
+
     PLAYER.checkins[checkinKey] = (PLAYER.checkins[checkinKey] || 0) + 1;
     PLAYER.visitedCities[cityKey] = (PLAYER.visitedCities[cityKey] || 0) + 1;
     PLAYER.xp += xpGained;
     PLAYER.checkinCooldowns[checkinKey] = now;
+    PLAYER.checkinLastAt[checkinKey] = now;
     PLAYER.todayCheckins += 1;
 
     // === ОЧКИ ГОРОДАМ ===

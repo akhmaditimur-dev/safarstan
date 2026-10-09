@@ -929,3 +929,16 @@
 .useful-item__link:hover {
     text-decoration: underline;
 }
+
+/* Слияние парных чек-инов в ленте */
+.feed-merged-badge {
+    display: inline-block;
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+    margin-right: 6px;
+    vertical-align: middle;
+}

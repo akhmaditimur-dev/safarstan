@@ -80,11 +80,15 @@ async function renderFeed() {
         return;
     }
 
-    container.innerHTML = items
+    // Группируем подряд идущие чек-ины одного игрока + дробим по друзьям
+    const grouped = groupFeedItems(items, feedTags);
+
+    container.innerHTML = grouped
         .map(item => renderFeedItem(
             item,
             feedLikes[item.id] || { count: 0, myLike: false },
-            feedTags[item.id] || []
+            item._friends || feedTags[item.id] || [],
+            feedTags
         ))
         .join('');
 
@@ -93,6 +97,99 @@ async function renderFeed() {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+// Группировка чек-инов одного игрока за короткое время,
+// потом внутри — дробление по составу друзей.
+function groupFeedItems(items, allTags = {}) {
+    const MAX_CHAIN = 6;              // максимум мест в одном «походе»
+    const MAX_GAP_MS = 60 * 60 * 1000; // 1 час между соседними
+
+    const out = [];
+    let i = 0;
+
+    while (i < items.length) {
+        const cur = items[i];
+
+        if (cur.event_type !== 'checkin') {
+            out.push(cur);
+            i++;
+            continue;
+        }
+
+        const chain = [cur];
+        let j = i + 1;
+        let prevTime = new Date(cur.created_at).getTime();
+        const city = cur.city_key;
+
+        while (j < items.length && chain.length < MAX_CHAIN) {
+            const next = items[j];
+            if (next.event_type !== 'checkin') break;
+            if (next.player_id !== cur.player_id) break;
+            if (next.city_key !== city) break;
+
+            const t = new Date(next.created_at).getTime();
+            if (t - prevTime > MAX_GAP_MS) break;
+
+            chain.push(next);
+            prevTime = t;
+            j++;
+        }
+
+        if (chain.length === 1) {
+            out.push(cur);
+            i++;
+            continue;
+        }
+
+        // Разбиваем цепочку на группы по составу друзей
+        const groups = new Map(); // ключ: sorted friend ids joined, значение: массив элементов
+
+        chain.forEach(item => {
+            const tags = allTags[item.id] || [];
+            const friendIds = tags.map(t => t.id).sort();
+            const key = friendIds.length === 0 ? '__alone__' : friendIds.join(',');
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push({ item, tags });
+        });
+
+        // Превращаем группы в feed-элементы
+        groups.forEach((groupItems, key) => {
+            const first = groupItems[0].item;
+
+            if (groupItems.length === 1 && key === '__alone__') {
+                // Один чек-ин без друзей — как есть
+                out.push(first);
+                return;
+            }
+
+            if (groupItems.length === 1) {
+                // Один чек-ин с друзьями — тоже как есть (с тегами)
+                out.push(first);
+                return;
+            }
+
+            // Несколько чек-инов в одной группе — объединяем
+            const friendsForGroup = groupItems[0].tags;
+            const merged = {
+                ...first,
+                _merged: true,
+                _friends: friendsForGroup,
+                _places: groupItems.map(({ item }) => ({
+                    place: item.event_data?.place || 'место',
+                    checkinId: item.event_data?.checkinId || null,
+                    feedId: item.id,
+                })),
+            };
+            out.push(merged);
+        });
+
+        i = j;
+    }
+
+    // Пересортировка: свежие события первой
+    out.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    return out;
+}
 function renderFeedEmpty(container) {
     const cityName = PLAYER && PLAYER.currentCity && CITIES[PLAYER.currentCity]
         ? CITIES[PLAYER.currentCity].name
@@ -130,7 +227,7 @@ function renderFeedEmpty(container) {
 // ============================================
 // ОДНО СОБЫТИЕ
 // ============================================
-function renderFeedItem(item, likeInfo, taggedFriends) {
+function renderFeedItem(item, likeInfo, taggedFriends, allTags = {}) {
     const player = item.players || {};
     const name = player.name || 'Игрок';
     const avatar = player.avatar || '🧑‍💼';
@@ -144,18 +241,31 @@ function renderFeedItem(item, likeInfo, taggedFriends) {
 
     switch (item.event_type) {
         case 'checkin': {
-            // Строим список отмеченных друзей
+            // Строим список отмеченных друзей (для одиночного события)
             let withHtml = '';
             if (taggedFriends && taggedFriends.length > 0) {
                 const friendNames = taggedFriends.map(f => escapeHtml(f.name)).join(', ');
-
-                if (taggedFriends.length === 1) {
-                    withHtml = ` <span class="feed-with">с ${friendNames}</span>`;
-                } else {
-                    withHtml = ` <span class="feed-with">с ${friendNames}</span>`;
-                }
+                withHtml = ` <span class="feed-with">с ${friendNames}</span>`;
             }
-            text = `${nameHtml} был в <strong>${escapeHtml(data.place || 'месте')}</strong>${cityName ? ` (${escapeHtml(cityName)})` : ''}${withHtml}`;
+
+            if (item._merged && item._places && item._places.length > 1) {
+                // Объединённый чек-ин с общей компанией
+                const placesHtml = item._places
+                    .map(p => `<strong>${escapeHtml(p.place)}</strong>`)
+                    .join(' · ');
+
+                const friendsNames = (item._friends || [])
+                    .map(f => escapeHtml(f.name))
+                    .join(', ');
+
+                const withFriendsAll = friendsNames
+                    ? ` <span class="feed-with">с ${friendsNames}</span>`
+                    : '';
+
+                text = `${nameHtml} был в ${item._places.length} местах: ${placesHtml}${withFriendsAll}${cityName ? ` (${escapeHtml(cityName)})` : ''}`;
+            } else {
+                text = `${nameHtml} был в <strong>${escapeHtml(data.place || 'месте')}</strong>${cityName ? ` (${escapeHtml(cityName)})` : ''}${withHtml}`;
+            }
             break;
         }
         case 'ugc':
@@ -183,12 +293,15 @@ function renderFeedItem(item, likeInfo, taggedFriends) {
     const likeClass = likeData.myLike ? 'feed-like feed-like--active' : 'feed-like';
 
     return `
-        <div class="feed-item" data-player-id="${pid}">
+        <div class="feed-item ${item._merged ? 'feed-item--merged' : ''}" data-player-id="${pid}">
             <div class="feed-item__avatar" data-player-profile="${pid}" style="cursor:pointer;">${avatarHtml}</div>
             <div class="feed-item__body">
                 <div class="feed-item__text">${text}</div>
                 <div class="feed-item__footer">
-                    <div class="feed-item__time">${timeAgo(item.created_at)}</div>
+                    <div class="feed-item__time">
+                        ${item._merged ? `<span class="feed-merged-badge">${item._places.length} мест</span>` : ''}
+                        ${timeAgo(item.created_at)}
+                    </div>
                     <button class="${likeClass}" data-feed-like="${item.id}">
                         <i data-lucide="heart"></i>
                         <span class="feed-like__count">${likeData.count || ''}</span>

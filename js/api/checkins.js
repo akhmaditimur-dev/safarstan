@@ -26,19 +26,33 @@ async function saveCheckin(playerId, cityKey, category, placeTitle) {
 async function loadCheckins(playerId) {
     const { data, error } = await _supabase
         .from('checkins')
-        .select('*')
+        .select('place_key, created_at')
         .eq('player_id', playerId)
-        .eq('is_deleted', false);
+        .eq('is_deleted', false)
+        .order('created_at', { ascending: false });
 
     if (error) {
         console.error('Ошибка загрузки чек-инов:', error);
         return {};
     }
-    const result = {};
+
+    const counts = {};
+    const lastAt = {};
+
     data.forEach(c => {
-        result[c.place_key] = (result[c.place_key] || 0) + 1;
+        counts[c.place_key] = (counts[c.place_key] || 0) + 1;
+        // Первая запись в отсортированном по дате убыванию — самая свежая
+        if (!lastAt[c.place_key]) {
+            lastAt[c.place_key] = new Date(c.created_at).getTime();
+        }
     });
-    return result;
+
+    // Сохраняем lastAt в PLAYER, если он есть
+    if (typeof PLAYER !== 'undefined' && PLAYER) {
+        PLAYER.checkinLastAt = lastAt;
+    }
+
+    return counts;
 }
 
 // ============================================
