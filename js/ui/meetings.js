@@ -102,14 +102,10 @@ function openMeetingCreateModal() {
     tomorrow.setDate(tomorrow.getDate() + 1);
     document.getElementById('meetingDate').value = tomorrow.toISOString().slice(0, 10);
 
-    // Город — текущий
-    const citySelect = document.getElementById('meetingCity');
-    if (citySelect) {
-        if (citySelect.options.length === 0) {
-            citySelect.innerHTML = Object.entries(CITIES)
-                .map(([k, c]) => `<option value="${k}">${c.name}</option>`).join('');
-        }
-        citySelect.value = PLAYER.currentCity || 'tashkent';
+    // Город — через поиск
+    if (typeof initCitySelect === 'function') {
+        initCitySelect('meetingCityInput', 'meetingCity', 'meetingCityDropdown');
+        setCitySelect('meetingCityInput', 'meetingCity', PLAYER.currentCity || 'tashkent');
     }
 
     modal.style.display = 'flex';

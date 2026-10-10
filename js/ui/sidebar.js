@@ -45,7 +45,7 @@ const SIDEBAR_CONFIG = [
             { id: 'navGapsBtn',    icon: 'coffee',        label: 'Мои гапы',   action: 'scroll', target: 'dashGapsCard',   counter: 'dashGapsCount', module: 'gaps' },
             { id: 'navHasharsBtn', icon: 'hand-heart',    label: 'Хашары',     action: 'scroll', target: 'dashHasharsCard', module: 'hashars' },
             { id: 'navTripsBtn',   icon: 'car',           label: 'Попутчики',  action: 'scroll', target: 'trips',           module: null },
-        ],
+            { id: 'navCharityBtn', icon: 'heart-handshake', label: 'Благотворительность', action: 'scroll', target: 'charity', module: null },        ],
     },
     {
         title: 'Инфо',

@@ -116,10 +116,6 @@ function renderGapCreateForm() {
     const body = document.getElementById('gapModalBody');
     if (!body) return;
 
-    const citiesOptions = Object.entries(CITIES).map(([key, c]) =>
-        `<option value="${key}" ${key === (PLAYER?.currentCity || '') ? 'selected' : ''}>${c.name}</option>`
-    ).join('');
-
     body.innerHTML = `
         <h2>Создать гап</h2>
         <p class="modal-subtitle">Тайный круг друзей. Приглашать — только сам.</p>
@@ -138,7 +134,11 @@ function renderGapCreateForm() {
         <textarea id="gapDescInput" class="modal-input" rows="2" placeholder="О чём ваш круг?"></textarea>
 
         <label class="modal-label">Город</label>
-        <select id="gapCityInput" class="modal-input">${citiesOptions}</select>
+        <div class="city-select">
+            <input type="text" id="gapCityInputText" class="modal-input" placeholder="Начни вводить" autocomplete="off">
+            <input type="hidden" id="gapCityInput" value="">
+            <div class="city-select__dropdown" id="gapCityInputDropdown" style="display:none;"></div>
+        </div>
 
         <label class="modal-label">Где собираетесь</label>
         <input type="text" id="gapMeetInput" class="modal-input" placeholder="Например, у входа в Чорсу">
@@ -175,6 +175,14 @@ function renderGapCreateForm() {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         dateInput.value = tomorrow.toISOString().slice(0, 10);
+    }
+
+        // Инициализация поиска города
+    if (typeof initCitySelect === 'function') {
+        initCitySelect('gapCityInputText', 'gapCityInput', 'gapCityInputDropdown');
+        if (typeof setCitySelect === 'function' && PLAYER?.currentCity) {
+            setCitySelect('gapCityInputText', 'gapCityInput', PLAYER.currentCity);
+        }
     }
 }
 

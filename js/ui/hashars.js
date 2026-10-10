@@ -146,11 +146,9 @@ function openHasharCreateModal() {
         `).join('');
     }
 
-    const citySelect = document.getElementById('hasharCityInput');
-    if (citySelect) {
-        citySelect.innerHTML = Object.entries(CITIES).map(([key, c]) =>
-            `<option value="${key}" ${key === (PLAYER?.currentCity || '') ? 'selected' : ''}>${c.name}</option>`
-        ).join('');
+    if (typeof initCitySelect === 'function') {
+        initCitySelect('hasharCityInputText', 'hasharCityInput', 'hasharCityInputDropdown');
+        setCitySelect('hasharCityInputText', 'hasharCityInput', PLAYER?.currentCity || 'tashkent');
     }
 
     modal.style.display = 'flex';

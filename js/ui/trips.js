@@ -124,15 +124,12 @@ function openTripCreateModal() {
     document.getElementById('tripDescription').value = '';
     document.getElementById('tripCreateError').style.display = 'none';
 
-    // Заполним селекты городов
-    const fromSel = document.getElementById('tripFrom');
-    const toSel = document.getElementById('tripTo');
-    if (fromSel.options.length === 0) {
-        const options = Object.entries(CITIES)
-            .map(([k, c]) => `<option value="${k}">${c.name}</option>`).join('');
-        fromSel.innerHTML = options;
-        toSel.innerHTML = options;
-        toSel.value = '';
+    // Поиск городов
+    if (typeof initCitySelect === 'function') {
+        initCitySelect('tripFromInput', 'tripFrom', 'tripFromDropdown');
+        initCitySelect('tripToInput', 'tripTo', 'tripToDropdown');
+        setCitySelect('tripFromInput', 'tripFrom', PLAYER.currentCity || 'tashkent');
+        setCitySelect('tripToInput', 'tripTo', '');
     }
 
     modal.style.display = 'flex';

@@ -1,0 +1,260 @@
+/* ============ БЛАГОТВОРИТЕЛЬНОСТЬ ============ */
+
+.charity-filters {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.charity-filter {
+    padding: 6px 14px;
+    background: var(--color-bg-soft);
+    border: none;
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-soft);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.charity-filter:hover {
+    color: var(--color-text);
+}
+
+.charity-filter.active {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.charity-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+.charity-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    grid-column: 1 / -1;
+}
+
+.charity-empty p {
+    margin-bottom: 12px;
+}
+
+/* Карточка */
+.charity-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.charity-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.charity-card__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.charity-card__type {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+}
+
+.charity-status {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    margin-left: auto;
+}
+
+.charity-status--success { background: #dcfce7; color: #166534; }
+.charity-status--warning { background: #fef3c7; color: #92400e; }
+.charity-status--danger  { background: #fee2e2; color: #991b1b; }
+.charity-status--muted   { background: var(--color-bg-soft); color: var(--color-text-muted); }
+
+.charity-card__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.charity-card__desc {
+    font-size: var(--fs-sm);
+    color: var(--color-text-soft);
+    line-height: 1.4;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.charity-card__city {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
+
+.charity-card__city svg {
+    width: 12px;
+    height: 12px;
+}
+
+.charity-card__progress {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.charity-card__progress-bar {
+    height: 8px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.charity-card__progress-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-base);
+}
+
+.charity-card__progress-text {
+    font-size: var(--fs-xs);
+    color: var(--color-text-soft);
+    font-weight: var(--fw-semibold);
+}
+
+.charity-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-border-soft);
+}
+
+.charity-card__author {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-xs);
+    color: var(--color-text-soft);
+}
+
+.charity-card__avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--color-bg-soft);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.charity-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.charity-card__deadline {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
+
+/* Детали */
+.charity-detail__header {
+    margin-bottom: 16px;
+}
+
+.charity-detail__header h2 {
+    margin: 8px 0 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-text);
+}
+
+.charity-detail__desc {
+    color: var(--color-text-soft);
+    font-size: var(--fs-sm);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    white-space: pre-wrap;
+}
+
+.charity-detail__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.charity-detail__progress {
+    padding: 12px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+}
+
+/* Подсказка в модалке создания */
+.charity-create-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    margin-top: 12px;
+    text-align: center;
+    justify-content: center;
+}
+
+.charity-create-note svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+
+/* Адаптив */
+@media (max-width: 600px) {
+    .charity-list {
+        grid-template-columns: 1fr;
+    }
+
+    .charity-status {
+        margin-left: 0;
+    }
+}

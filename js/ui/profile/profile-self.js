@@ -261,29 +261,17 @@ function initAvatarPicker() {
 // ============================================
 // SELECT ГОРОДОВ
 // ============================================
-function buildCityOptionsHtml() {
-    return Object.entries(CITIES)
-        .map(([key, city]) => `<option value="${key}">${city.name} (${city.country})</option>`)
-        .join('');
-}
 
 function fillCitySelects() {
-    const homeSelect = document.getElementById('regHomeCity');
-    const currentSelect = document.getElementById('regCurrentCity');
-    if (!homeSelect || !currentSelect) return;
+    if (typeof initCitySelect !== 'function') return;
 
-    const options = buildCityOptionsHtml();
-    homeSelect.innerHTML = options;
-    currentSelect.innerHTML = options;
-    currentSelect.value = homeSelect.value;
-}
+    initCitySelect('regHomeCityInput', 'regHomeCity', 'regHomeCityDropdown');
+    initCitySelect('regCurrentCityInput', 'regCurrentCity', 'regCurrentCityDropdown');
 
-function fillPlanCitySelect(preselectKey) {
-    const select = document.getElementById('planCity');
-    if (!select) return;
-
-    select.innerHTML = buildCityOptionsHtml();
-    if (preselectKey) select.value = preselectKey;
+    // По умолчанию — Ташкент
+    const defaultCity = 'tashkent';
+    setCitySelect('regHomeCityInput', 'regHomeCity', defaultCity);
+    setCitySelect('regCurrentCityInput', 'regCurrentCity', defaultCity);
 }
 
 // ============================================

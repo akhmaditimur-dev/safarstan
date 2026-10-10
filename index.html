@@ -48,6 +48,7 @@
     <link rel="stylesheet" href="styles/components/badges.css">
     <link rel="stylesheet" href="styles/components/modals.css">
     <link rel="stylesheet" href="styles/components/forms.css">
+    <link rel="stylesheet" href="styles/components/city-select.css">
     <link rel="stylesheet" href="styles/components/toast.css">
     <link rel="stylesheet" href="styles/components/skeleton.css">
     <link rel="stylesheet" href="styles/components/navigation.css">
@@ -69,7 +70,9 @@
     <link rel="stylesheet" href="styles/sections/affiche.css">
     <link rel="stylesheet" href="styles/sections/trips.css">
     <link rel="stylesheet" href="styles/sections/meetings.css">
-    <link rel="stylesheet" href="styles/sections/calendar.css">    <link rel="stylesheet" href="styles/sections/sections.css">
+    <link rel="stylesheet" href="styles/sections/charity.css">
+    <link rel="stylesheet" href="styles/sections/calendar.css">    
+    <link rel="stylesheet" href="styles/sections/sections.css">
     <link rel="stylesheet" href="styles/responsive.css">
 </head>
 <body>
@@ -486,6 +489,27 @@
         </div>
     </section>
 
+    <!-- БЛАГОТВОРИТЕЛЬНОСТЬ -->
+    <section class="section" id="charity">
+        <div class="container">
+            <div class="section-header">
+                <h2>Благотворительность</h2>
+                <button class="add-place-btn" id="charityCreateBtn">
+                    <i data-lucide="plus"></i> Создать сбор
+                </button>
+            </div>
+
+            <div class="charity-filters">
+                <button class="charity-filter active" data-charity-filter="all">Все</button>
+                <button class="charity-filter" data-charity-filter="money">Деньги</button>
+                <button class="charity-filter" data-charity-filter="things">Вещи</button>
+                <button class="charity-filter" data-charity-filter="mine">Мои сборы</button>
+            </div>
+
+            <div id="charityList" class="charity-list"></div>
+        </div>
+    </section>
+
     <!-- ПОПУТЧИКИ -->
     <section class="section" id="trips">
         <div class="container">
@@ -572,9 +596,18 @@
                     <button type="button" class="avatar-option" data-avatar="🐎">🐎</button>
                 </div>
                 <label class="modal-label"><i data-lucide="home"></i> Родной город</label>
-                <select id="regHomeCity" class="modal-input"></select>
+                <div class="city-select">
+                    <input type="text" id="regHomeCityInput" class="modal-input" placeholder="Начни вводить" autocomplete="off">
+                    <input type="hidden" id="regHomeCity" value="">
+                    <div class="city-select__dropdown" id="regHomeCityDropdown" style="display:none;"></div>
+                </div>
+
                 <label class="modal-label"><i data-lucide="map-pin"></i> Где живёшь сейчас</label>
-                <select id="regCurrentCity" class="modal-input"></select>
+                <div class="city-select">
+                    <input type="text" id="regCurrentCityInput" class="modal-input" placeholder="Начни вводить" autocomplete="off">
+                    <input type="hidden" id="regCurrentCity" value="">
+                    <div class="city-select__dropdown" id="regCurrentCityDropdown" style="display:none;"></div>
+                </div>
 
                 <!-- Чекбокс согласия -->
                 <label class="auth-agreement">
@@ -1101,7 +1134,6 @@
             <p class="modal-subtitle">Куда и когда собираешься?</p>
             <input type="hidden" id="planId" value="">
             <label class="modal-label">Город</label>
-            <select id="planCity" class="modal-input"></select>
             <label class="modal-label">Место (опционально)</label>
             <input type="text" id="planPlace" class="modal-input" placeholder="Например, Чорсу Базар">
             <label class="modal-label">Когда</label>
@@ -1240,7 +1272,11 @@
             <textarea id="hasharDescInput" class="modal-input" rows="3" placeholder="Что будем делать? Что взять с собой?"></textarea>
 
             <label class="modal-label">Город</label>
-            <select id="hasharCityInput" class="modal-input"></select>
+            <div class="city-select">
+                <input type="text" id="hasharCityInputText" class="modal-input" placeholder="Начни вводить" autocomplete="off">
+                <input type="hidden" id="hasharCityInput" value="">
+                <div class="city-select__dropdown" id="hasharCityInputDropdown" style="display:none;"></div>
+            </div>
 
             <label class="modal-label">Адрес</label>
             <input type="text" id="hasharAddressInput" class="modal-input" placeholder="Например, махалля Яккасарай, дом 12">
@@ -1616,7 +1652,11 @@
                 <input type="text" id="meetingAddress" class="modal-input" placeholder="Юнусабад, 4-й квартал">
 
                 <label class="modal-label">Город</label>
-                <select id="meetingCity" class="modal-input"></select>
+                <div class="city-select">
+                    <input type="text" id="meetingCityInput" class="modal-input" placeholder="Начни вводить" autocomplete="off">
+                    <input type="hidden" id="meetingCity" value="">
+                    <div class="city-select__dropdown" id="meetingCityDropdown" style="display:none;"></div>
+                </div>
 
                 <!-- ПОЛЯ ДЛЯ ДНЯ РОЖДЕНИЯ -->
                 <div class="meeting-type-fields" data-meeting-fields="birthday" style="display:none;">
@@ -1737,6 +1777,59 @@
         </div>
     </div>
 
+    <!-- Модалка: создать сбор -->
+    <div id="charityCreateModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="charityCreateClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Создать сбор</h2>
+            <p class="modal-subtitle">Благотворительная инициатива</p>
+
+            <label class="modal-label">Тип сбора</label>
+            <select id="charityType" class="modal-input">
+                <option value="money">Деньги</option>
+                <option value="things">Вещи</option>
+            </select>
+
+            <label class="modal-label">Название</label>
+            <input type="text" id="charityTitle" class="modal-input" placeholder="Например, помощь семье из Ферганы" maxlength="100">
+
+            <label class="modal-label">Описание</label>
+            <textarea id="charityDescription" class="modal-input" rows="3" placeholder="Что случилось? Кому помогаем?" maxlength="600"></textarea>
+
+            <label class="modal-label">Город</label>
+            <div class="city-select">
+                <input type="text" id="charityCityInput" class="modal-input" placeholder="Начни вводить" autocomplete="off">
+                <input type="hidden" id="charityCity" value="">
+                <div class="city-select__dropdown" id="charityCityDropdown" style="display:none;"></div>
+            </div>
+
+            <div data-charity-money-fields>
+                <label class="modal-label">Цель (сумма)</label>
+                <input type="text" id="charityGoal" class="modal-input" placeholder="Например, 5 000 000 сум">
+
+                <label class="modal-label">Реквизиты</label>
+                <input type="text" id="charityRequisites" class="modal-input" placeholder="Номер карты / кошелёк">
+            </div>
+
+            <label class="modal-label">Срок (опционально)</label>
+            <input type="date" id="charityDeadline" class="modal-input">
+
+            <button id="charityCreateSubmit" class="modal-btn">Отправить на модерацию</button>
+            <p id="charityCreateError" class="auth-error" style="display:none;"></p>
+            <p class="charity-create-note">
+                <i data-lucide="shield-check"></i>
+                Сбор появится после проверки модератором
+            </p>
+        </div>
+    </div>
+
+    <!-- Модалка: детали сбора -->
+    <div id="charityDetailModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="charityDetailClose" class="modal-close"><i data-lucide="x"></i></button>
+            <div id="charityDetailBody"></div>
+        </div>
+    </div>
 
     <!-- Модалка: создать поездку -->
     <div id="tripCreateModal" class="modal-overlay" style="display:none;">
@@ -1746,10 +1839,18 @@
             <p class="modal-subtitle">Найди попутчиков в дорогу</p>
 
             <label class="modal-label">Откуда</label>
-            <select id="tripFrom" class="modal-input"></select>
+            <div class="city-select">
+                <input type="text" id="tripFromInput" class="modal-input" placeholder="Начни вводить" autocomplete="off">
+                <input type="hidden" id="tripFrom" value="">
+                <div class="city-select__dropdown" id="tripFromDropdown" style="display:none;"></div>
+            </div>
 
             <label class="modal-label">Куда</label>
-            <select id="tripTo" class="modal-input"></select>
+            <div class="city-select">
+                <input type="text" id="tripToInput" class="modal-input" placeholder="Начни вводить" autocomplete="off">
+                <input type="hidden" id="tripTo" value="">
+                <div class="city-select__dropdown" id="tripToDropdown" style="display:none;"></div>
+            </div>
 
             <label class="modal-label">Дата</label>
             <input type="date" id="tripDate" class="modal-input">
@@ -1859,8 +1960,10 @@
     <script defer src="js/ui/landing.js"></script>
     <script defer src="js/ui/useful.js"></script>
     <script defer src="js/ui/affiche.js"></script>
+    <script defer src="js/ui/city-select.js"></script>
     <script defer src="js/ui/trips.js"></script>
     <script defer src="js/ui/meetings.js"></script>
+    <script defer src="js/ui/charity.js"></script>
     <script defer src="js/ui/faq.js"></script>
 
     <script defer src="js/app/init.js"></script>
@@ -1878,6 +1981,7 @@
     <script defer src="js/app/events/events-affiche.js"></script>
     <script defer src="js/app/events/events-trips.js"></script>
     <script defer src="js/app/events/events-meetings.js"></script>
+    <script defer src="js/app/events/events-charity.js"></script>
     <script defer src="js/app/start.js"></script>
 
 </body>
