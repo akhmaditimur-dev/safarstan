@@ -240,6 +240,12 @@ function renderFeedItem(item, likeInfo, taggedFriends, allTags = {}) {
     let text = '';
 
     switch (item.event_type) {
+        case 'trip': {
+            const from = data.from || '';
+            const to = data.to || '';
+            text = `${nameHtml} ищет попутчиков: <strong>${escapeHtml(from)}</strong> → <strong>${escapeHtml(to)}</strong>`;
+            break;
+        }
         case 'checkin': {
             // Строим список отмеченных друзей (для одиночного события)
             let withHtml = '';

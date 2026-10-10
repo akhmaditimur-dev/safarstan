@@ -132,6 +132,10 @@ function buildNotificationText(n) {
             return `<strong>${name}</strong> отклонил запрос на профиль`;
         case 'gap_invite':
             return `<strong>${name}</strong> приглашает тебя в гап${p.gap_title ? ` «${escapeHtml(p.gap_title)}»` : ''}`;
+        case 'trip_joined':
+            return `<strong>${name}</strong> присоединился к твоей поездке`;
+        case 'trip_cancelled':
+            return `<strong>${name}</strong> отменил поездку`;
         case 'review_on_place':
             return `<strong>${name}</strong> оставил отзыв${p.place_title ? ` на «${escapeHtml(p.place_title)}»` : ''}`;
         case 'photo_on_place':
@@ -228,6 +232,11 @@ function handleNotificationClick(type) {
         case 'gap_invite':
             const gapsCard = document.getElementById('dashGapsCard');
             if (gapsCard) gapsCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            break;
+        case 'trip_joined':
+        case 'trip_cancelled':
+            const tripsSection = document.getElementById('trips');
+            if (tripsSection) tripsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             break;
         default:
             break;
