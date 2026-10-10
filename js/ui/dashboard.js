@@ -39,6 +39,9 @@ async function showDashboard() {
     if (typeof renderTrips === 'function') {
         await renderTrips();
     }
+    if (typeof renderMeetingsDashboard === 'function') {
+        await renderMeetingsDashboard();
+    }
     
     // === КАЛЕНДАРЬ ===
     if (typeof renderCalendar === 'function') {

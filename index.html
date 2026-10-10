@@ -176,7 +176,6 @@
                 </div>
 
                 <!-- ПРАВАЯ КОЛОНКА -->
-                <!-- ПРАВАЯ КОЛОНКА -->
                 <div class="dashboard-col dashboard-col--right">
                     <!-- КАЛЕНДАРЬ -->
                     <div class="dashboard-card dashboard-card--calendar" id="dashCalendarCard">
@@ -224,6 +223,19 @@
                             <button class="btn btn-ghost btn-sm" id="dashAddPlanBtn"><i data-lucide="plus"></i> Добавить</button>
                         </div>
                         <div class="dashboard-plans" id="dashPlans"></div>
+                    </div>
+
+                    <div class="dashboard-card" id="dashMeetingsCard">
+                        <div class="dashboard-card__header">
+                            <h3>Мои встречи</h3>
+                            <button class="btn btn-ghost btn-sm" id="meetingCreateBtn" style="display:none;" title="Создать">
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </div>
+                        <div class="dashboard-meetings" id="dashMeetings"></div>
+                        <button class="btn btn-secondary btn-sm btn-block" id="meetingsShowAllBtn" style="display:none;">
+                            Все встречи
+                        </button>
                     </div>
 
                     <div class="dashboard-card" id="dashGapsCard">
@@ -1667,6 +1679,7 @@
     <script defer src="js/ui/useful.js"></script>
     <script defer src="js/ui/affiche.js"></script>
     <script defer src="js/ui/trips.js"></script>
+    <script defer src="js/ui/meetings.js"></script>
     <script defer src="js/ui/faq.js"></script>
 
     <script defer src="js/app/init.js"></script>

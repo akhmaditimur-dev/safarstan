@@ -942,3 +942,19 @@
     margin-right: 6px;
     vertical-align: middle;
 }
+
+/* Мои встречи */
+.dashboard-meetings {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.dashboard-meetings .dashboard-row {
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.dashboard-meetings .dashboard-row:hover {
+    background: var(--color-primary-light);
+}
