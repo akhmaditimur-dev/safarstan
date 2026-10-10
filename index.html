@@ -1577,6 +1577,18 @@
                         <i data-lucide="hand-heart"></i>
                         <span>Хашар</span>
                     </button>
+                    <button class="meeting-type-btn" data-meeting-type="business">
+                        <i data-lucide="briefcase"></i>
+                        <span>Бизнес</span>
+                    </button>
+                    <button class="meeting-type-btn" data-meeting-type="wedding">
+                        <i data-lucide="heart"></i>
+                        <span>Свадьба</span>
+                    </button>
+                    <button class="meeting-type-btn" data-meeting-type="other">
+                        <i data-lucide="calendar"></i>
+                        <span>Просто встреча</span>
+                    </button>
                 </div>
             </div>
 
@@ -1636,6 +1648,38 @@
                     <input type="number" id="meetingHasharMax" class="modal-input" min="1" max="500" placeholder="Например, 20">
                 </div>
 
+                <!-- ПОЛЯ ДЛЯ БИЗНЕС-ВСТРЕЧИ -->
+                <div class="meeting-type-fields" data-meeting-fields="business" style="display:none;">
+                    <label class="modal-label">Повестка (опционально)</label>
+                    <textarea id="meetingBusinessAgenda" class="modal-input" rows="2" placeholder="Что обсуждаем?"></textarea>
+
+                    <label class="modal-label">Ссылка (Zoom / Meet, опционально)</label>
+                    <input type="text" id="meetingBusinessLink" class="modal-input" placeholder="https://zoom.us/...">
+
+                    <label class="modal-label">Дресс-код (опционально)</label>
+                    <input type="text" id="meetingBusinessDresscode" class="modal-input" placeholder="Business casual">
+                </div>
+
+                <!-- ПОЛЯ ДЛЯ СВАДЬБЫ -->
+                <div class="meeting-type-fields" data-meeting-fields="wedding" style="display:none;">
+                    <label class="modal-label">Жених</label>
+                    <input type="text" id="meetingWeddingGroom" class="modal-input" placeholder="Имя жениха">
+
+                    <label class="modal-label">Невеста</label>
+                    <input type="text" id="meetingWeddingBride" class="modal-input" placeholder="Имя невесты">
+
+                    <label class="modal-label">Дресс-код (опционально)</label>
+                    <input type="text" id="meetingWeddingDresscode" class="modal-input" placeholder="Например, пастельные тона">
+
+                    <label class="modal-label">Программа (опционально)</label>
+                    <textarea id="meetingWeddingProgram" class="modal-input" rows="2" placeholder="Что и во сколько?"></textarea>
+
+                    <p class="meeting-wedding-hint">
+                        <i data-lucide="lock"></i>
+                        Список гостей увидят только жених и невеста.
+                    </p>
+                </div>
+
                 <label class="modal-label">Кто может видеть</label>
                 <select id="meetingPrivacy" class="modal-input">
                     <option value="friends">Только друзья</option>
@@ -1664,6 +1708,9 @@
                     <option value="friend_meeting">Встречи друзей</option>
                     <option value="birthday">Дни рождения</option>
                     <option value="hashar">Хашары</option>
+                    <option value="business">Бизнес</option>
+                    <option value="wedding">Свадьбы</option>
+                    <option value="other">Просто встречи</option>
                 </select>
             </div>
 

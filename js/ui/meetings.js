@@ -129,6 +129,9 @@ function selectMeetingType(type) {
         friend_meeting: { t: 'Встреча друзей', s: 'Соберёмся вместе' },
         birthday: { t: 'День рождения', s: 'Кто именинник?' },
         hashar: { t: 'Хашар', s: 'Общее дело' },
+        business: { t: 'Бизнес-встреча', s: 'Рабочая встреча' },
+        wedding: { t: 'Свадьба', s: 'Торжество' },
+        other: { t: 'Просто встреча', s: 'Заполни детали' },
     };
     const info = titles[type] || { t: 'Встреча', s: '' };
     document.getElementById('meetingStep2Title').textContent = info.t;
@@ -193,6 +196,15 @@ async function submitMeetingCreate() {
         data.category = document.getElementById('meetingHasharCategory').value;
         data.bring = document.getElementById('meetingHasharBring').value.trim();
         data.max_members = parseInt(document.getElementById('meetingHasharMax').value) || null;
+    } else if (MEETING_DRAFT.type === 'business') {
+        data.agenda = document.getElementById('meetingBusinessAgenda').value.trim();
+        data.link = document.getElementById('meetingBusinessLink').value.trim();
+        data.dresscode = document.getElementById('meetingBusinessDresscode').value.trim();
+    } else if (MEETING_DRAFT.type === 'wedding') {
+        data.groom = document.getElementById('meetingWeddingGroom').value.trim();
+        data.bride = document.getElementById('meetingWeddingBride').value.trim();
+        data.dresscode = document.getElementById('meetingWeddingDresscode').value.trim();
+        data.program = document.getElementById('meetingWeddingProgram').value.trim();
     }
 
     const result = await createMeeting({
@@ -382,6 +394,19 @@ async function openMeetingDetail(meetingId) {
             ${data.category ? `<div class="meeting-detail__row"><i data-lucide="tag"></i> Категория: <strong>${catLabels[data.category] || data.category}</strong></div>` : ''}
             ${data.bring ? `<div class="meeting-detail__row"><i data-lucide="shopping-bag"></i> Взять: ${escapeHtml(data.bring)}</div>` : ''}
             ${data.max_members ? `<div class="meeting-detail__row"><i data-lucide="users"></i> Лимит: ${data.max_members}</div>` : ''}
+        `;
+    } else if (meeting.type === 'business') {
+        typeFieldsHtml = `
+            ${data.agenda ? `<div class="meeting-detail__row"><i data-lucide="list"></i> Повестка: ${escapeHtml(data.agenda)}</div>` : ''}
+            ${data.link ? `<div class="meeting-detail__row"><i data-lucide="link"></i> Ссылка: <a href="${escapeHtml(data.link)}" target="_blank" rel="noopener">открыть</a></div>` : ''}
+            ${data.dresscode ? `<div class="meeting-detail__row"><i data-lucide="shirt"></i> Дресс-код: ${escapeHtml(data.dresscode)}</div>` : ''}
+        `;
+    } else if (meeting.type === 'wedding') {
+        typeFieldsHtml = `
+            ${data.groom ? `<div class="meeting-detail__row"><i data-lucide="user"></i> Жених: <strong>${escapeHtml(data.groom)}</strong></div>` : ''}
+            ${data.bride ? `<div class="meeting-detail__row"><i data-lucide="user"></i> Невеста: <strong>${escapeHtml(data.bride)}</strong></div>` : ''}
+            ${data.dresscode ? `<div class="meeting-detail__row"><i data-lucide="shirt"></i> Дресс-код: ${escapeHtml(data.dresscode)}</div>` : ''}
+            ${data.program ? `<div class="meeting-detail__row"><i data-lucide="calendar"></i> Программа: ${escapeHtml(data.program)}</div>` : ''}
         `;
     }
 
