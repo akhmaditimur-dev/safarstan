@@ -29,6 +29,11 @@ initApp().then(() => {
             startHeartbeat(PLAYER.playerId);
         }
     }
+
+    // Админ-якоря (потом подключатся к админ-панели)
+    if (typeof initAdminAnchors === 'function') {
+        initAdminAnchors();
+    }
 });
 
 // ============================================
@@ -75,3 +80,20 @@ window.addEventListener('hashchange', () => {
         }
     }
 });
+
+// ============================================
+// АДМИН-ЯКОРЯ
+// ============================================
+
+function initAdminAnchors() {
+    if (typeof PLAYER === 'undefined' || !PLAYER) return;
+
+    const admin = typeof isAdmin === 'function' && isAdmin(PLAYER.playerId);
+
+    document.querySelectorAll('[data-admin-only]').forEach(el => {
+        el.style.display = admin ? '' : 'none';
+    });
+
+    // Потом: подгрузка админ-панели
+    // if (admin && typeof initAdminPanel === 'function') initAdminPanel();
+}

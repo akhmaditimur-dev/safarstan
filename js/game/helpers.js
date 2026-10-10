@@ -79,3 +79,12 @@ function cityName(cityKey) {
     if (!cityKey) return '';
     return CITIES[cityKey]?.name || cityKey;
 }
+
+// Хелпер: является ли игрок админом
+function isAdmin(playerId) {
+    if (!playerId) return false;
+    if (typeof ADMINS !== 'undefined' && Array.isArray(ADMINS)) {
+        return ADMINS.includes(playerId);
+    }
+    return false;
+}
