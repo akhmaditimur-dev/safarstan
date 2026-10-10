@@ -52,3 +52,20 @@ document.addEventListener('click', (e) => {
         closeCharityDetailModal();
     }
 });
+
+// ============================================
+// ОТЧЁТ
+// ============================================
+
+// Закрытие
+document.addEventListener('click', (e) => {
+    if (e.target.id === 'charityReportModal' || e.target.closest('#charityReportClose')) {
+        closeCharityReportModal();
+    }
+});
+
+// Отправка отчёта
+document.addEventListener('click', async (e) => {
+    if (!e.target.closest('#charityReportSubmit')) return;
+    await submitCharityReportForm();
+});

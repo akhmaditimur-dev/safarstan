@@ -9,7 +9,6 @@ async function loadCharityCampaigns(filter = {}) {
             status, report_text, created_at,
             creator:creator_id (id, name, avatar, level)
         `)
-        .in('status', ['active', 'closed', 'reported'])
         .order('created_at', { ascending: false });
 
     if (filter.type && filter.type !== 'all') query = query.eq('type', filter.type);
@@ -115,5 +114,27 @@ async function rejectCharityCampaign(campaignId) {
         .eq('id', campaignId);
 
     if (error) return { error: error.message };
+    return { ok: true };
+}
+
+// Оставить отчёт по сбору
+async function submitCharityReport(campaignId, { amount, text, photos }) {
+    if (!PLAYER || !PLAYER.playerId) return { error: 'Не авторизован' };
+
+    const { error } = await _supabase
+        .from('charity_campaigns')
+        .update({
+            status: 'reported',
+            report_amount: amount || null,
+            report_text: text || null,
+            report_photos: photos || [],
+        })
+        .eq('id', campaignId)
+        .eq('creator_id', PLAYER.playerId);
+
+    if (error) {
+        console.warn('submitCharityReport:', error);
+        return { error: error.message };
+    }
     return { ok: true };
 }

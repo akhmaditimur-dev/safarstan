@@ -21,9 +21,17 @@ async function renderCharity() {
     list.innerHTML = '<div class="charity-empty">⏳ Загрузка...</div>';
 
     const all = await loadCharityCampaigns();
-    CHARITY_CACHE = all;
 
-    let items = all;
+    // Свои — все статусы. Чужие — только одобренные.
+    const myId = PLAYER?.playerId;
+    const visible = all.filter(c => {
+        if (c.creator_id === myId) return true;
+        return ['active', 'closed', 'reported'].includes(c.status);
+    });
+
+    CHARITY_CACHE = visible;
+
+    let items = visible;
     if (CHARITY_FILTER === 'money') {
         items = all.filter(c => c.type === 'money');
     } else if (CHARITY_FILTER === 'things') {
@@ -269,7 +277,24 @@ async function openCharityDetail(campaignId) {
 
         ${progressHtml}
 
-        ${isMine ? `
+        ${campaign.status === 'reported' && campaign.report_text ? `
+            <div class="charity-detail__report">
+                <h3><i data-lucide="file-text"></i> Отчёт</h3>
+                ${campaign.report_amount ? `<div class="charity-detail__row"><i data-lucide="wallet"></i> Потрачено: <strong>${escapeHtml(campaign.report_amount)}</strong></div>` : ''}
+                <p class="charity-detail__report-text">${escapeHtml(campaign.report_text)}</p>
+                ${(campaign.report_photos || []).length > 0 ? `
+                    <div class="charity-detail__report-photos">
+                        ${campaign.report_photos.map(url => `
+                            <div class="charity-detail__photo" data-lightbox="${escapeHtml(url)}">
+                                <img src="${escapeHtml(url)}" alt="" loading="lazy">
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            </div>
+        ` : ''}
+
+        ${isMine && campaign.status !== 'reported' ? `
             <button class="btn btn-secondary btn-block" id="charityReportBtn" data-charity-id="${campaign.id}" style="margin-top: 16px;">
                 <i data-lucide="file-text"></i> Оставить отчёт
             </button>
@@ -283,3 +308,87 @@ function closeCharityDetailModal() {
     const modal = document.getElementById('charityDetailModal');
     if (modal) modal.style.display = 'none';
 }
+
+// ============================================
+// ОТЧЁТ ПО СБОРУ
+// ============================================
+
+function openCharityReportModal(campaignId) {
+    const modal = document.getElementById('charityReportModal');
+    if (!modal) return;
+
+    const campaign = CHARITY_CACHE.find(c => c.id === campaignId);
+    if (!campaign) return;
+
+    document.getElementById('charityReportTitle').textContent = campaign.title;
+    document.getElementById('charityReportAmount').value = '';
+    document.getElementById('charityReportText').value = '';
+    document.getElementById('charityReportPhotos').value = '';
+    document.getElementById('charityReportError').style.display = 'none';
+
+    // Показ «Сумма» только для money-сбора
+    const moneyFields = document.querySelectorAll('[data-charity-report-money]');
+    moneyFields.forEach(el => {
+        el.style.display = campaign.type === 'money' ? '' : 'none';
+    });
+
+    modal.dataset.campaignId = campaignId;
+    modal.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function closeCharityReportModal() {
+    const modal = document.getElementById('charityReportModal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function submitCharityReportForm() {
+    const modal = document.getElementById('charityReportModal');
+    const errorEl = document.getElementById('charityReportError');
+    errorEl.style.display = 'none';
+
+    const campaignId = modal.dataset.campaignId;
+    const amount = document.getElementById('charityReportAmount').value.trim();
+    const text = document.getElementById('charityReportText').value.trim();
+    const photosRaw = document.getElementById('charityReportPhotos').value.trim();
+
+    if (!text || text.length < 10) {
+        errorEl.textContent = 'Опиши отчёт (минимум 10 символов)';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    // Автопроверка мата
+    if (typeof hasBadWords === 'function' && hasBadWords(text)) {
+        errorEl.textContent = 'Пожалуйста, без грубых слов';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    const photos = photosRaw
+        ? photosRaw.split(',').map(s => s.trim()).filter(Boolean)
+        : [];
+
+    const result = await submitCharityReport(campaignId, { amount, text, photos });
+
+    if (result.error) {
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    closeCharityReportModal();
+    await renderCharity();
+    if (typeof showWarningToast === 'function') {
+        showWarningToast('✅ Отчёт добавлен');
+    }
+}
+
+// Кнопка «Оставить отчёт» в деталях
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('#charityReportBtn');
+    if (!btn) return;
+    e.stopPropagation();
+    closeCharityDetailModal();
+    openCharityReportModal(btn.dataset.charityId);
+});

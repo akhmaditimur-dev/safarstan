@@ -258,3 +258,67 @@
         margin-left: 0;
     }
 }
+
+/* ============================================
+   ОТЧЁТ
+   ============================================ */
+
+.charity-detail__report {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--color-primary-soft);
+    border-radius: var(--radius-lg);
+    border-left: 3px solid var(--color-primary);
+}
+
+.charity-detail__report h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    color: var(--color-primary-dark);
+    margin: 0 0 12px;
+}
+
+.charity-detail__report h3 svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+.charity-detail__report-text {
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+    line-height: 1.5;
+    margin: 8px 0;
+    white-space: pre-wrap;
+}
+
+.charity-detail__report-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.charity-detail__photo {
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-bg-soft);
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+}
+
+.charity-detail__photo:hover {
+    transform: scale(1.05);
+}
+
+.charity-detail__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
