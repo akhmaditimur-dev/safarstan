@@ -310,33 +310,6 @@ async function searchPlayersForGap(query) {
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
-
-// ============================================
-// ХЕЛПЕРЫ
-// ============================================
-function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-}
-
-function cityName(cityKey) {
-    if (!cityKey) return '';
-    return CITIES[cityKey]?.name || cityKey;
-}
-
-// Универсальный рендер аватара: URL → <img>, иначе эмодзи
-function renderAvatarHtml(avatar) {
-    if (!avatar) return '🧑‍💼';
-    if (typeof avatar === 'string' && avatar.startsWith('http')) {
-        return `<img src="${avatar}" alt="" loading="lazy">`;
-    }
-    return avatar;
-}
-
 // ============================================
 // ОБРАБОТЧИКИ СОБЫТИЙ
 // ============================================

@@ -285,15 +285,6 @@ function translateHasharStatus(status) {
     return map[status] || status;
 }
 
-// Аватар: URL → <img>, иначе эмодзи
-function renderAvatarHtml(avatar) {
-    if (!avatar) return '🧑‍💼';
-    if (typeof avatar === 'string' && avatar.startsWith('http')) {
-        return `<img src="${avatar}" alt="" loading="lazy">`;
-    }
-    return avatar;
-}
-
 // ============================================
 // ОБРАБОТЧИКИ
 // ============================================

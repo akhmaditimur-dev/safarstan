@@ -150,22 +150,6 @@ function renderReviewItem(review) {
     `;
 }
 
-function renderAvatarHtml(avatar) {
-    if (!avatar) return '🧑‍💼';
-    if (typeof avatar === 'string' && avatar.startsWith('http')) {
-        return `<img src="${avatar}" alt="" loading="lazy">`;
-    }
-    return avatar;
-}
-
-if (typeof escapeHtml === 'undefined') {
-    window.escapeHtml = function(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    };
-}
-
 function renderReviewItem(review) {
     const player = review.players || {};
     const name = player.name || 'Игрок';

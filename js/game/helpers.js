@@ -51,3 +51,31 @@ function validateUserText(text, options = {}) {
     }
     return null;
 }
+
+// ============ ОБЩИЕ UI-ХЕЛПЕРЫ ============
+
+// Универсальный рендер аватара: URL → <img>, иначе эмодзи
+function renderAvatarHtml(avatar) {
+    if (!avatar) return '🧑‍💼';
+    if (typeof avatar === 'string' && avatar.startsWith('http')) {
+        return `<img src="${avatar}" alt="" loading="lazy">`;
+    }
+    return avatar;
+}
+
+// Экранирование HTML
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+// Название города из ключа
+function cityName(cityKey) {
+    if (!cityKey) return '';
+    return CITIES[cityKey]?.name || cityKey;
+}
