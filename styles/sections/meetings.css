@@ -55,3 +55,227 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================================
+   МОДАЛКА «ВСЕ ВСТРЕЧИ»
+   ============================================ */
+
+.modal--meetings {
+    max-width: 900px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.meetings-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.meetings-filter-select {
+    margin: 0;
+    width: auto;
+    min-width: 200px;
+}
+
+.meetings-all-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Карточка встречи в списке */
+.meeting-card {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.meeting-card:hover {
+    background: var(--color-primary-light);
+    transform: translateX(3px);
+}
+
+.meeting-card__icon {
+    width: 40px;
+    height: 40px;
+    background: var(--color-surface);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--color-primary);
+}
+
+.meeting-card__icon svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+.meeting-card__body {
+    flex: 1;
+    min-width: 0;
+}
+
+.meeting-card__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin-bottom: 6px;
+}
+
+.meeting-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: var(--fs-xs);
+    color: var(--color-text-soft);
+    margin-bottom: 6px;
+}
+
+.meeting-card__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.meeting-card__meta svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2.5;
+    flex-shrink: 0;
+}
+
+.meeting-card__creator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
+
+.meeting-card__avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.meeting-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ============================================
+   ДЕТАЛИ ВСТРЕЧИ
+   ============================================ */
+
+.meeting-detail__header {
+    margin-bottom: 16px;
+}
+
+.meeting-detail__type {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    margin-bottom: 8px;
+}
+
+.meeting-detail__header h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-text);
+}
+
+.meeting-detail__desc {
+    color: var(--color-text-soft);
+    font-size: var(--fs-sm);
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.meeting-detail__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.meeting-detail__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+    padding: 8px 12px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+}
+
+.meeting-detail__row svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.meeting-detail__row strong {
+    font-weight: var(--fw-semibold);
+}
+
+.meeting-detail__privacy {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    padding: 6px 10px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-full);
+}
+
+.meeting-detail__privacy svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* Адаптив */
+@media (max-width: 700px) {
+    .modal--meetings {
+        max-width: 100%;
+        max-height: 100vh;
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    .meetings-filter-select {
+        width: 100%;
+    }
+
+    .meetings-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
