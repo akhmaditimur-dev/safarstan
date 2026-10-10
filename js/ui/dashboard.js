@@ -36,6 +36,9 @@ async function showDashboard() {
     if (typeof renderAffiche === 'function') {
         await renderAffiche();
     }
+    if (typeof renderTrips === 'function') {
+        await renderTrips();
+    }
     
     // === КАЛЕНДАРЬ ===
     if (typeof renderCalendar === 'function') {

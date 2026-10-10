@@ -67,6 +67,7 @@
     <link rel="stylesheet" href="styles/sections/landing.css">
     <link rel="stylesheet" href="styles/sections/dashboard.css">
     <link rel="stylesheet" href="styles/sections/affiche.css">
+    <link rel="stylesheet" href="styles/sections/trips.css">
     <link rel="stylesheet" href="styles/sections/calendar.css">    <link rel="stylesheet" href="styles/sections/sections.css">
     <link rel="stylesheet" href="styles/responsive.css">
 </head>
@@ -261,7 +262,7 @@
             </div>
         </div>
     </section>
-    
+
     <!-- HERO -->
     <section class="hero">
         <div class="container">
@@ -464,6 +465,7 @@
     </section>
 
     <!-- СЕРВИСЫ -->
+    <!-- СЕРВИСЫ -->
     <section class="section section--alt" id="services">
         <div class="container">
             <div class="section-header">
@@ -471,6 +473,25 @@
                 <button class="add-place-btn" data-category="service"><i data-lucide="plus"></i> Добавить место</button>
             </div>
             <div id="servicesList" class="cards"></div>
+        </div>
+    </section>
+
+    <!-- ПОПУТЧИКИ -->
+    <section class="section" id="trips">
+        <div class="container">
+            <div class="section-header">
+                <h2>Попутчики</h2>
+                <button class="add-place-btn" id="tripCreateBtn">
+                    <i data-lucide="plus"></i> Создать поездку
+                </button>
+            </div>
+
+            <div class="trips-filters">
+                <button class="trip-filter active" data-trip-filter="current">Мой город</button>
+                <button class="trip-filter" data-trip-filter="all">Все города</button>
+            </div>
+
+            <div id="tripsList" class="trips-list"></div>
         </div>
     </section>
 
@@ -1524,6 +1545,51 @@
         <img id="lightboxImg" class="lightbox__img" src="" alt="">
     </div>
 
+    <!-- Модалка: создать поездку -->
+    <div id="tripCreateModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="tripCreateClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Создать поездку</h2>
+            <p class="modal-subtitle">Найди попутчиков в дорогу</p>
+
+            <label class="modal-label">Откуда</label>
+            <select id="tripFrom" class="modal-input"></select>
+
+            <label class="modal-label">Куда</label>
+            <select id="tripTo" class="modal-input"></select>
+
+            <label class="modal-label">Дата</label>
+            <input type="date" id="tripDate" class="modal-input">
+
+            <label class="modal-label">Время отправления</label>
+            <input type="time" id="tripTime" class="modal-input" value="09:00">
+
+            <label class="modal-label">Транспорт</label>
+            <select id="tripTransport" class="modal-input">
+                <option value="car">Машина</option>
+                <option value="taxi">Такси</option>
+                <option value="train">Поезд</option>
+                <option value="bus">Автобус</option>
+            </select>
+
+            <label class="modal-label">Свободных мест</label>
+            <input type="number" id="tripSeats" class="modal-input" min="1" max="8" value="3">
+
+            <label class="modal-label">Цена за место (опционально)</label>
+            <input type="text" id="tripPrice" class="modal-input" placeholder="Например: 100 000 сум или бесплатно">
+
+            <label class="modal-label">Контакт (опционально)</label>
+            <input type="text" id="tripContact" class="modal-input" placeholder="@telegram или +998...">
+
+            <label class="modal-label">Комментарий (опционально)</label>
+            <textarea id="tripDescription" class="modal-input" rows="2" placeholder="Курю? Есть место для багажа?"></textarea>
+
+            <button id="tripCreateSubmit" class="modal-btn">Создать поездку</button>
+            <p id="tripCreateError" class="auth-error" style="display:none;"></p>
+        </div>
+    </div>
+
+
     <!-- СКРИПТЫ -->
     <script src="https://cdn.jsdelivr.net/npm/ol@v9.2.4/dist/ol.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -1555,6 +1621,7 @@
     <script defer src="js/api/presence.js"></script>
     <script defer src="js/api/useful.js"></script>
     <script defer src="js/api/affiche.js"></script>
+    <script defer src="js/api/trips.js"></script>
 
     <script defer src="js/game/helpers.js"></script>
     <script defer src="js/game/checkin.js"></script>
@@ -1596,6 +1663,7 @@
     <script defer src="js/ui/landing.js"></script>
     <script defer src="js/ui/useful.js"></script>
     <script defer src="js/ui/affiche.js"></script>
+    <script defer src="js/ui/trips.js"></script>
     <script defer src="js/ui/faq.js"></script>
 
     <script defer src="js/app/init.js"></script>
@@ -1611,6 +1679,7 @@
     <script defer src="js/app/events/events-sidebar.js"></script>
     <script defer src="js/app/events/events-useful.js"></script>
     <script defer src="js/app/events/events-affiche.js"></script>
+    <script defer src="js/app/events/events-trips.js"></script>
     <script defer src="js/app/start.js"></script>
 
 </body>
