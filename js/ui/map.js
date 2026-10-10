@@ -148,7 +148,7 @@ function handleMapClick(evt) {
         if (cityKey && CITIES[cityKey]) {
             currentCity = cityKey;
             renderAll();
-            if (typeof renderCitySelector === 'function') renderCitySelector();
+            if (typeof renderHeaderCity === 'function') renderHeaderCity();
             saveState();
         }
     } else if (features && features.length > 1) {

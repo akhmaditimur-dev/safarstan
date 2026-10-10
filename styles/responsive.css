@@ -23,3 +23,12 @@
     .hero h1 { font-size: var(--fs-3xl); }
     .player-badge { display: none !important; }
 }
+
+@media (max-width: 600px) {
+    .header-city__btn span {
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

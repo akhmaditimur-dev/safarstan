@@ -28,6 +28,9 @@ initApp().then(() => {
         if (typeof startHeartbeat === 'function') {
             startHeartbeat(PLAYER.playerId);
         }
+        if (typeof renderHeaderCity === 'function') {
+            renderHeaderCity();
+        }
     }
 
     // Админ-якоря (потом подключатся к админ-панели)

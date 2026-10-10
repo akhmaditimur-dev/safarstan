@@ -5,18 +5,18 @@
    ============================================ */
 .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
 }
 
 .card {
     background: var(--color-surface);
     border-radius: var(--radius-xl);
-    padding: 14px;
+    padding: 12px;
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     position: relative;
     overflow: hidden;
     transition: transform var(--transition-base),
@@ -35,7 +35,7 @@
 
 .card h3 {
     font-family: var(--font-heading);
-    font-size: var(--fs-lg);
+    font-size: var(--fs-base);
     font-weight: var(--fw-bold);
     margin: 0;
     color: var(--color-text);

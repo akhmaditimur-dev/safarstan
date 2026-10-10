@@ -52,7 +52,6 @@
     <link rel="stylesheet" href="styles/components/toast.css">
     <link rel="stylesheet" href="styles/components/skeleton.css">
     <link rel="stylesheet" href="styles/components/navigation.css">
-    <link rel="stylesheet" href="styles/sections/hero.css">
     <link rel="stylesheet" href="styles/sections/city.css">
     <link rel="stylesheet" href="styles/sections/ratings.css">
     <link rel="stylesheet" href="styles/sections/quests.css">
@@ -81,6 +80,15 @@
     <header class="header">
         <div class="container header__inner">
             <div class="logo">Safarstan</div>
+
+            <div class="header-city" id="headerCity">
+                <button class="header-city__btn" id="headerCityBtn">
+                    <i data-lucide="map-pin"></i>
+                    <span id="headerCityName">—</span>
+                    <i data-lucide="chevron-down"></i>
+                </button>
+                <div class="header-city__dropdown" id="headerCityDropdown" style="display:none;"></div>
+            </div>
 
             <div class="header-search" id="headerSearch">
                 <div class="header-search__input-wrap">
@@ -276,56 +284,7 @@
         </div>
     </section>
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="container">
-            <h1>Куда отправимся?</h1>
-            <p class="hero__subtitle">Safarstan — исследуй, открывай, живи в городах</p>
-
-            <div class="hero__columns">
-                <div class="hero__col hero__col--left">
-                    <div class="city-search">
-                        <div class="city-search__input-wrap">
-                            <span class="city-search__icon"><i data-lucide="search"></i></span>
-                            <input type="text" id="citySearchInput" class="city-search__input" placeholder="Поиск" autocomplete="off" name="city-search-no-autofill" readonly onfocus="this.removeAttribute('readonly')">
-                            <button id="citySearchClear" class="city-search__clear" style="display:none;"><i data-lucide="x"></i></button>
-                        </div>
-                        <div id="citySearchResults" class="city-search__results" style="display:none;"></div>
-                    </div>
-
-                    <div class="city-section" id="myCitiesSection" style="display:none;">
-                        <h3 class="city-section__title"><i data-lucide="map-pin"></i> Мои города</h3>
-                        <div class="city-chips" id="myCitiesChips"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- РЕЙТИНГ -->
-    <section class="section" id="ratings">
-    <div class="container">
-        <h2>Рейтинг городов</h2>
-
-        <div class="tabs tabs--scroll" id="ratingTabs">
-            <button class="tab active" data-rating="residents"><i data-lucide="home"></i> Жители</button>
-            <button class="tab" data-rating="home"><i data-lucide="house"></i> Родной дом</button>
-            <button class="tab" data-rating="hospitality"><i data-lucide="hand-heart"></i> Гостеприимство</button>
-            <button class="tab" data-rating="tourists"><i data-lucide="luggage"></i> Туристы</button>
-            <button class="tab" data-rating="content"><i data-lucide="camera"></i> Контент</button>
-        </div>
-
-        <div class="rating-periods" id="ratingPeriods">
-            <button class="rating-period" data-period="all">Всё время</button>
-            <button class="rating-period" data-period="month">Месяц</button>
-            <button class="rating-period active" data-period="week">Неделя</button>
-        </div>
-
-        <div id="ratingList" class="rating-list"></div>
-    </div>
-    </section>
-
-    <!-- КАРТА -->
+<!-- КАРТА -->
     <section class="section section--alt" id="map">
     <div class="container">
         <h2>Карта городов</h2>
@@ -365,6 +324,29 @@
     </div>
     </section>
 
+    <!-- РЕЙТИНГ -->
+    <section class="section" id="ratings">
+    <div class="container">
+        <h2>Рейтинг городов</h2>
+
+        <div class="tabs tabs--scroll" id="ratingTabs">
+            <button class="tab active" data-rating="residents"><i data-lucide="home"></i> Жители</button>
+            <button class="tab" data-rating="home"><i data-lucide="house"></i> Родной дом</button>
+            <button class="tab" data-rating="hospitality"><i data-lucide="hand-heart"></i> Гостеприимство</button>
+            <button class="tab" data-rating="tourists"><i data-lucide="luggage"></i> Туристы</button>
+            <button class="tab" data-rating="content"><i data-lucide="camera"></i> Контент</button>
+        </div>
+
+        <div class="rating-periods" id="ratingPeriods">
+            <button class="rating-period" data-period="all">Всё время</button>
+            <button class="rating-period" data-period="month">Месяц</button>
+            <button class="rating-period active" data-period="week">Неделя</button>
+        </div>
+
+        <div id="ratingList" class="rating-list"></div>
+    </div>
+    </section>
+  
     <!-- О ГОРОДЕ -->
     <section class="section section--alt" id="info">
         <div class="container">
@@ -1959,7 +1941,6 @@
     <script defer src="js/ui/skeleton.js"></script>
     <script defer src="js/ui/cards.js"></script>
     <script defer src="js/ui/sections.js"></script>
-    <script defer src="js/ui/city-selector.js"></script>
     <script defer src="js/ui/ratings.js"></script>
     <script defer src="js/ui/quests.js"></script>
     <script defer src="js/ui/map.js"></script>
@@ -1989,6 +1970,7 @@
     <script defer src="js/ui/useful.js"></script>
     <script defer src="js/ui/affiche.js"></script>
     <script defer src="js/ui/city-select.js"></script>
+    <script defer src="js/ui/header-city.js"></script>
     <script defer src="js/ui/trips.js"></script>
     <script defer src="js/ui/meetings.js"></script>
     <script defer src="js/ui/charity.js"></script>

@@ -14,7 +14,6 @@ async function initApp() {
 
     // ─── Всегда инициализируем базовые вещи ───
     initCitySearch();
-    renderCitySelector();
     renderMap();
 
     // Применяем язык (заголовки секций, hero)
