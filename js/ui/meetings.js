@@ -406,17 +406,170 @@ async function openMeetingDetail(meetingId) {
             ${meeting.privacy === 'public' ? 'Публичное' : meeting.privacy === 'friends' ? 'Только друзья' : 'По приглашению'}
         </div>
 
-        ${isMine ? `
-            <button class="btn btn-danger btn-block" id="meetingDetailCancelBtn" data-meeting-id="${meeting.id}" style="margin-top: 16px;">
-                <i data-lucide="x"></i> Отменить встречу
-            </button>
-        ` : ''}
+        ${renderMeetingMembersSection(meeting)}
+
+        ${renderMeetingActions(meeting)}
     `;
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+// Секция «Участники»
+function renderMeetingMembersSection(meeting) {
+    const members = meeting.members || [];
+
+    if (members.length === 0) {
+        return `
+            <div class="meeting-detail__section">
+                <h3>Участники</h3>
+                <div class="dashboard-empty">Пока никого</div>
+            </div>
+        `;
+    }
+
+    const membersHtml = members.map(m => {
+        const avatarHtml = typeof renderAvatarHtml === 'function'
+            ? renderAvatarHtml(m.avatar)
+            : m.avatar;
+        const roleIcon = m.role === 'creator' ? 'crown' : m.role === 'helper' ? 'wrench' : '';
+        const statusLabel = m.status === 'going' ? '' : m.status === 'maybe' ? ' (может быть)' : ' (не идёт)';
+
+        return `
+            <div class="meeting-member" data-player-profile="${m.player_id}">
+                <div class="meeting-member__avatar">${avatarHtml}</div>
+                <div class="meeting-member__name">${escapeHtml(m.name)}${statusLabel}</div>
+                ${roleIcon ? `<div class="meeting-member__role"><i data-lucide="${roleIcon}"></i></div>` : ''}
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div class="meeting-detail__section">
+            <h3>Участники (${members.length})</h3>
+            <div class="meeting-members-grid">${membersHtml}</div>
+        </div>
+    `;
+}
+
+// Кнопки действий
+function renderMeetingActions(meeting) {
+    const isMine = meeting.creator_id === PLAYER?.playerId;
+    const myMembership = (meeting.members || []).find(m => m.player_id === PLAYER?.playerId);
+    const iAmIn = !!myMembership;
+
+    let html = '<div class="meeting-detail__actions">';
+
+    if (isMine) {
+        html += `
+            <button class="btn btn-primary btn-block" id="meetingInviteBtn" data-meeting-id="${meeting.id}">
+                <i data-lucide="user-plus"></i> Пригласить
+            </button>
+            <button class="btn btn-danger btn-block" id="meetingDetailCancelBtn" data-meeting-id="${meeting.id}">
+                <i data-lucide="x"></i> Отменить встречу
+            </button>
+        `;
+    } else if (iAmIn) {
+        // RSVP — статус
+        html += `
+            <div class="meeting-rsvp">
+                <button class="meeting-rsvp__btn ${myMembership.status === 'going' ? 'active' : ''}" data-meeting-rsvp="going" data-meeting-id="${meeting.id}">
+                    <i data-lucide="check"></i> Иду
+                </button>
+                <button class="meeting-rsvp__btn ${myMembership.status === 'maybe' ? 'active' : ''}" data-meeting-rsvp="maybe" data-meeting-id="${meeting.id}">
+                    <i data-lucide="help-circle"></i> Может быть
+                </button>
+            </div>
+            <button class="btn btn-ghost btn-block" id="meetingLeaveBtn" data-meeting-id="${meeting.id}">
+                <i data-lucide="log-out"></i> Покинуть
+            </button>
+        `;
+    } else if (meeting.privacy === 'public' || meeting.privacy === 'friends') {
+        html += `
+            <button class="btn btn-primary btn-block" id="meetingJoinBtn" data-meeting-id="${meeting.id}">
+                <i data-lucide="user-plus"></i> Присоединиться
+            </button>
+        `;
+    } else {
+        html += `<div class="dashboard-empty">Эта встреча — только по приглашению</div>`;
+    }
+
+    html += '</div>';
+    return html;
+}
+
 function closeMeetingDetailModal() {
     const modal = document.getElementById('meetingDetailModal');
     if (modal) modal.style.display = 'none';
+}
+
+// ============================================
+// ПРИГЛАШЕНИЕ НА ВСТРЕЧУ
+// ============================================
+
+function openMeetingInviteModal(meetingId) {
+    const modal = document.getElementById('meetingInviteModal');
+    if (!modal) return;
+
+    const searchInput = document.getElementById('meetingInviteSearch');
+    searchInput.value = '';
+    searchInput.dataset.meetingId = meetingId;
+
+    document.getElementById('meetingInviteResults').innerHTML = '';
+    modal.style.display = 'flex';
+}
+
+function closeMeetingInviteModal() {
+    const modal = document.getElementById('meetingInviteModal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function searchFriendsForMeeting(query) {
+    const container = document.getElementById('meetingInviteResults');
+    if (!container) return;
+
+    if (!query || query.length < 2) {
+        container.innerHTML = '';
+        return;
+    }
+
+    // Ищем только среди друзей
+    const friendIds = (typeof FRIENDS !== 'undefined' ? FRIENDS : []).map(f => f.id);
+    if (friendIds.length === 0) {
+        container.innerHTML = '<div class="dashboard-empty">У тебя нет друзей</div>';
+        return;
+    }
+
+    container.innerHTML = '<div class="dashboard-empty">Поиск...</div>';
+
+    const q = query.trim().toLowerCase();
+    const friends = (typeof FRIENDS !== 'undefined' ? FRIENDS : [])
+        .filter(f => f.name.toLowerCase().includes(q))
+        .slice(0, 10);
+
+    if (friends.length === 0) {
+        container.innerHTML = '<div class="dashboard-empty">Никого не нашли</div>';
+        return;
+    }
+
+    const meetingId = document.getElementById('meetingInviteSearch').dataset.meetingId;
+
+    container.innerHTML = friends.map(p => {
+        const avatarHtml = typeof renderAvatarHtml === 'function'
+            ? renderAvatarHtml(p.avatar)
+            : p.avatar;
+
+        return `
+            <div class="gap-invite-result">
+                <div class="gap-invite-result__avatar">${avatarHtml}</div>
+                <div class="gap-invite-result__info">
+                    <div><strong>${escapeHtml(p.name)}</strong></div>
+                </div>
+                <button class="btn btn-primary btn-sm" data-meeting-invite-send="${p.id}" data-meeting-id="${meetingId}">
+                    Пригласить
+                </button>
+            </div>
+        `;
+    }).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }

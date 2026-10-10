@@ -279,3 +279,116 @@
         align-items: stretch;
     }
 }
+
+/* ============================================
+   УЧАСТНИКИ ВСТРЕЧИ
+   ============================================ */
+
+.meeting-detail__section {
+    margin-top: 20px;
+}
+
+.meeting-detail__section h3 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin-bottom: 10px;
+}
+
+.meeting-members-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.meeting-member {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.meeting-member:hover {
+    background: var(--color-primary-light);
+}
+
+.meeting-member__avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.meeting-member__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.meeting-member__role svg {
+    width: 12px;
+    height: 12px;
+    color: var(--color-warm);
+}
+
+.meeting-detail__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+/* RSVP */
+.meeting-rsvp {
+    display: flex;
+    gap: 6px;
+}
+
+.meeting-rsvp__btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 12px;
+    background: var(--color-bg-soft);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-soft);
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.meeting-rsvp__btn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.meeting-rsvp__btn.active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+.meeting-rsvp__btn svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.5;
+}

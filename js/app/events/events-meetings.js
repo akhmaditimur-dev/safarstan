@@ -104,3 +104,103 @@ document.addEventListener('click', async (e) => {
     }
     if (typeof showWarningToast === 'function') showWarningToast('Встреча отменена');
 });
+
+// ============================================
+// УЧАСТНИКИ ВСТРЕЧ
+// ============================================
+
+// Присоединиться
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('#meetingJoinBtn');
+    if (!btn) return;
+
+    btn.disabled = true;
+    const result = await joinMeeting(btn.dataset.meetingId);
+    btn.disabled = false;
+
+    if (result.error) {
+        if (typeof showWarningToast === 'function') showWarningToast(result.error);
+        return;
+    }
+
+    if (typeof showWarningToast === 'function') showWarningToast('✅ Ты присоединился');
+    await openMeetingDetail(btn.dataset.meetingId);
+    await renderMeetingsDashboard();
+});
+
+// Покинуть
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('#meetingLeaveBtn');
+    if (!btn) return;
+
+    const ok = await showConfirm('Покинуть встречу?', { okText: 'Покинуть' });
+    if (!ok) return;
+
+    const result = await leaveMeeting(btn.dataset.meetingId);
+    if (result.error) {
+        if (typeof showWarningToast === 'function') showWarningToast(result.error);
+        return;
+    }
+
+    await openMeetingDetail(btn.dataset.meetingId);
+    await renderMeetingsDashboard();
+});
+
+// RSVP
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-meeting-rsvp]');
+    if (!btn) return;
+
+    const status = btn.dataset.meetingRsvp;
+    const meetingId = btn.dataset.meetingId;
+
+    const result = await updateMeetingRsvp(meetingId, status);
+    if (result.error) {
+        if (typeof showWarningToast === 'function') showWarningToast(result.error);
+        return;
+    }
+
+    await openMeetingDetail(meetingId);
+});
+
+// Открыть модалку приглашения
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('#meetingInviteBtn');
+    if (!btn) return;
+    openMeetingInviteModal(btn.dataset.meetingId);
+});
+
+// Закрыть модалку приглашения
+document.addEventListener('click', (e) => {
+    if (e.target.id === 'meetingInviteModal' || e.target.closest('#meetingInviteClose')) {
+        closeMeetingInviteModal();
+    }
+});
+
+// Поиск друзей (debounce)
+let _meetingInviteSearchTimer = null;
+document.addEventListener('input', (e) => {
+    if (e.target.id !== 'meetingInviteSearch') return;
+    clearTimeout(_meetingInviteSearchTimer);
+    _meetingInviteSearchTimer = setTimeout(() => {
+        searchFriendsForMeeting(e.target.value.trim());
+    }, 300);
+});
+
+// Отправить приглашение
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-meeting-invite-send]');
+    if (!btn) return;
+
+    const toPlayerId = btn.dataset.meetingInviteSend;
+    const meetingId = btn.dataset.meetingId;
+
+    const result = await inviteToMeeting(meetingId, toPlayerId);
+    if (result.error) {
+        if (typeof showWarningToast === 'function') showWarningToast(result.error);
+        return;
+    }
+
+    btn.outerHTML = `<span class="gap-invite-result__sent"><i data-lucide="check"></i> Отправлено</span>`;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+});

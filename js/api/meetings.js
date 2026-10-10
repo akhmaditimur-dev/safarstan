@@ -189,3 +189,178 @@ async function loadMyMeetings() {
 
     return meetings || [];
 }
+
+// ============================================
+// УЧАСТНИКИ ВСТРЕЧ
+// ============================================
+
+// Пригласить друга на встречу
+async function inviteToMeeting(meetingId, toPlayerId) {
+    if (!PLAYER || !PLAYER.playerId) return { error: 'Не авторизован' };
+
+    const { error } = await _supabase
+        .from('meeting_invites')
+        .insert({
+            meeting_id: meetingId,
+            from_player: PLAYER.playerId,
+            to_player: toPlayerId,
+            status: 'pending',
+        });
+
+    if (error) {
+        if (error.message.includes('duplicate')) return { error: 'Уже приглашён' };
+        return { error: error.message };
+    }
+
+    // Уведомление
+    if (typeof createNotification === 'function') {
+        const { data: meeting } = await _supabase
+            .from('meetings')
+            .select('title')
+            .eq('id', meetingId)
+            .single();
+
+        await createNotification(
+            toPlayerId,
+            'meeting_invite',
+            { meeting_title: meeting?.title || 'Встреча', meeting_id: meetingId },
+            PLAYER.playerId
+        );
+    }
+
+    return { ok: true };
+}
+
+// Принять приглашение
+async function acceptMeetingInvite(inviteId) {
+    if (!PLAYER || !PLAYER.playerId) return { error: 'Не авторизован' };
+
+    const { data: inv } = await _supabase
+        .from('meeting_invites')
+        .select('*')
+        .eq('id', inviteId)
+        .single();
+
+    if (!inv) return { error: 'Приглашение не найдено' };
+
+    const { error: err1 } = await _supabase
+        .from('meeting_members')
+        .insert({
+            meeting_id: inv.meeting_id,
+            player_id: PLAYER.playerId,
+            role: 'guest',
+            status: 'going',
+        });
+
+    if (err1 && !err1.message.includes('duplicate')) {
+        return { error: err1.message };
+    }
+
+    await _supabase
+        .from('meeting_invites')
+        .update({ status: 'accepted' })
+        .eq('id', inviteId);
+
+    return { ok: true };
+}
+
+// Отклонить приглашение
+async function declineMeetingInvite(inviteId) {
+    const { error } = await _supabase
+        .from('meeting_invites')
+        .update({ status: 'declined' })
+        .eq('id', inviteId);
+
+    if (error) return { error: error.message };
+    return { ok: true };
+}
+
+// Мои входящие приглашения на встречи
+async function loadMyMeetingInvites() {
+    if (!PLAYER || !PLAYER.playerId) return [];
+
+    const { data: invites, error } = await _supabase
+        .from('meeting_invites')
+        .select('id, meeting_id, from_player, created_at')
+        .eq('to_player', PLAYER.playerId)
+        .eq('status', 'pending');
+
+    if (error) {
+        console.warn('loadMyMeetingInvites:', error);
+        return [];
+    }
+    if (!invites || invites.length === 0) return [];
+
+    const meetingIds = invites.map(i => i.meeting_id);
+    const fromIds = invites.map(i => i.from_player);
+
+    const { data: meetings } = await _supabase
+        .from('meetings')
+        .select('id, title, type, date, time, place, city_key')
+        .in('id', meetingIds);
+
+    const { data: players } = await _supabase
+        .from('players')
+        .select('id, name, avatar')
+        .in('id', fromIds);
+
+    return invites.map(inv => {
+        const m = (meetings || []).find(x => x.id === inv.meeting_id);
+        const f = (players || []).find(x => x.id === inv.from_player);
+        return {
+            ...inv,
+            meetingTitle: m?.title || 'Встреча',
+            meetingType: m?.type || 'other',
+            meetingDate: m?.date,
+            meetingTime: m?.time,
+            meetingPlace: m?.place,
+            meetingCityKey: m?.city_key,
+            fromName: f?.name || 'Игрок',
+            fromAvatar: f?.avatar || '🧑‍💼',
+        };
+    });
+}
+
+// Загрузить участников встречи
+async function loadMeetingMembers(meetingId) {
+    const { data: members, error } = await _supabase
+        .from('meeting_members')
+        .select('id, player_id, role, status')
+        .eq('meeting_id', meetingId);
+
+    if (error) {
+        console.warn('loadMeetingMembers:', error);
+        return [];
+    }
+    if (!members || members.length === 0) return [];
+
+    const ids = members.map(m => m.player_id);
+    const { data: players } = await _supabase
+        .from('players')
+        .select('id, name, avatar, level')
+        .in('id', ids);
+
+    return members.map(m => {
+        const p = (players || []).find(x => x.id === m.player_id);
+        return {
+            ...m,
+            name: p?.name || 'Игрок',
+            avatar: p?.avatar || '🧑‍💼',
+            level: p?.level || 1,
+        };
+    });
+}
+
+// Изменить RSVP
+async function updateMeetingRsvp(meetingId, status) {
+    if (!PLAYER || !PLAYER.playerId) return { error: 'Не авторизован' };
+
+    const { error } = await _supabase
+        .from('meeting_members')
+        .update({ status })
+        .eq('meeting_id', meetingId)
+        .eq('player_id', PLAYER.playerId);
+
+    if (error) return { error: error.message };
+    return { ok: true };
+}
