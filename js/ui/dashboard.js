@@ -33,6 +33,9 @@ async function showDashboard() {
     if (typeof renderUsefulCard === 'function') {
         await renderUsefulCard();
     }
+    if (typeof renderAffiche === 'function') {
+        await renderAffiche();
+    }
     
     // === КАЛЕНДАРЬ ===
     if (typeof renderCalendar === 'function') {

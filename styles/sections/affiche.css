@@ -1,0 +1,290 @@
+/* ============ АФИША ============ */
+
+.affiche-section {
+    grid-column: 1 / -1;   /* на всю ширину дашборда */
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+    margin-top: 0;
+}
+
+.affiche-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.affiche-header h3 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin: 0;
+}
+
+.affiche-header__arrows {
+    display: flex;
+    gap: 6px;
+}
+
+.affiche-arrow {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-bg-soft);
+    border: none;
+    color: var(--color-text-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-fast), color var(--transition-fast);
+    padding: 0;
+}
+
+.affiche-arrow:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.affiche-arrow svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.5;
+}
+
+/* Карусель */
+.affiche-track {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+}
+
+.affiche-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.affiche-track::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+}
+
+.affiche-track::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Карточка */
+.affiche-card {
+    flex: 0 0 220px;
+    width: 220px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.affiche-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.affiche-card__photo {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 5 / 3;
+    background: var(--color-primary-soft);
+    overflow: hidden;
+}
+
+.affiche-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.affiche-card__date {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    box-shadow: var(--shadow-xs);
+    text-transform: capitalize;
+}
+
+.affiche-card__badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.affiche-card__badge--partner {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.affiche-card__badge--paid {
+    background: var(--color-warm);
+    color: #fff;
+}
+
+.affiche-card__body {
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.affiche-card__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin: 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.affiche-card__venue {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--fs-xs);
+    color: var(--color-text-soft);
+}
+
+.affiche-card__venue svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2.5;
+    flex-shrink: 0;
+}
+
+.affiche-card__price {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+}
+
+.affiche-card__actions {
+    display: flex;
+    gap: 6px;
+    margin-top: auto;
+    align-items: center;
+}
+
+.affiche-card__going {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-soft);
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.affiche-card__going:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.affiche-card__going.active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+.affiche-card__going svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2.5;
+}
+
+.affiche-card__count {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 1px 5px;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    margin-left: 2px;
+}
+
+.affiche-card__going:not(.active) .affiche-card__count {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
+
+.affiche-card__buy {
+    padding: 5px 10px;
+    background: var(--gradient-primary);
+    color: #fff;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: transform var(--transition-fast);
+}
+
+.affiche-card__buy:hover {
+    transform: translateY(-1px);
+}
+
+.affiche-loading,
+.affiche-empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    width: 100%;
+}
+
+/* Адаптив */
+@media (max-width: 700px) {
+    .affiche-section {
+        padding: 14px;
+        border-radius: var(--radius-lg);
+    }
+
+    .affiche-card {
+        flex: 0 0 180px;
+        width: 180px;
+    }
+
+    .affiche-header__arrows {
+        display: none;
+    }
+}
