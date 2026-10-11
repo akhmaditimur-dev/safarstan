@@ -13,7 +13,6 @@ async function initApp() {
     const session = await getCurrentSession();
 
     // ─── Всегда инициализируем базовые вещи ───
-    initCitySearch();
     renderMap();
 
     // Применяем язык (заголовки секций, hero)
@@ -63,6 +62,11 @@ async function initApp() {
         onboardingCompleted: serverPlayer.onboarding_completed === true,
         username: serverPlayer.username || null,
     };
+
+        // Синхронизация глобального города с профилем
+        if (typeof currentCity !== 'undefined' && PLAYER.currentCity) {
+            currentCity = PLAYER.currentCity;
+        }
 
     // === Автогенерация ника (если нет) ===
     if (!serverPlayer.username) {

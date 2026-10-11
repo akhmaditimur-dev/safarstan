@@ -268,7 +268,28 @@ function renderSearchResults(results, container) {
 async function handleSearchResult(type, value) {
     // --- Город ---
     if (type === 'city') {
-        if (typeof selectCity === 'function') selectCity(value);
+        if (value && CITIES[value]) {
+            // 1. Обновляем глобальный город
+            if (typeof currentCity !== 'undefined') {
+                currentCity = value;
+            } else {
+                window.currentCity = value;
+            }
+
+            // 2. Сохраняем в PLAYER
+            if (typeof PLAYER !== 'undefined' && PLAYER) {
+                PLAYER.currentCity = value;
+                if (typeof savePlayerToServer === 'function') {
+                    savePlayerToServer(PLAYER);
+                }
+            }
+
+            // 3. Обновляем UI
+            if (typeof renderAll === 'function') renderAll();
+            if (typeof renderCityInfo === 'function') renderCityInfo();
+            if (typeof renderHeaderCity === 'function') renderHeaderCity();
+            if (typeof saveState === 'function') saveState();
+        }
         return;
     }
 
@@ -287,7 +308,23 @@ async function handleSearchResult(type, value) {
 
     // Если город другой — сначала переключаем
     if (cityKey && cityKey !== currentCity && CITIES[cityKey]) {
-        if (typeof selectCity === 'function') selectCity(cityKey);
+        if (typeof currentCity !== 'undefined') {
+            currentCity = cityKey;
+        } else {
+            window.currentCity = cityKey;
+        }
+
+        if (typeof PLAYER !== 'undefined' && PLAYER) {
+            PLAYER.currentCity = cityKey;
+            if (typeof savePlayerToServer === 'function') {
+                savePlayerToServer(PLAYER);
+            }
+        }
+
+        if (typeof renderAll === 'function') renderAll();
+        if (typeof renderCityInfo === 'function') renderCityInfo();
+        if (typeof renderHeaderCity === 'function') renderHeaderCity();
+
         await new Promise(r => setTimeout(r, 600));
     }
 

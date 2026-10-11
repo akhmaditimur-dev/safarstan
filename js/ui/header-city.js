@@ -2,9 +2,13 @@
 
 function renderHeaderCity() {
     const nameEl = document.getElementById('headerCityName');
-    if (!nameEl || !PLAYER) return;
+    if (!nameEl) return;
 
-    const city = CITIES[PLAYER.currentCity];
+    const key = (typeof currentCity !== 'undefined' && currentCity)
+        ? currentCity
+        : (PLAYER?.currentCity || null);
+
+    const city = key ? CITIES[key] : null;
     nameEl.textContent = city ? city.name : '—';
 }
 
@@ -14,12 +18,15 @@ function openHeaderCityDropdown() {
 
     const visited = PLAYER?.visitedCities || {};
     const homeKey = PLAYER?.homeCity;
-    const currentKey = PLAYER?.currentCity;
+    const currentKey = (typeof currentCity !== 'undefined' && currentCity)
+        ? currentCity
+        : PLAYER?.currentCity;
 
-    // Собираем города: родной, текущий, посещённые
+    // Собираем города: родной, текущий, посещённые, +глобальный
     const keys = new Set();
     if (homeKey) keys.add(homeKey);
     if (currentKey) keys.add(currentKey);
+    if (typeof currentCity !== 'undefined' && currentCity) keys.add(currentCity);
     Object.keys(visited).forEach(k => {
         if (visited[k] > 0) keys.add(k);
     });
@@ -76,9 +83,28 @@ document.addEventListener('click', (e) => {
     if (item) {
         const key = item.dataset.cityKey;
         closeHeaderCityDropdown();
-        if (typeof selectCity === 'function' && key) {
-            selectCity(key);
-            renderHeaderCity();
+
+        if (key && CITIES[key]) {
+            // 1. Обновляем глобальный город
+            if (typeof currentCity !== 'undefined') {
+                currentCity = key;
+            } else {
+                window.currentCity = key;
+            }
+
+            // 2. Сохраняем в PLAYER
+            if (typeof PLAYER !== 'undefined' && PLAYER) {
+                PLAYER.currentCity = key;
+                if (typeof savePlayerToServer === 'function') {
+                    savePlayerToServer(PLAYER);
+                }
+            }
+
+            // 3. Обновляем UI
+            if (typeof renderAll === 'function') renderAll();
+            if (typeof renderCityInfo === 'function') renderCityInfo();
+            if (typeof renderHeaderCity === 'function') renderHeaderCity();
+            if (typeof saveState === 'function') saveState();
         }
         return;
     }

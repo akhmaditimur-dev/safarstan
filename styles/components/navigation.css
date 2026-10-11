@@ -13,38 +13,39 @@
 }
 
 .header__inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
-    gap: 20px;
+    display: flex;
     align-items: center;
+    gap: 16px;
 }
 
 .logo {
-    justify-self: start;
-    align-self: center;
     font-family: var(--font-heading);
     font-size: var(--fs-lg);
     font-weight: var(--fw-extrabold);
     color: var(--color-text);
     white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.header-city {
+    flex-shrink: 0;
 }
 
 .header-actions {
-    justify-self: end;
-    align-self: center;
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
+    margin-left: auto;
 }
 
 /* ============================================
    ПОИСК
    ============================================ */
 .header-search {
-    justify-self: center;
-    align-self: center;
-    width: 100%;
-    max-width: 600px;
+    flex: 1;
+    min-width: 0;
+    max-width: none;
     position: relative;
 }
 
