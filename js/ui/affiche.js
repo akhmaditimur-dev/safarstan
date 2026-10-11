@@ -10,7 +10,9 @@ async function renderAffiche() {
 
     track.innerHTML = '<div class="affiche-loading">⏳ Загрузка...</div>';
 
-    const cityKey = PLAYER.currentCity || null;
+    const cityKey = (typeof currentCity !== 'undefined' && currentCity)
+        ? currentCity
+        : (PLAYER?.currentCity || null);
     AFFICHE_EVENTS = await loadAfficheEvents(cityKey, 90);
     AFFICHE_LOADED = true;
 
