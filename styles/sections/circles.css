@@ -58,3 +58,248 @@
     color: var(--color-primary-dark);
     box-shadow: 0 0 0 3px var(--color-primary-light);
 }
+
+/* ============================================
+   ПРОСМОТР КРУГА
+   ============================================ */
+
+.circle-view__header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.circle-view__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.circle-view__icon svg {
+    width: 26px;
+    height: 26px;
+    stroke-width: 2;
+}
+
+.circle-view__type {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.circle-view__header h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-extrabold);
+    color: var(--color-text);
+}
+
+.circle-view__desc {
+    font-size: var(--fs-sm);
+    color: var(--color-text-soft);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    white-space: pre-wrap;
+}
+
+.circle-view__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.circle-view__row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+    padding: 8px 12px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+}
+
+.circle-view__row svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.circle-view__section {
+    margin-top: 20px;
+}
+
+.circle-view__section h3 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    margin-bottom: 10px;
+}
+
+.circle-view__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+/* Участники */
+.circle-members-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.circle-member {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.circle-member:hover {
+    background: var(--color-primary-light);
+}
+
+.circle-member__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.circle-member__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.circle-member__name {
+    flex: 1;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    color: var(--color-text);
+}
+
+.circle-member__role svg {
+    width: 14px;
+    height: 14px;
+    color: var(--color-warm);
+    stroke-width: 2.5;
+}
+
+/* Заявки */
+.circle-pending {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--color-warm-light);
+    border-radius: var(--radius-md);
+    margin-bottom: 6px;
+}
+
+.circle-pending__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.circle-pending__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.circle-pending__info {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--fs-sm);
+}
+
+.circle-pending__meta {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    margin-top: 2px;
+}
+
+.circle-pending__actions {
+    display: flex;
+    gap: 4px;
+}
+
+/* Приглашение */
+.circle-invite-result {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-md);
+    margin-bottom: 6px;
+}
+
+.circle-invite-result__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.circle-invite-result__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.circle-invite-result__name {
+    flex: 1;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+}
+
+.circle-invite-result__sent {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--fs-xs);
+    color: var(--color-primary);
+    font-weight: var(--fw-semibold);
+}

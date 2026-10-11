@@ -22,8 +22,7 @@ async function loadFeed(limit = 10, filter = 'all') {
             .from('feed')
             .select(`
                 id, event_type, event_data, city_key, created_at, player_id,
-                players:player_id (name, avatar, home_city, current_city)
-            `)
+                players:players!feed_player_id_fkey (name, avatar, home_city, current_city)            `)
             .eq('city_key', PLAYER.currentCity)
             .order('created_at', { ascending: false })
             .limit(limit);
@@ -41,7 +40,7 @@ async function loadFeed(limit = 10, filter = 'all') {
             .from('feed')
             .select(`
                 id, event_type, event_data, city_key, created_at, player_id,
-                players:player_id (name, avatar, home_city, current_city)
+                players:players!feed_player_id_fkey (name, avatar, home_city, current_city)
             `)
             .order('created_at', { ascending: false })
             .limit(limit);
@@ -71,7 +70,7 @@ async function loadFeed(limit = 10, filter = 'all') {
         .from('feed')
         .select(`
             id, event_type, event_data, city_key, created_at, player_id,
-            players:player_id (name, avatar, home_city, current_city)
+            players:players!feed_player_id_fkey (name, avatar, home_city, current_city)
         `)
         .in('player_id', idsForFeed)
         .order('created_at', { ascending: false })
@@ -90,7 +89,7 @@ async function loadFeed(limit = 10, filter = 'all') {
             .from('feed')
             .select(`
                 id, event_type, event_data, city_key, created_at, player_id,
-                players:player_id (name, avatar, home_city, current_city)
+                players:players!feed_player_id_fkey (name, avatar, home_city, current_city)
             `)
             .in('city_key', myCities)
             .order('created_at', { ascending: false })
@@ -130,7 +129,7 @@ async function loadFriendsFeed(friendIds, limit = 10) {
         .from('feed')
         .select(`
             id, event_type, event_data, city_key, created_at, player_id,
-            players:player_id (name, avatar)
+            players:players!feed_player_id_fkey (name, avatar)
         `)
         .in('player_id', friendIds)
         .order('created_at', { ascending: false })

@@ -3,18 +3,8 @@
 let FEED = [];
 let currentFeedFilter = 'all';
 
-// ============================================
-// ХЕЛПЕР: АВАТАР (URL → img, эмодзи → текст)
-// ============================================
-if (typeof renderAvatarHtml === 'undefined') {
-    window.renderAvatarHtml = function(avatar) {
-        if (!avatar) return '🧑‍💼';
-        if (typeof avatar === 'string' && avatar.startsWith('http')) {
-            return `<img src="${avatar}" alt="" loading="lazy">`;
-        }
-        return avatar;
-    };
-}
+// Кэш имён и аватаров игроков (в пределах сессии)
+const FEED_PLAYERS_CACHE = {};
 
 // ============================================
 // РЕНДЕР ЛЕНТЫ
@@ -31,22 +21,24 @@ async function renderFeed() {
 
     FEED = await loadFeed(10, currentFeedFilter);
 
+    // Лайки и отметки — только если есть события
     let feedLikes = {};
     let feedTags = {};
+
     if (FEED.length > 0) {
         feedLikes = await loadFeedLikes(FEED.map(f => f.id));
 
-        // Загружаем отметки друзей для чек-инов
         const checkinEvents = FEED.filter(f => f.event_type === 'checkin' && f.id);
         if (checkinEvents.length > 0 && typeof loadCheckinTagsForFeed === 'function') {
             feedTags = await loadCheckinTagsForFeed(checkinEvents);
         }
     }
 
+    // Фильтр
     let items = FEED;
 
     if (currentFeedFilter === 'city') {
-        // Уже отфильтровано на сервере в loadFeed
+        // уже отфильтровано на сервере
         items = FEED;
 
     } else if (currentFeedFilter === 'mine') {
@@ -80,7 +72,7 @@ async function renderFeed() {
         return;
     }
 
-    // Группируем подряд идущие чек-ины одного игрока + дробим по друзьям
+    // Группировка
     const grouped = groupFeedItems(items, feedTags);
 
     container.innerHTML = grouped
@@ -92,16 +84,18 @@ async function renderFeed() {
         ))
         .join('');
 
-    fillFeedAvatars();
+    // Догружаем имена и аватары
+    await fillFeedPlayers();
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// Группировка чек-инов одного игрока за короткое время,
-// потом внутри — дробление по составу друзей.
+// ============================================
+// ГРУППИРОВКА ЧЕК-ИНОВ
+// ============================================
 function groupFeedItems(items, allTags = {}) {
-    const MAX_CHAIN = 6;              // максимум мест в одном «походе»
-    const MAX_GAP_MS = 60 * 60 * 1000; // 1 час между соседними
+    const MAX_CHAIN = 6;
+    const MAX_GAP_MS = 60 * 60 * 1000;
 
     const out = [];
     let i = 0;
@@ -140,8 +134,8 @@ function groupFeedItems(items, allTags = {}) {
             continue;
         }
 
-        // Разбиваем цепочку на группы по составу друзей
-        const groups = new Map(); // ключ: sorted friend ids joined, значение: массив элементов
+        // Группировка по составу друзей
+        const groups = new Map();
 
         chain.forEach(item => {
             const tags = allTags[item.id] || [];
@@ -151,23 +145,16 @@ function groupFeedItems(items, allTags = {}) {
             groups.get(key).push({ item, tags });
         });
 
-        // Превращаем группы в feed-элементы
         groups.forEach((groupItems, key) => {
             const first = groupItems[0].item;
 
-            if (groupItems.length === 1 && key === '__alone__') {
-                // Один чек-ин без друзей — как есть
-                out.push(first);
-                return;
-            }
-
             if (groupItems.length === 1) {
-                // Один чек-ин с друзьями — тоже как есть (с тегами)
+                // Одиночный чек-ин — как есть
                 out.push(first);
                 return;
             }
 
-            // Несколько чек-инов в одной группе — объединяем
+            // Несколько — объединяем
             const friendsForGroup = groupItems[0].tags;
             const merged = {
                 ...first,
@@ -185,11 +172,14 @@ function groupFeedItems(items, allTags = {}) {
         i = j;
     }
 
-    // Пересортировка: свежие события первой
     out.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     return out;
 }
+
+// ============================================
+// ПУСТОЕ СОСТОЯНИЕ
+// ============================================
 function renderFeedEmpty(container) {
     const cityName = PLAYER && PLAYER.currentCity && CITIES[PLAYER.currentCity]
         ? CITIES[PLAYER.currentCity].name
@@ -247,7 +237,6 @@ function renderFeedItem(item, likeInfo, taggedFriends, allTags = {}) {
             break;
         }
         case 'checkin': {
-            // Строим список отмеченных друзей (для одиночного события)
             let withHtml = '';
             if (taggedFriends && taggedFriends.length > 0) {
                 const friendNames = taggedFriends.map(f => escapeHtml(f.name)).join(', ');
@@ -255,7 +244,6 @@ function renderFeedItem(item, likeInfo, taggedFriends, allTags = {}) {
             }
 
             if (item._merged && item._places && item._places.length > 1) {
-                // Объединённый чек-ин с общей компанией
                 const placesHtml = item._places
                     .map(p => `<strong>${escapeHtml(p.place)}</strong>`)
                     .join(' · ');
@@ -319,42 +307,59 @@ function renderFeedItem(item, likeInfo, taggedFriends, allTags = {}) {
 }
 
 // ============================================
-// ДОЗАГРУЗКА АВАТАРОВ
+// ДОЗАГРУЗКА ИМЁН И АВАТАРОВ
 // ============================================
-async function fillFeedAvatars() {
+async function fillFeedPlayers() {
     const items = document.querySelectorAll('.feed-item[data-player-id]');
+    if (items.length === 0) return;
+
+    // Собираем все player_id
     const idsToLoad = new Set();
-
     items.forEach(el => {
-        const avatarEl = el.querySelector('.feed-item__avatar');
-        if (!avatarEl) return;
-        if (avatarEl.querySelector('img')) return;
-
-        const text = avatarEl.textContent.trim();
-        if (text && !text.startsWith('http')) return;
-
         const pid = el.dataset.playerId;
-        if (pid) idsToLoad.add(pid);
+        if (pid && pid !== 'null' && pid !== 'undefined') {
+            idsToLoad.add(pid);
+        }
     });
 
     if (idsToLoad.size === 0) return;
 
-    const { data, error } = await _supabase
-        .from('players')
-        .select('id, avatar')
-        .in('id', [...idsToLoad]);
+    // Какие ID ещё не в кэше
+    const missingIds = [...idsToLoad].filter(id => !FEED_PLAYERS_CACHE[id]);
 
-    if (error || !data) return;
+    if (missingIds.length > 0) {
+        const { data, error } = await _supabase
+            .from('public_players')
+            .select('id, avatar, name')
+            .in('id', missingIds);
 
-    const map = {};
-    data.forEach(p => { map[p.id] = p.avatar || '🧑‍💼'; });
+        if (error) {
+            console.warn('fillFeedPlayers: ошибка', error);
+        } else {
+            (data || []).forEach(p => {
+                FEED_PLAYERS_CACHE[p.id] = {
+                    avatar: p.avatar || '🧑‍💼',
+                    name: p.name || 'Игрок',
+                };
+            });
+        }
+    }
 
+    // Применяем ко всем items
     items.forEach(el => {
         const pid = el.dataset.playerId;
-        const avatarEl = el.querySelector('.feed-item__avatar');
-        if (!avatarEl || !pid || !map[pid]) return;
+        const info = FEED_PLAYERS_CACHE[pid];
+        if (!info) return;
 
-        avatarEl.innerHTML = renderAvatarHtml(map[pid]);
+        const avatarEl = el.querySelector('.feed-item__avatar');
+        if (avatarEl) {
+            avatarEl.innerHTML = renderAvatarHtml(info.avatar);
+        }
+
+        const nameEl = el.querySelector('.feed-player-link');
+        if (nameEl) {
+            nameEl.textContent = info.name;
+        }
     });
 }
 

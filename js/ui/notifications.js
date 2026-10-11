@@ -134,6 +134,8 @@ function buildNotificationText(n) {
             return `<strong>${name}</strong> приглашает тебя в гап${p.gap_title ? ` «${escapeHtml(p.gap_title)}»` : ''}`;
         case 'trip_joined':
             return `<strong>${name}</strong> присоединился к твоей поездке`;
+        case 'circle_invite_pending':
+            return `<strong>${name}</strong> приглашает в круг${p.circle_title ? ` «${escapeHtml(p.circle_title)}»` : ''}. Нужно подтверждение.`;
         case 'trip_cancelled':
             return `<strong>${name}</strong> отменил поездку`;
         case 'review_on_place':
@@ -237,6 +239,10 @@ function handleNotificationClick(type) {
         case 'trip_cancelled':
             const tripsSection = document.getElementById('trips');
             if (tripsSection) tripsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            break;
+        case 'circle_invite_pending':
+            const circlesCard = document.getElementById('dashCirclesCard');
+            if (circlesCard) circlesCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
             break;
         default:
             break;

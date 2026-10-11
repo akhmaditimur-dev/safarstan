@@ -1751,6 +1751,26 @@
         </div>
     </div>
 
+    <!-- Модалка: просмотр круга -->
+    <div id="circleViewModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="circleViewClose" class="modal-close"><i data-lucide="x"></i></button>
+            <div id="circleViewBody"></div>
+        </div>
+    </div>
+
+    <!-- Модалка: пригласить в круг -->
+    <div id="circleInviteModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="circleInviteClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Пригласить в круг</h2>
+            <p class="modal-subtitle">Найди друга по имени</p>
+            <input type="text" id="circleInviteSearch" class="modal-input" placeholder="Начни вводить имя...">
+            <div id="circleInviteResults"></div>
+        </div>
+    </div>
+
+
     <!-- Модалка: создать круг -->
     <div id="circleCreateModal" class="modal-overlay" style="display:none;">
         <div class="modal">
