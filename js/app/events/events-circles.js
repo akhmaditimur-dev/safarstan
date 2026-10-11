@@ -20,11 +20,11 @@ document.addEventListener('click', async (e) => {
     await submitCircleCreate();
 });
 
-// Выбор эмодзи
+// Выбор иконки
 document.addEventListener('click', (e) => {
-    const btn = e.target.closest('#circleEmojiPicker .circle-emoji-option');
+    const btn = e.target.closest('#circleIconPicker .circle-icon-option');
     if (!btn) return;
-    document.querySelectorAll('#circleEmojiPicker .circle-emoji-option').forEach(b => {
+    document.querySelectorAll('#circleIconPicker .circle-icon-option').forEach(b => {
         b.classList.remove('active');
     });
     btn.classList.add('active');

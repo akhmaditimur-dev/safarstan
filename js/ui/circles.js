@@ -43,11 +43,11 @@ async function renderCirclesDashboard() {
     // Первые 5
     container.innerHTML = circles.slice(0, 5).map(c => {
         const typeLabel = CIRCLE_TYPE_LABELS[c.type] || 'Круг';
-        const emoji = c.avatar_emoji || '☕';
+        const iconName = c.avatar_emoji || 'coffee';
 
         return `
             <div class="dashboard-row" data-circle-id="${c.id}">
-                <div class="dashboard-row__icon">${emoji}</div>
+                <div class="dashboard-row__icon"><i data-lucide="${iconName}"></i></div>
                 <div class="dashboard-row__info">
                     <div class="dashboard-row__name">${escapeHtml(c.name)}</div>
                     <div class="dashboard-row__meta">
@@ -76,8 +76,8 @@ function openCircleCreateModal() {
     document.getElementById('circleMeetPoint').value = '';
     document.getElementById('circleCreateError').style.display = 'none';
 
-    // Эмодзи — сброс на ☕
-    document.querySelectorAll('#circleEmojiPicker .circle-emoji-option').forEach((btn, i) => {
+    // Иконка — сброс на coffee
+    document.querySelectorAll('#circleIconPicker .circle-icon-option').forEach((btn, i) => {
         btn.classList.toggle('active', i === 0);
     });
 
@@ -106,8 +106,8 @@ async function submitCircleCreate() {
     const cityKey = document.getElementById('circleCity').value;
     const scheduleType = document.getElementById('circleSchedule').value;
     const meetPoint = document.getElementById('circleMeetPoint').value.trim();
-    const emojiBtn = document.querySelector('#circleEmojiPicker .circle-emoji-option.active');
-    const emoji = emojiBtn ? emojiBtn.dataset.emoji : '☕';
+    const iconBtn = document.querySelector('#circleIconPicker .circle-icon-option.active');
+    const icon = iconBtn ? iconBtn.dataset.icon : 'coffee';
 
     if (!name || name.length < 3) {
         errorEl.textContent = 'Название слишком короткое (минимум 3 символа)';
@@ -134,7 +134,7 @@ async function submitCircleCreate() {
         cityKey,
         schedule: { type: scheduleType },
         meetPoint,
-        avatarEmoji: emoji,
+        avatarEmoji: icon,
     });
 
     if (result.error) {
