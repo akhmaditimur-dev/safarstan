@@ -1759,6 +1759,38 @@
         </div>
     </div>
 
+    <!-- Модалка: встреча круга -->
+    <div id="circleMeetingModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="circleMeetingClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Запланировать встречу</h2>
+            <p class="modal-subtitle" id="circleMeetingCircleName">—</p>
+
+            <label class="modal-label">Дата</label>
+            <input type="date" id="circleMeetingDate" class="modal-input">
+
+            <label class="modal-label">Время (опционально)</label>
+            <input type="time" id="circleMeetingTime" class="modal-input" value="18:00">
+
+            <label class="modal-label">Место (опционально)</label>
+            <input type="text" id="circleMeetingPlace" class="modal-input" placeholder="Например, чайхана у Чорсу" maxlength="80">
+
+            <label class="modal-label">Адрес (опционально)</label>
+            <input type="text" id="circleMeetingAddress" class="modal-input" placeholder="Юнусабад, 4-й квартал" maxlength="120">
+
+            <label class="modal-label">Комментарий (опционально)</label>
+            <textarea id="circleMeetingComment" class="modal-input" rows="2" maxlength="300" placeholder="Что обсудим?"></textarea>
+
+            <label class="modal-label">Организатор</label>
+            <select id="circleMeetingOrganizer" class="modal-input"></select>
+            <p class="circle-meeting-hint" id="circleMeetingHint"></p>
+
+            <button id="circleMeetingSubmit" class="modal-btn">Создать встречу</button>
+            <p id="circleMeetingError" class="auth-error" style="display:none;"></p>
+        </div>
+    </div>
+
+
     <!-- Модалка: пригласить в круг -->
     <div id="circleInviteModal" class="modal-overlay" style="display:none;">
         <div class="modal">

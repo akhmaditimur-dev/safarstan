@@ -40,10 +40,12 @@ async function renderCirclesDashboard() {
         return;
     }
 
-    // Первые 5
     container.innerHTML = circles.slice(0, 5).map(c => {
         const typeLabel = CIRCLE_TYPE_LABELS[c.type] || 'Круг';
-        const iconName = c.avatar_emoji || 'coffee';
+        let iconName = c.avatar_emoji || 'coffee';
+        if (!/^[a-z][a-z0-9-]*$/.test(iconName)) {
+            iconName = 'coffee';
+        }
 
         return `
             <div class="dashboard-row" data-circle-id="${c.id}">
@@ -59,7 +61,9 @@ async function renderCirclesDashboard() {
         `;
     }).join('');
 
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    requestAnimationFrame(() => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
 }
 
 // ============================================
@@ -76,12 +80,10 @@ function openCircleCreateModal() {
     document.getElementById('circleMeetPoint').value = '';
     document.getElementById('circleCreateError').style.display = 'none';
 
-    // Иконка — сброс на coffee
     document.querySelectorAll('#circleIconPicker .circle-icon-option').forEach((btn, i) => {
         btn.classList.toggle('active', i === 0);
     });
 
-    // Город
     if (typeof initCitySelect === 'function') {
         initCitySelect('circleCityInput', 'circleCity', 'circleCityDropdown');
         setCitySelect('circleCityInput', 'circleCity', PLAYER.currentCity || 'tashkent');
@@ -165,10 +167,11 @@ async function openCircleView(circleId) {
     const body = document.getElementById('circleViewBody');
     body.innerHTML = '<div class="dashboard-empty">Загрузка...</div>';
 
-    const [circle, members, pendingInvites] = await Promise.all([
+    const [circle, members, pendingInvites, meetings] = await Promise.all([
         loadCircleById(circleId),
         loadCircleMembers(circleId),
         loadCirclePendingInvites(circleId),
+        loadCircleMeetings(circleId),
     ]);
 
     if (!circle) {
@@ -180,7 +183,7 @@ async function openCircleView(circleId) {
     const myMembership = members.find(m => m.player_id === PLAYER?.playerId);
     const isAdmin = myMembership?.role === 'admin';
 
-    renderCircleView(circle, members, pendingInvites, { isAdmin, myMembership });
+    renderCircleView(circle, members, meetings, pendingInvites, { isAdmin, myMembership });
 }
 
 function closeCircleView() {
@@ -189,15 +192,17 @@ function closeCircleView() {
     CURRENT_OPEN_CIRCLE = null;
 }
 
-function renderCircleView(circle, members, pendingInvites, { isAdmin, myMembership }) {
+function renderCircleView(circle, members, meetings, pendingInvites, { isAdmin, myMembership }) {
     const body = document.getElementById('circleViewBody');
-    const iconName = circle.avatar_emoji || 'coffee';
+    let iconName = circle.avatar_emoji || 'coffee';
+    if (!/^[a-z][a-z0-9-]*$/.test(iconName)) {
+        iconName = 'coffee';
+    }
     const typeLabel = CIRCLE_TYPE_LABELS[circle.type] || 'Круг';
     const scheduleLabel = circle.schedule?.type
         ? (CIRCLE_SCHEDULE_LABELS[circle.schedule.type] || '')
         : 'Без расписания';
 
-    // Участники
     const membersHtml = members.map(m => {
         const avatarHtml = renderAvatarHtml(m.avatar);
         const roleIcon = m.role === 'admin' ? 'crown' : 'user';
@@ -212,7 +217,6 @@ function renderCircleView(circle, members, pendingInvites, { isAdmin, myMembersh
         `;
     }).join('');
 
-    // Входящие заявки (только админ)
     const pendingHtml = (isAdmin && pendingInvites.length > 0) ? `
         <div class="circle-view__section">
             <h3>Заявки на вступление (${pendingInvites.length})</h3>
@@ -239,11 +243,15 @@ function renderCircleView(circle, members, pendingInvites, { isAdmin, myMembersh
         </div>
     ` : '';
 
-    // Кнопки
+    const meetingsHtml = renderCircleMeetingsSection(circle, members, meetings);
+
     let actionsHtml = '';
     if (isAdmin) {
         actionsHtml = `
-            <button class="btn btn-primary btn-block" id="circleInviteBtn" data-circle-id="${circle.id}">
+            <button class="btn btn-primary btn-block" id="circleMeetingCreateBtn" data-circle-id="${circle.id}">
+                <i data-lucide="calendar-plus"></i> Запланировать встречу
+            </button>
+            <button class="btn btn-secondary btn-block" id="circleInviteBtn" data-circle-id="${circle.id}">
                 <i data-lucide="user-plus"></i> Пригласить
             </button>
         `;
@@ -285,6 +293,8 @@ function renderCircleView(circle, members, pendingInvites, { isAdmin, myMembersh
             <h3>Участники (${members.length})</h3>
             <div class="circle-members-grid">${membersHtml}</div>
         </div>
+
+        ${meetingsHtml}
 
         <div class="circle-view__actions">${actionsHtml}</div>
     `;
@@ -348,4 +358,184 @@ function searchFriendsForCircle(query) {
     }).join('');
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// ============================================
+// СЕКЦИЯ ВСТРЕЧ В КРУГЕ
+// ============================================
+
+function renderCircleMeetingsSection(circle, members, meetings) {
+    const planned = (meetings || []).filter(m => m.status === 'planned');
+    const past = (meetings || []).filter(m => m.status === 'done' || m.status === 'cancelled');
+
+    const today = new Date().toISOString().slice(0, 10);
+    const upcoming = planned
+        .filter(m => m.date >= today)
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+    const next = upcoming[0];
+    const upcomingHtml = next ? `
+        <div class="circle-meeting-next">
+            <div class="circle-meeting-next__date">
+                <i data-lucide="calendar"></i>
+                ${formatDate(next.date)}${next.time ? ', ' + next.time.slice(0, 5) : ''}
+            </div>
+            ${next.place ? `<div class="circle-meeting-next__place"><i data-lucide="map-pin"></i> ${escapeHtml(next.place)}</div>` : ''}
+            ${next.address ? `<div class="circle-meeting-next__address">${escapeHtml(next.address)}</div>` : ''}
+            ${next.comment ? `<div class="circle-meeting-next__comment">${escapeHtml(next.comment)}</div>` : ''}
+            <div class="circle-meeting-next__org">
+                <i data-lucide="user"></i>
+                Организатор: <strong>${escapeHtml(getMemberName(members, next.organizer_id))}</strong>
+            </div>
+            ${next.organizer_id === PLAYER?.playerId ? `
+                <button class="btn btn-secondary btn-sm" data-circle-meeting-done="${next.id}">
+                    <i data-lucide="check"></i> Проведена
+                </button>
+            ` : ''}
+        </div>
+    ` : `
+        <div class="dashboard-empty">Пока нет запланированных встреч</div>
+    `;
+
+    const historyHtml = past.slice(0, 5).map(m => {
+        const statusIcon = m.status === 'done' ? 'check' : 'x';
+        const statusLabel = m.status === 'done' ? 'проведена' : 'отменена';
+        return `
+            <div class="circle-meeting-history">
+                <div class="circle-meeting-history__date">
+                    ${formatDate(m.date)}
+                </div>
+                <div class="circle-meeting-history__place">
+                    ${escapeHtml(m.place || '—')}
+                </div>
+                <div class="circle-meeting-history__status">
+                    <i data-lucide="${statusIcon}"></i> ${statusLabel}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div class="circle-view__section">
+            <h3>Ближайшая встреча</h3>
+            ${upcomingHtml}
+        </div>
+
+        ${past.length > 0 ? `
+            <div class="circle-view__section">
+                <h3>История (${past.length})</h3>
+                ${historyHtml}
+            </div>
+        ` : ''}
+    `;
+}
+
+function getMemberName(members, playerId) {
+    const m = (members || []).find(x => x.player_id === playerId);
+    return m ? m.name : 'Игрок';
+}
+
+// ============================================
+// СОЗДАНИЕ ВСТРЕЧИ КРУГА
+// ============================================
+
+async function openCircleMeetingModal(circleId) {
+    const modal = document.getElementById('circleMeetingModal');
+    if (!modal) return;
+
+    const circle = await loadCircleById(circleId);
+    if (!circle) return;
+
+    const members = await loadCircleMembers(circleId);
+    const meetings = await loadCircleMeetings(circleId);
+
+    document.getElementById('circleMeetingCircleName').textContent = circle.name;
+    document.getElementById('circleMeetingDate').value = '';
+    document.getElementById('circleMeetingTime').value = '18:00';
+    document.getElementById('circleMeetingPlace').value = circle.meet_point || '';
+    document.getElementById('circleMeetingAddress').value = '';
+    document.getElementById('circleMeetingComment').value = '';
+    document.getElementById('circleMeetingError').style.display = 'none';
+
+    const orgSelect = document.getElementById('circleMeetingOrganizer');
+    orgSelect.innerHTML = members.map(m =>
+        `<option value="${m.player_id}">${escapeHtml(m.name)}${m.player_id === PLAYER?.playerId ? ' (ты)' : ''}</option>`
+    ).join('');
+
+    const suggested = suggestNextOrganizer(members, meetings);
+    if (suggested) {
+        orgSelect.value = suggested;
+        const suggestedName = getMemberName(members, suggested);
+        const hintEl = document.getElementById('circleMeetingHint');
+        if (hintEl && suggested !== PLAYER?.playerId) {
+            hintEl.textContent = `Рекомендация: ${suggestedName} давно не организовывал`;
+        } else {
+            hintEl.textContent = '';
+        }
+    } else {
+        document.getElementById('circleMeetingHint').textContent = '';
+    }
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('circleMeetingDate').value = tomorrow.toISOString().slice(0, 10);
+
+    modal.dataset.circleId = circleId;
+    modal.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function closeCircleMeetingModal() {
+    const modal = document.getElementById('circleMeetingModal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function submitCircleMeeting() {
+    const modal = document.getElementById('circleMeetingModal');
+    const errorEl = document.getElementById('circleMeetingError');
+    errorEl.style.display = 'none';
+
+    const circleId = modal.dataset.circleId;
+    const date = document.getElementById('circleMeetingDate').value;
+    const time = document.getElementById('circleMeetingTime').value;
+    const place = document.getElementById('circleMeetingPlace').value.trim();
+    const address = document.getElementById('circleMeetingAddress').value.trim();
+    const comment = document.getElementById('circleMeetingComment').value.trim();
+    const organizerId = document.getElementById('circleMeetingOrganizer').value;
+
+    if (!date) {
+        errorEl.textContent = 'Выбери дату';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    if (typeof hasBadWords === 'function' && comment && hasBadWords(comment)) {
+        errorEl.textContent = 'Пожалуйста, без грубых слов';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    const result = await createCircleMeeting({
+        circleId,
+        organizerId,
+        date,
+        time,
+        place,
+        address,
+        comment,
+    });
+
+    if (result.error) {
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    closeCircleMeetingModal();
+    if (CURRENT_OPEN_CIRCLE) {
+        await openCircleView(CURRENT_OPEN_CIRCLE.id);
+    }
+    if (typeof showWarningToast === 'function') {
+        showWarningToast('✅ Встреча запланирована');
+    }
 }

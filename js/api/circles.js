@@ -113,38 +113,70 @@ async function createCircle(data) {
     return { circle };
 }
 
-// Пригласить в круг (ждёт одобрения админа)
+// Пригласить в круг
 async function inviteToCircle(circleId, toPlayerId) {
     if (!PLAYER || !PLAYER.playerId) return { error: 'Не авторизован' };
 
-    const { error } = await _supabase
-        .from('circle_invites')
-        .insert({
-            circle_id: circleId,
-            from_player: PLAYER.playerId,
-            to_player: toPlayerId,
-            status: 'pending',
-        });
-
-    if (error) {
-        if (error.message.includes('duplicate')) return { error: 'Уже приглашён' };
-        return { error: error.message };
-    }
-
-    // Уведомление админу круга, что нужна заявка на одобрение
+    // Узнаём круг и роль приглашающего
     const { data: circle } = await _supabase
         .from('circles')
         .select('admin_id, name')
         .eq('id', circleId)
         .single();
 
-    if (circle && circle.admin_id && typeof createNotification === 'function') {
-        await createNotification(
-            circle.admin_id,
-            'circle_invite_pending',
-            { circle_title: circle.name, circle_id: circleId },
-            PLAYER.playerId
-        );
+    if (!circle) return { error: 'Круг не найден' };
+
+    const isAdmin = circle.admin_id === PLAYER.playerId;
+
+    if (isAdmin) {
+        // Админ добавляет сразу в участники
+        const { error: err1 } = await _supabase
+            .from('circle_members')
+            .insert({
+                circle_id: circleId,
+                player_id: toPlayerId,
+                role: 'member',
+                status: 'active',
+            });
+
+        if (err1 && !err1.message.includes('duplicate')) {
+            return { error: err1.message };
+        }
+
+        // Уведомление приглашённому
+        if (typeof createNotification === 'function') {
+            await createNotification(
+                toPlayerId,
+                'circle_added',
+                { circle_title: circle.name, circle_id: circleId },
+                PLAYER.playerId
+            );
+        }
+    } else {
+        // Участник создаёт приглашение — ждёт одобрения админа
+        const { error: err2 } = await _supabase
+            .from('circle_invites')
+            .insert({
+                circle_id: circleId,
+                from_player: PLAYER.playerId,
+                to_player: toPlayerId,
+                status: 'pending',
+            });
+
+        if (err2) {
+            if (err2.message.includes('duplicate')) return { error: 'Уже приглашён' };
+            return { error: err2.message };
+        }
+
+        // Уведомление админу
+        if (typeof createNotification === 'function') {
+            await createNotification(
+                circle.admin_id,
+                'circle_invite_pending',
+                { circle_title: circle.name, circle_id: circleId },
+                PLAYER.playerId
+            );
+        }
     }
 
     return { ok: true };
@@ -435,4 +467,106 @@ async function declineCircleInvite(inviteId) {
 
     if (error) return { error: error.message };
     return { ok: true };
+}
+
+// ============================================
+// ВСТРЕЧИ ВНУТРИ КРУГА
+// ============================================
+
+// Загрузить встречи круга
+async function loadCircleMeetings(circleId) {
+    const { data, error } = await _supabase
+        .from('circle_meetings')
+        .select('*')
+        .eq('circle_id', circleId)
+        .order('date', { ascending: false });
+
+    if (error) {
+        console.warn('loadCircleMeetings:', error);
+        return [];
+    }
+    return data || [];
+}
+
+// Создать встречу круга
+async function createCircleMeeting(data) {
+    if (!PLAYER || !PLAYER.playerId) return { error: 'Не авторизован' };
+
+    const { data: meeting, error } = await _supabase
+        .from('circle_meetings')
+        .insert({
+            circle_id: data.circleId,
+            organizer_id: data.organizerId || PLAYER.playerId,
+            date: data.date,
+            time: data.time || null,
+            place: data.place || null,
+            address: data.address || null,
+            comment: data.comment || null,
+            status: 'planned',
+        })
+        .select()
+        .single();
+
+    if (error) return { error: error.message };
+    return { meeting };
+}
+
+// Отменить встречу
+async function cancelCircleMeeting(meetingId) {
+    if (!PLAYER || !PLAYER.playerId) return { error: 'Не авторизован' };
+
+    const { error } = await _supabase
+        .from('circle_meetings')
+        .update({ status: 'cancelled' })
+        .eq('id', meetingId);
+
+    if (error) return { error: error.message };
+    return { ok: true };
+}
+
+// Отметить встречу проведённой
+async function markCircleMeetingDone(meetingId) {
+    if (!PLAYER || !PLAYER.playerId) return { error: 'Не авторизован' };
+
+    const { error } = await _supabase
+        .from('circle_meetings')
+        .update({ status: 'done' })
+        .eq('id', meetingId);
+
+    if (error) return { error: error.message };
+    return { ok: true };
+}
+
+// Хелпер: подобрать следующего организатора
+// (тот из участников, кто дольше всех не организовывал)
+function suggestNextOrganizer(members, meetings) {
+    if (!members || members.length === 0) return null;
+
+    // Последняя организация каждого
+    const lastByPlayer = {};
+    (meetings || []).forEach(m => {
+        if (!m.organizer_id) return;
+        const t = new Date(m.date + 'T00:00:00').getTime();
+        if (!lastByPlayer[m.organizer_id] || t > lastByPlayer[m.organizer_id]) {
+            lastByPlayer[m.organizer_id] = t;
+        }
+    });
+
+    // Кто ни разу не организовывал — приоритет
+    const neverOrganized = members.filter(m => !lastByPlayer[m.player_id]);
+    if (neverOrganized.length > 0) {
+        return neverOrganized[0].player_id;
+    }
+
+    // Иначе — самый давний
+    let oldest = null;
+    let oldestTime = Infinity;
+    members.forEach(m => {
+        const t = lastByPlayer[m.player_id] || 0;
+        if (t < oldestTime) {
+            oldestTime = t;
+            oldest = m.player_id;
+        }
+    });
+    return oldest;
 }

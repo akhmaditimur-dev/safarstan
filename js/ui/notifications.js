@@ -43,12 +43,26 @@ function initNotificationsBell() {
 async function updateNotificationsBadge() {
     if (!PLAYER || !PLAYER.playerId) return;
 
-    const count = await getUnreadCount(PLAYER.playerId);
+    // 1. Непрочитанные уведомления
+    const notifCount = await getUnreadCount(PLAYER.playerId);
+
+    // 2. Активные приглашения в круги (я — приглашённый, ещё не принял)
+    let inviteCount = 0;
+    try {
+        if (typeof loadMyCircleInvites === 'function') {
+            const invites = await loadMyCircleInvites();
+            inviteCount = (invites || []).length;
+        }
+    } catch (e) {
+        inviteCount = 0;
+    }
+
+    const total = notifCount + inviteCount;
     const badge = document.getElementById('notifBadge');
     if (!badge) return;
 
-    if (count > 0) {
-        badge.textContent = count > 99 ? '99+' : count;
+    if (total > 0) {
+        badge.textContent = total > 99 ? '99+' : total;
         badge.style.display = 'flex';
     } else {
         badge.style.display = 'none';
@@ -72,12 +86,9 @@ async function renderNotificationsList(containerId, limit = 50) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // Skeleton
     if (typeof renderNotificationsSkeleton === 'function') {
         renderNotificationsSkeleton(containerId, 5);
     }
-
-    // ...дальше идёт текущий код
 
     container.innerHTML = '<div class="notif-empty">⏳ Загрузка...</div>';
 
@@ -134,10 +145,14 @@ function buildNotificationText(n) {
             return `<strong>${name}</strong> приглашает тебя в гап${p.gap_title ? ` «${escapeHtml(p.gap_title)}»` : ''}`;
         case 'trip_joined':
             return `<strong>${name}</strong> присоединился к твоей поездке`;
-        case 'circle_invite_pending':
-            return `<strong>${name}</strong> приглашает в круг${p.circle_title ? ` «${escapeHtml(p.circle_title)}»` : ''}. Нужно подтверждение.`;
         case 'trip_cancelled':
             return `<strong>${name}</strong> отменил поездку`;
+        case 'circle_added':
+            return `<strong>${name}</strong> добавил тебя в круг${p.circle_title ? ` «${escapeHtml(p.circle_title)}»` : ''}`;
+        case 'circle_invite_pending':
+            return `<strong>${name}</strong> приглашает игрока в круг${p.circle_title ? ` «${escapeHtml(p.circle_title)}»` : ''}`;
+        case 'circle_invite_approved':
+            return `<strong>${name}</strong> одобрил твою заявку в круг`;
         case 'review_on_place':
             return `<strong>${name}</strong> оставил отзыв${p.place_title ? ` на «${escapeHtml(p.place_title)}»` : ''}`;
         case 'photo_on_place':
@@ -226,24 +241,31 @@ function handleNotificationClick(type) {
                 });
             }
             break;
+
         case 'profile_access_request':
             if (typeof openAccessRequestsModal === 'function') {
                 openAccessRequestsModal();
             }
             break;
+
         case 'gap_invite':
             const gapsCard = document.getElementById('dashGapsCard');
             if (gapsCard) gapsCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
             break;
+
         case 'trip_joined':
         case 'trip_cancelled':
             const tripsSection = document.getElementById('trips');
             if (tripsSection) tripsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             break;
+
+        case 'circle_added':
         case 'circle_invite_pending':
+        case 'circle_invite_approved':
             const circlesCard = document.getElementById('dashCirclesCard');
             if (circlesCard) circlesCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
             break;
+
         default:
             break;
     }

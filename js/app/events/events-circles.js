@@ -113,6 +113,7 @@ document.addEventListener('click', async (e) => {
     }
 
     if (typeof showWarningToast === 'function') showWarningToast('✅ Принят');
+    if (typeof updateNotificationsBadge === 'function') await updateNotificationsBadge();
     if (CURRENT_OPEN_CIRCLE) {
         await openCircleView(CURRENT_OPEN_CIRCLE.id);
     }
@@ -130,6 +131,7 @@ document.addEventListener('click', async (e) => {
         return;
     }
 
+    if (typeof updateNotificationsBadge === 'function') await updateNotificationsBadge();
     if (CURRENT_OPEN_CIRCLE) {
         await openCircleView(CURRENT_OPEN_CIRCLE.id);
     }
@@ -152,4 +154,47 @@ document.addEventListener('click', async (e) => {
 
     closeCircleView();
     await renderCirclesDashboard();
+});
+
+// ============================================
+// ВСТРЕЧИ КРУГА
+// ============================================
+
+// Открыть модалку создания
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('#circleMeetingCreateBtn');
+    if (!btn) return;
+    e.stopPropagation();
+    openCircleMeetingModal(btn.dataset.circleId);
+});
+
+// Закрытие
+document.addEventListener('click', (e) => {
+    if (e.target.id === 'circleMeetingModal' || e.target.closest('#circleMeetingClose')) {
+        closeCircleMeetingModal();
+    }
+});
+
+// Submit
+document.addEventListener('click', async (e) => {
+    if (!e.target.closest('#circleMeetingSubmit')) return;
+    e.stopPropagation();
+    await submitCircleMeeting();
+});
+
+// Отметить проведённой
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-circle-meeting-done]');
+    if (!btn) return;
+    e.stopPropagation();
+
+    const result = await markCircleMeetingDone(btn.dataset.circleMeetingDone);
+    if (result.error) {
+        if (typeof showWarningToast === 'function') showWarningToast(result.error);
+        return;
+    }
+
+    if (CURRENT_OPEN_CIRCLE) {
+        await openCircleView(CURRENT_OPEN_CIRCLE.id);
+    }
 });
