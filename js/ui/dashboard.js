@@ -45,6 +45,9 @@ async function showDashboard() {
     if (typeof renderMeetingsDashboard === 'function') {
         await renderMeetingsDashboard();
     }
+    if (typeof renderCirclesDashboard === 'function') {
+        await renderCirclesDashboard();
+    }
     
     // === КАЛЕНДАРЬ ===
     if (typeof renderCalendar === 'function') {

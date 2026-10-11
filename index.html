@@ -69,6 +69,7 @@
     <link rel="stylesheet" href="styles/sections/affiche.css">
     <link rel="stylesheet" href="styles/sections/trips.css">
     <link rel="stylesheet" href="styles/sections/meetings.css">
+    <link rel="stylesheet" href="styles/sections/circles.css">    
     <link rel="stylesheet" href="styles/sections/charity.css">
     <link rel="stylesheet" href="styles/sections/calendar.css">    
     <link rel="stylesheet" href="styles/sections/sections.css">
@@ -245,6 +246,16 @@
                         <button class="btn btn-secondary btn-sm btn-block" id="meetingsShowAllBtn">
                             Все встречи
                         </button>
+                    </div>
+
+                    <div class="dashboard-card" id="dashCirclesCard">
+                        <div class="dashboard-card__header">
+                            <h3>Мои круги</h3>
+                            <button class="btn btn-ghost btn-sm" id="circleCreateBtn" title="Создать круг">
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </div>
+                        <div class="dashboard-circles" id="dashCircles"></div>
                     </div>
 
                     <div class="dashboard-card" id="dashGapsCard">
@@ -1740,6 +1751,64 @@
         </div>
     </div>
 
+    <!-- Модалка: создать круг -->
+    <div id="circleCreateModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button id="circleCreateClose" class="modal-close"><i data-lucide="x"></i></button>
+            <h2>Создать круг</h2>
+            <p class="modal-subtitle">Постоянный круг друзей</p>
+
+            <label class="modal-label">Тип круга</label>
+            <select id="circleType" class="modal-input">
+                <option value="gap">Гап (друзья, одноклассники, соседи)</option>
+                <option value="family">Семья</option>
+                <option value="work">Коллеги</option>
+                <option value="earth">Землячество</option>
+            </select>
+
+            <label class="modal-label">Название</label>
+            <input type="text" id="circleName" class="modal-input" placeholder="Например, Одноклассники 2005" maxlength="60">
+
+            <label class="modal-label">Эмодзи</label>
+            <div class="circle-emoji-picker" id="circleEmojiPicker">
+                <button type="button" class="circle-emoji-option active" data-emoji="☕">☕</button>
+                <button type="button" class="circle-emoji-option" data-emoji="🏠">🏠</button>
+                <button type="button" class="circle-emoji-option" data-emoji="💼">💼</button>
+                <button type="button" class="circle-emoji-option" data-emoji="🌍">🌍</button>
+                <button type="button" class="circle-emoji-option" data-emoji="🎓">🎓</button>
+                <button type="button" class="circle-emoji-option" data-emoji="🎉">🎉</button>
+                <button type="button" class="circle-emoji-option" data-emoji="🍽">🍽</button>
+                <button type="button" class="circle-emoji-option" data-emoji="⚽">⚽</button>
+            </div>
+
+            <label class="modal-label">Описание (опционально)</label>
+            <textarea id="circleDescription" class="modal-input" rows="2" placeholder="О чём ваш круг?" maxlength="500"></textarea>
+
+            <label class="modal-label">Город</label>
+            <div class="city-select">
+                <input type="text" id="circleCityInput" class="modal-input" placeholder="Начни вводить" autocomplete="off">
+                <input type="hidden" id="circleCity" value="">
+                <div class="city-select__dropdown" id="circleCityDropdown" style="display:none;"></div>
+            </div>
+
+            <label class="modal-label">Расписание встреч</label>
+            <select id="circleSchedule" class="modal-input">
+                <option value="monthly">Раз в месяц</option>
+                <option value="weekly">Каждую неделю</option>
+                <option value="biweekly">Раз в две недели</option>
+                <option value="quarterly">Раз в квартал</option>
+                <option value="once">Один раз</option>
+                <option value="manual">Без расписания</option>
+            </select>
+
+            <label class="modal-label">Место сбора (опционально)</label>
+            <input type="text" id="circleMeetPoint" class="modal-input" placeholder="Например, чайхана у Чорсу" maxlength="80">
+
+            <button id="circleCreateSubmit" class="modal-btn">Создать круг</button>
+            <p id="circleCreateError" class="auth-error" style="display:none;"></p>
+        </div>
+    </div>
+
     <!-- Модалка: детали встречи -->
     <div id="meetingDetailModal" class="modal-overlay" style="display:none;">
         <div class="modal">
@@ -1973,6 +2042,7 @@
     <script defer src="js/ui/header-city.js"></script>
     <script defer src="js/ui/trips.js"></script>
     <script defer src="js/ui/meetings.js"></script>
+    <script defer src="js/ui/circles.js"></script>    
     <script defer src="js/ui/charity.js"></script>
     <script defer src="js/ui/faq.js"></script>
 
@@ -1992,6 +2062,7 @@
     <script defer src="js/app/events/events-affiche.js"></script>
     <script defer src="js/app/events/events-trips.js"></script>
     <script defer src="js/app/events/events-meetings.js"></script>
+    <script defer src="js/app/events/events-circles.js"></script>    
     <script defer src="js/app/events/events-charity.js"></script>
     <script defer src="js/app/start.js"></script>
 
