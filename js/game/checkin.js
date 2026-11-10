@@ -154,6 +154,20 @@ async function checkIn(checkinKey) {
         newBadges.forEach((id, idx) => {
             setTimeout(() => showBadgeToast(getBadgeById(id)), 600 + idx * 800);
         });
+
+        // Предлагаем поделиться первым бейджем (через 2 секунды после тоста)
+        setTimeout(async () => {
+            if (typeof showConfirm === 'function') {
+                const badgeName = getBadgeById(newBadges[0])?.name || 'Новое достижение';
+                const wantToShare = await showConfirm(
+                    `Ты получил бейдж «${badgeName}»! Поделиться этим?`, 
+                    { okText: 'Поделиться', cancelText: 'Не сейчас' }
+                );
+                if (wantToShare) {
+                    await shareBadge(badgeName);
+                }
+            }
+        }, 2000);
     }
 
     // === КВЕСТЫ ===
@@ -182,5 +196,58 @@ async function checkIn(checkinKey) {
     // === ОТМЕТКА ДРУЗЕЙ ===
     if (checkinId) {
         openTagFriendsModal(checkinId, checkinKey, placeTitle);
+    }
+
+    // === ПОДЕЛИТЬСЯ ===
+    // Спрашиваем с небольшой задержкой, чтобы окно не перекрывало «С кем был?»
+    setTimeout(async () => {
+        if (typeof showConfirm === 'function') {
+            const wantToShare = await showConfirm(
+                'Место отмечено! Поделиться этим с друзьями?', 
+                { okText: 'Поделиться', cancelText: 'Не сейчас' }
+            );
+            if (wantToShare) {
+                await shareCheckin(PLAYER.currentCity, placeTitle);
+            }
+        }
+    }, 500);
+}
+
+// ============================================
+// ПОДЕЛИТЬСЯ ЧЕК-ИНОМ
+// ============================================
+async function shareCheckin(cityKey, placeName) {
+    if (!PLAYER) return;
+
+    const city = CITIES[cityKey]?.name || cityKey;
+    const text = `Я только что отметился в «${placeName}» (${city}) в Safarstan! Присоединяйся:`;
+    const url = 'https://akhmaditimur-dev.github.io/safarstan/';
+    
+    // Нативный шаринг (мобилки)
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Safarstan',
+                text: text,
+                url: url
+            });
+            return;
+        } catch (err) {
+            if (err.name !== 'AbortError') console.warn('Share error:', err);
+            return;
+        }
+    }
+
+    // Копирование в буфер (десктоп)
+    try {
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('Ссылка скопирована в буфер обмена!');
+        }
+    } catch (err) {
+        console.warn('Clipboard error:', err);
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('Не удалось скопировать ссылку');
+        }
     }
 }

@@ -52,3 +52,41 @@ function checkBadges() {
     PLAYER.badges = [...earned];
     return newBadges;
 }
+
+// ============================================
+// ПОДЕЛИТЬСЯ БЕЙДЖЕМ
+// ============================================
+async function shareBadge(badgeName) {
+    if (!PLAYER) return;
+
+    const text = `Я только что получил достижение «${badgeName}» в Safarstan! Присоединяйся:`;
+    const url = 'https://akhmaditimur-dev.github.io/safarstan/';
+    
+    // Нативный шаринг (мобилки)
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Safarstan',
+                text: text,
+                url: url
+            });
+            return;
+        } catch (err) {
+            if (err.name !== 'AbortError') console.warn('Share error:', err);
+            return;
+        }
+    }
+
+    // Копирование в буфер (десктоп)
+    try {
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('Ссылка скопирована в буфер обмена!');
+        }
+    } catch (err) {
+        console.warn('Clipboard error:', err);
+        if (typeof showWarningToast === 'function') {
+            showWarningToast('Не удалось скопировать ссылку');
+        }
+    }
+}
