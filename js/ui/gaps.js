@@ -19,12 +19,17 @@ async function renderGapsDashboard() {
     if (CURRENT_GAPS.length === 0) {
         container.innerHTML = `
             <div class="dashboard-empty">
-                У тебя пока нет гапов
+                <p style="margin-bottom: 12px;">У тебя пока нет гапов</p>
+                <button class="btn btn-primary btn-sm" id="dashEmptyAddGapBtn">
+                    <i data-lucide="coffee"></i> Создать гап
+                </button>
             </div>
-            <button class="btn btn-primary btn-sm btn-block" onclick="openGapModal()">
-                <i data-lucide="coffee"></i> Создать гап
-            </button>
         `;
+        
+        const btn = document.getElementById('dashEmptyAddGapBtn');
+        if (btn && typeof openGapModal === 'function') {
+            btn.addEventListener('click', () => openGapModal());
+        }
         if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }

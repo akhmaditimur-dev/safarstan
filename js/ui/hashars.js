@@ -90,12 +90,17 @@ async function renderMyHashars() {
     if (list.length === 0) {
         container.innerHTML = `
             <div class="dashboard-empty">
-                Ты пока не участвуешь в хашарах
+                <p style="margin-bottom: 12px;">Ты пока не участвуешь в хашарах</p>
+                <button class="btn btn-primary btn-sm" id="dashEmptyAddHasharBtn">
+                    <i data-lucide="hand-heart"></i> Создать хашар
+                </button>
             </div>
-            <button class="btn btn-primary btn-sm btn-block" id="dashHasharCreateBtn">
-                <i data-lucide="hand-heart"></i> Создать хашар
-            </button>
         `;
+        
+        const btn = document.getElementById('dashEmptyAddHasharBtn');
+        if (btn && typeof openHasharCreateModal === 'function') {
+            btn.addEventListener('click', openHasharCreateModal);
+        }
         if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }

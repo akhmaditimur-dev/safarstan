@@ -24,9 +24,17 @@ async function renderMeetingsDashboard() {
     if (upcoming.length === 0) {
         container.innerHTML = `
             <div class="dashboard-empty">
-                Пока нет встреч
+                <p style="margin-bottom: 12px;">Пока нет запланированных встреч</p>
+                <button class="btn btn-primary btn-sm" id="dashEmptyAddMeetingBtn">
+                    <i data-lucide="plus"></i> Создать встречу
+                </button>
             </div>
         `;
+        
+        const btn = document.getElementById('dashEmptyAddMeetingBtn');
+        if (btn && typeof openMeetingCreateModal === 'function') {
+            btn.addEventListener('click', openMeetingCreateModal);
+        }
         if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }

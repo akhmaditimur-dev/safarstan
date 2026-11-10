@@ -20,12 +20,7 @@ async function createNotification(userId, type, payload = {}, fromPlayerId = nul
 async function loadMyNotifications(playerId, limit = 50) {
     const { data, error } = await _supabase
         .from('notifications')
-        .select(`
-            id, type, payload, is_read, created_at, from_player_id,
-            from_player:players!notifications_from_player_id_fkey (
-                id, name, avatar
-            )
-        `)
+        .select('id, type, payload, is_read, created_at, from_player_id')
         .eq('user_id', playerId)
         .order('created_at', { ascending: false })
         .limit(limit);
@@ -34,7 +29,31 @@ async function loadMyNotifications(playerId, limit = 50) {
         console.warn('Ошибка загрузки уведомлений:', error);
         return [];
     }
-    return data || [];
+    if (!data || data.length === 0) return [];
+
+    // Ручной join через public_players (RLS на players не даёт читать чужих)
+    const fromIds = [...new Set(
+        data.map(n => n.from_player_id).filter(Boolean)
+    )];
+
+    let playersById = {};
+    if (fromIds.length > 0) {
+        const { data: players, error: errP } = await _supabase
+            .from('public_players')
+            .select('id, name, avatar')
+            .in('id', fromIds);
+
+        if (errP) {
+            console.warn('Ошибка загрузки игроков для уведомлений:', errP);
+        } else {
+            (players || []).forEach(p => { playersById[p.id] = p; });
+        }
+    }
+
+    return data.map(n => ({
+        ...n,
+        from_player: n.from_player_id ? (playersById[n.from_player_id] || null) : null,
+    }));
 }
 
 async function getUnreadCount(playerId) {

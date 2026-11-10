@@ -33,9 +33,17 @@ async function renderCirclesDashboard() {
     if (circles.length === 0) {
         container.innerHTML = `
             <div class="dashboard-empty">
-                Пока нет кругов. Создай первый.
+                <p style="margin-bottom: 12px;">Пока нет кругов. Создай первый.</p>
+                <button class="btn btn-primary btn-sm" id="dashEmptyAddCircleBtn">
+                    <i data-lucide="plus"></i> Создать круг
+                </button>
             </div>
         `;
+        
+        const btn = document.getElementById('dashEmptyAddCircleBtn');
+        if (btn && typeof openCircleCreateModal === 'function') {
+            btn.addEventListener('click', openCircleCreateModal);
+        }
         if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }

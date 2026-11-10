@@ -239,10 +239,8 @@ async function renderPlans() {
             </div>
         `;
         const btn = document.getElementById('dashEmptyAddPlanBtn');
-        if (btn) {
-            btn.addEventListener('click', () => {
-                if (typeof openPlanModal === 'function') openPlanModal(PLAYER?.currentCity);
-            });
+        if (btn && typeof openPlanModal === 'function') {
+            btn.addEventListener('click', () => openPlanModal(PLAYER?.currentCity));
         }
         if (typeof lucide !== 'undefined') lucide.createIcons();
         return;

@@ -30,15 +30,25 @@ async function renderUsefulCard() {
     const items = await loadUsefulPlaces(PLAYER.currentCity, 5);
     const cityName = CITIES[PLAYER.currentCity]?.name || '';
 
-    if (items.length === 0) {
+    if (!items || items.length === 0) {
         container.innerHTML = `
             <div class="dashboard-empty">
                 <p style="margin-bottom: 12px;">В ${escapeHtml(cityName)} пока ничего нет</p>
-                <button class="btn btn-primary btn-sm" id="usefulAddBtnEmpty">
-                    <i data-lucide="plus"></i> Добавить полезное
+                <button class="btn btn-primary btn-sm" id="usefulEmptyAddBtn">
+                    <i data-lucide="plus"></i> Добавить место
                 </button>
             </div>
         `;
+        
+        // Вешаем обработчик на кнопку
+        const btn = document.getElementById('usefulEmptyAddBtn');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                if (typeof openUsefulAddModal === 'function') {
+                    openUsefulAddModal();
+                }
+            });
+        }
         if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
